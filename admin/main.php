@@ -1,16 +1,3 @@
-<?php
-session_start();
-
-// Set a cookie named "loggedIn" with the value "false" and expiration time of 1 minutes
-setcookie("loggedIn", "false", time() + 60, "/");
-
-// Check if the user is not logged in
-if (!isset($_SESSION['username'])) {
-  // Redirect to the login page
-  header("Location: ../common/login.php");
-  exit(); // Ensure that script execution stops after the redirect
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +14,7 @@ if (!isset($_SESSION['username'])) {
 
 <!-- Main Content -->
 <div class="container-fluid border">
-<div class="container-fluid px-4 main-header d-flex justify-content-between py-2">
+<div class="container-fluid px-4 main-header d-flex justify-content-between py-3">
         <form id="searchForm">
           <input class="form-control me-1" type="search"  id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:260px">
         </form>
@@ -41,8 +28,7 @@ if (!isset($_SESSION['username'])) {
 </div>
 
 <section>
-  <div class="tables container-fluid mt-1 px-5
-   tbl-container d-flex flex-column justify-content-center align-content-center">
+  <div class="tables container-fluid px-5 tbl-container d-flex flex-column justify-content-center align-content-center" style="height:75 vh;">
     <div class="row tbl-fixed">
       <table class="table-striped table-condensed" style="width:1920px !important;" id="myTable">
       <thead>
@@ -55,7 +41,7 @@ if (!isset($_SESSION['username'])) {
 
               if ($result && $result->num_rows > 0) {
                   $row = $result->fetch_assoc(); // Fetching only the first row
-                  echo "<th class='text-center'>No<br><br><span ></span></th>";
+                  echo "<th class='text-center border-end'>No<br><br><span ></span></th>";
                   // Iterate through each column
                   foreach ($row as $column_name => $value) {
                     
@@ -89,7 +75,7 @@ if (!isset($_SESSION['username'])) {
                       }
 
                       // Output the table header for each column
-                      echo "<th id='$column_name' class='text-center' style='$background_color'>";
+                      echo "<th id='$column_name' class='text-center border-end' style='$background_color'>";
                       // Special treatment for specific columns
                       switch ($column_name) {
                           case 'ETA':
@@ -123,6 +109,7 @@ if (!isset($_SESSION['username'])) {
               ?>
 
             </tr>
+
           </thead>
            <tbody>
 
@@ -132,8 +119,7 @@ if (!isset($_SESSION['username'])) {
   </div>
 </section>
 
-
-<div class="container-fluid px-5 mb-3">
+<div class="container">
 <div class="buttons d-flex align-content-end justify-content-end mt-3 px-2">
       <div class="page-of mt-2 me-2">Page <span id="current-page">1</span> of <span id="total-pages">1</span></div>
       <button id="prev-btn">Prev</button>
@@ -195,8 +181,6 @@ if (!isset($_SESSION['username'])) {
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- Make tbody editable -->
 <script>
   $(document).ready(function() {
@@ -459,38 +443,5 @@ if (!isset($_SESSION['username'])) {
     // Initial calculation and update on page load
     updateSums();
 });
-</script>
-
-<script>
-    $(document).ready(function() {
-        // Handle form submission with AJAX
-        $('#addForm').submit(function(e) {
-            e.preventDefault(); // Prevent default form submission
-
-            // Serialize form data
-            var formData = $(this).serialize();
-
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: 'actions/process_form.php', // Adjust the URL to your PHP script
-                data: formData,
-                success: function(response) {
-                    // Handle success response here
-                    console.log(response); // Log response for debugging
-                    // You can update UI or display a success message
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    console.error(xhr.responseText); // Log error response for debugging
-                }
-            });
-        });
-
-        // Show modal when button is clicked
-        $('#showAddModalBtn').click(function() {
-            $('#addModal').modal('show');
-        });
-    });
 </script>
 </html>

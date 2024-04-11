@@ -51,7 +51,8 @@ if(isset($_POST['save_multiple_checkbox'])) {
     } else {
         // No brands selected, show an alert and redirect
         echo '<script>alert("Please select at least one brand!");</script>';
-        echo '<script>window.location.href = window.location.href;</script>';
+        // Redirect to the current page after showing the alert
+        echo '<script>window.location.href = "../create-user.php";</script>';
         exit();
     }
 } else {
