@@ -1,5 +1,8 @@
-<?php 
+<?php
 session_start();
+
+// Set a cookie named "loggedIn" with the value "false" and expiration time of 1 minutes
+setcookie("loggedIn", "false", time() + 60, "/");
 
 // Check if the user is not logged in
 if (!isset($_SESSION['username'])) {
@@ -24,13 +27,13 @@ if (!isset($_SESSION['username'])) {
 
 <!-- Main Content -->
 <div class="container-fluid border">
-<div class="container main-header d-flex justify-content-between py-3">
+<div class="container-fluid px-4 main-header d-flex justify-content-between py-3">
         <form id="searchForm">
           <input class="form-control me-1" type="search"  id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:260px">
         </form>
 
         <div class="form-inline d-flex flex-row gap-1">
-          <button type="button" class="btn btn-primary" onclick="$('#addModal').modal('show')">Create</button>
+          <!-- <button type="button" class="btn btn-primary" onclick="$('#addModal').modal('show')">Create</button> -->
           <input type="number" id="row" style="width:80px; height: 40px;" class="form-control"/>
           <button type="button" class="btn btn-success" id="filter">Filter</button>
         </div>
@@ -38,7 +41,7 @@ if (!isset($_SESSION['username'])) {
 </div>
 
 <section>
-  <div class="tables container tbl-container d-flex flex-column justify-content-center align-content-center" style="height:75 vh;">
+  <div class="tables container-fluid px-5 pt-3 tbl-container d-flex flex-column justify-content-center align-content-center">
     <div class="row tbl-fixed">
       <table class="table-striped table-condensed" style="width:1920px !important;" id="myTable">
       <thead>
@@ -51,7 +54,7 @@ if (!isset($_SESSION['username'])) {
 
               if ($result && $result->num_rows > 0) {
                   $row = $result->fetch_assoc(); // Fetching only the first row
-                  echo "<th class='text-center'>No<br><br><span ></span></th>";
+                  echo "<th class='text-center border-end'>No<br><br><span ></span></th>";
                   // Iterate through each column
                   foreach ($row as $column_name => $value) {
                     
@@ -85,7 +88,7 @@ if (!isset($_SESSION['username'])) {
                       }
 
                       // Output the table header for each column
-                      echo "<th id='$column_name' class='text-center' style='$background_color'>";
+                      echo "<th id='$column_name' class='text-center border-end' style='$background_color'>";
                       // Special treatment for specific columns
                       switch ($column_name) {
                           case 'ETA':
@@ -129,7 +132,7 @@ if (!isset($_SESSION['username'])) {
   </div>
 </section>
 
-<div class="container">
+<div class="container-fluid px-4 sticky-bottom">
 <div class="buttons d-flex align-content-end justify-content-end mt-3 px-2">
       <div class="page-of mt-2 me-2">Page <span id="current-page">1</span> of <span id="total-pages">1</span></div>
       <button id="prev-btn">Prev</button>
@@ -157,6 +160,7 @@ if (!isset($_SESSION['username'])) {
                             COLUMN_NAME AS department_name
                             FROM INFORMATION_SCHEMA.COLUMNS
                             WHERE TABLE_NAME = 'tblproduct_transaction'
+                            AND COLUMN_NAME != 'product_status'
                             AND ORDINAL_POSITION >= 2;";
                             $result = $conn->query($sql); // Execute the query
 
@@ -193,6 +197,7 @@ if (!isset($_SESSION['username'])) {
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- Make tbody editable -->
+
 <script>
   $(document).ready(function() {
     var currentPage = 1; // Current page
@@ -206,64 +211,66 @@ if (!isset($_SESSION['username'])) {
       var oldValue = cell.text().trim();
       var column = cell.attr("data-column");
 
-      // Set the contenteditable attribute to true to make the cell editable
-      cell.attr("contenteditable", "true").focus();
+      // Check if the column name is "ETA" or "RMA"
+      if (column === "ETA" || column === "RMA") {
+        // Set the contenteditable attribute to true to make the cell editable
+        cell.attr("contenteditable", "true").focus();
 
-      // On blur event, send AJAX request to update the value
-      cell.one("blur", function() {
-        var newValue = cell.text().trim();
-        updateValue(cell, newValue, oldValue, column);
-      });
-
-      // On pressing Enter key, confirm the edited value
-      cell.on("keydown", function(event) {
-        if (event.key === "Enter") {
-          event.preventDefault(); // Prevent default behavior of Enter key
+        // On blur event, send AJAX request to update the value
+        cell.one("blur", function() {
           var newValue = cell.text().trim();
           updateValue(cell, newValue, oldValue, column);
-        }
-      });
+        });
 
-      // Input validation for numeric columns
-      if (column !== "product_name") {
-        cell.on("input", function(event) {
-          var value = $(this).text().trim();
-          if (isNaN(value)) {
-            $(this).text(oldValue); // Revert the cell text to the original value
+        // On pressing Enter key, confirm the edited value
+        cell.on("keydown", function(event) {
+          if (event.key === "Enter") {
+            event.preventDefault(); // Prevent default behavior of Enter key
+            var newValue = cell.text().trim();
+            updateValue(cell, newValue, oldValue, column);
           }
         });
+
+        // Input validation for numeric columns
+        if (column !== "product_name") {
+          cell.on("input", function(event) {
+            var value = $(this).text().trim();
+            if (isNaN(value)) {
+              $(this).text(oldValue); // Revert the cell text to the original value
+            }
+          });
+        }
       }
     });
 
+    // Event listener for form submission
+    $("#searchForm").submit(function(event) {
+      event.preventDefault(); // Prevent the default form submission
 
-     // Event listener for form submission
-     $("#searchForm").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission
+      // Retrieve the search input value
+      var searchText = $("#searchInput").val().trim();
 
-        // Retrieve the search input value
-        var searchText = $("#searchInput").val().trim();
-
-        // Call the function to fetch data with the search text
-        fetchData(searchText);
+      // Call the function to fetch data with the search text
+      fetchData(searchText);
     });
 
     // Function to fetch updated data from the server
     function fetchData(searchText = '') {
-        // Modify your SQL query to include the search text as a parameter
-        $.ajax({
-            url: "actions/fetch_data.php?search=" + searchText,
-            type: "GET",
-            dataType: "json",
-            success: function(response) {
-                data = response;
-                totalRecords = data.length;
-                updateTable(data);
-                updatePagination();
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX Error:", error);
-            }
-        });
+      // Modify your SQL query to include the search text as a parameter
+      $.ajax({
+        url: "actions/fetch_data.php?search=" + searchText,
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+          data = response;
+          totalRecords = data.length;
+          updateTable(data);
+          updatePagination();
+        },
+        error: function(xhr, status, error) {
+          console.error("AJAX Error:", error);
+        }
+      });
     }
 
     // Call fetchData when the page loads to fetch initial data
@@ -271,43 +278,54 @@ if (!isset($_SESSION['username'])) {
 
     // Update the table content with the fetched data
     function updateTable(data) {
-        $('tbody').empty(); // Clear existing table rows
+      $('tbody').empty(); // Clear existing table rows
 
-        if (data.length === 0) {
+      if (data.length === 0) {
         // If no results found, display message in a single cell row
         var tr = $("<tr>").appendTo("tbody");
         $("<td colspan='100'>").text("No results found").appendTo(tr);
         return;
-    }
+      }
 
-        var startIndex = (currentPage - 1) * rowsPerPage;
-        var endIndex = startIndex + rowsPerPage;
-        var paginatedData = data.slice(startIndex, endIndex);
+      var startIndex = (currentPage - 1) * rowsPerPage;
+      var endIndex = startIndex + rowsPerPage;
+      var paginatedData = data.slice(startIndex, endIndex);
 
-        // Calculate the starting loop ID for the current page
-        var startingLoopId = (currentPage - 1) * rowsPerPage + 1;
+      // Calculate the starting loop ID for the current page
+      var startingLoopId = (currentPage - 1) * rowsPerPage + 1;
 
-        $.each(paginatedData, function(index, row) {
-            var tr = $("<tr>").attr("id", "row_" + row.product_pk);
+      $.each(paginatedData, function(index, row) {
+        var tr = $("<tr>").attr("id", "row_" + row.product_pk);
 
-            // Add a loop ID column
-            var loopIdTd = $("<td>").text(startingLoopId + index);
-            tr.append(loopIdTd);
+        // Add a loop ID column
+        var loopIdTd = $("<td>").text(startingLoopId + index);
+        tr.append(loopIdTd);
 
-            $.each(row, function(column_name, value) {
-                if (column_name !== 'product_pk' && column_name !== 'product_status' && column_name !== 'product_fk') {
-                    var td = $("<td>").attr({
-                        "id": column_name,
-                        "class": "editable",
-                        "data-column": column_name,
-                        "contenteditable": "true",
-                        "type": "number"
-                    }).text(value);
-                    tr.append(td);
-                }
+        $.each(row, function(column_name, value) {
+          if (column_name !== 'product_pk' && column_name !== 'product_status' && column_name !== 'product_fk') {
+            var td = $("<td>").text(value);
+            if (column_name === 'ETA' || column_name === 'RMA') {
+              td.attr({
+                "class": "editable",
+                "data-column": column_name,
+                "contenteditable": "true",
+                "type": "number"
+              });
+              // Add styles here
+            td.css({
+              // Example styles
+              "background-color": "lightgreen",
+              // "border": "1px solid black",
+              "font-weight": "bold"
+              // Add any other styles you need
             });
-            $('tbody').append(tr);
+            }
+            
+            tr.append(td);
+          }
         });
+        $('tbody').append(tr);
+      });
     }
 
     // Function to update pagination controls
@@ -318,53 +336,43 @@ if (!isset($_SESSION['username'])) {
       $("#page-number").val(currentPage); // Update input field value
     }
 
+    function updateValue(cell, newValue, oldValue, column) {
+  var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
 
-    function updateValue(cell, newValue, oldValue) {
-      var column = cell.attr("data-column");
+  // Send AJAX request to update the value
+  $.ajax({
+    url: "actions/update.php",
+    type: "POST",
+    data: {
+      id: productId,
+      column: column,
+      newValue: newValue
+    },
+    dataType: "json",
 
-      // If column is not product_name, validate if newValue is numeric
-      if (column !== "product_name" && isNaN(newValue)) {
-        alert("Please enter a valid numeric value.");
+    success: function(response) {
+      console.log("AJAX Success:", response);
+      if (response.success) {
+        cell.text(newValue); // Update the cell text with the new value
+        var searchText = $("#searchInput").val().trim();
+        fetchData(searchText); // Fetch new data after successful update
+        // Optionally, you can handle further actions here after successful update
+      } else {
+        console.error("Update failed:", response.message);
         cell.text(oldValue); // Revert the cell text to the original value
-        return;
       }
+    },
 
-      var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
-
-      // Send AJAX request to update the value
-      $.ajax({
-        url: "actions/update.php",
-        type: "POST",
-        data: {
-          id: productId,
-          column: column,
-          newValue: newValue
-        },
-        dataType: "json",
-
-        success: function(response) {
-          console.log("AJAX Success:", response);
-          if (response.success) {
-            cell.text(newValue); // Update the cell text with the new value
-            // Retrieve the search input value
-            var searchText = $("#searchInput").val().trim();
-            fetchData(searchText); // Fetch new data after successful update
-          } else {
-            console.error("Update failed:", response.message);
-            cell.text(oldValue); // Revert the cell text to the original value
-          }
-        },
-
-        error: function(xhr, status, error) {
-          console.error("AJAX Error:", error);
-          cell.text(oldValue); // Revert the cell text to the original value
-        },
-        complete: function() {
-          // Remove the contenteditable attribute and reattach click event handler
-          cell.removeAttr("contenteditable");
-        }
-      });
+    error: function(xhr, status, error) {
+      console.error("AJAX Error:", error);
+      cell.text(oldValue); // Revert the cell text to the original value
+    },
+    complete: function() {
+      // Remove the contenteditable attribute and reattach click event handler
+      cell.removeAttr("contenteditable");
     }
+  });
+}
 
     // Function to handle pagination
     function paginate(direction) {
@@ -395,7 +403,6 @@ if (!isset($_SESSION['username'])) {
         fetchData(); // Fetch data for the updated page
       }
     });
-
 
     // Combine filtering and pagination logic
     $('#filter').on('click', function() {

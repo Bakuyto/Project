@@ -27,6 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_input"])) {
     if ($conn->query($sql) === TRUE) {
         // Insertion successful for tblproduct_transaction
         echo "New record created successfully for tblproduct_transaction";
+        header("Location: ../main.php");
         
         // Get the ID generated for the inserted record
         $last_insert_id = $conn->insert_id;
@@ -38,8 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_input"])) {
         if ($conn->query($sql_sales_months) === TRUE) {
             // Insertion successful for tblproduct_sales_months
             echo "New record created successfully for tblproduct_sales_months";
-            header("location: ../main.php");
-            exit(); // Exit after redirection to prevent further execution of PHP code
         } else {
             // Error occurred for tblproduct_sales_months
             echo "Error: " . $sql_sales_months . "<br>" . $conn->error;
@@ -52,3 +51,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_input"])) {
     // Close the database connection
     $conn->close();
 }
+?>

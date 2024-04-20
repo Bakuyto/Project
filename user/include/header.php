@@ -2,8 +2,8 @@
 $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
 ?>
 
-<nav class="navbar navbar-expand-lg bg-info">
-  <div class="container">
+<nav class="navbar navbar-expand-lg bg-info position-sticky top-0" style="height:60px;">
+  <div class="container-fluid px-5">
     <a class="navbar-brand text-light" href="main.php"><h3>Pacific</h3></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
       data-bs-target="#navbarSupportedContent"
@@ -11,30 +11,6 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
       aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse justify-content-center"
-      id="navbarSupportedContent">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a
-            class="nav-link <?php if($current_page == 'main.php') echo 'text-light active'; ?>"
-            href="main.php"><h4>Home</h4></a>
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link <?php if($current_page == 'report.php') echo 'text-light active'; ?>"
-            href="report.php"><h4>Report</h4></a>
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link <?php if($current_page == 'create-user.php') echo 'text-light active'; ?>"
-            href="create-user.php"><h4>Create</h4></a>
-        </li>
-        <li class="nav-item d-sm-none d-md-none">
-          <a href="#"><div
-              class="nav-link justify-content-end"><h4>Logout</h4></div></a>
-        </li>
-      </ul>
-    </div>
     <div class="collapse navbar-collapse" id="navbarSupportedContent"
       style="flex-grow:0;">
       <ul class="navbar-nav ml-auto">
@@ -60,20 +36,27 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
             ?>
           </a>
           <!-- Dropdown Menu -->
-          <div class="dropdown-menu dropdown-menu-right mt-5"
+          <div class="dropdown-menu dropdown-menu-right mt-5 me-5 bg-white"
             aria-labelledby="navbarDropdown">
             <div class="profile-info">
               <h5 class="ms-3"><?php 
                 if(isset($_SESSION['username'])) {
-                    echo $_SESSION['username'];
-                } else {
-                    echo 'Username';
-                }
+                  echo $_SESSION['username'];
+                  // Check if user_level_fk is set in the session and display role accordingly
+                  if(isset($_SESSION['user_level_fk'])) {
+                      if ($_SESSION['user_level_fk'] == 1) {
+                          echo ' (Admin)';
+                      } elseif ($_SESSION['user_level_fk'] == 2) {
+                          echo ' (Staff)';
+                      }
+                  }
+              } else {
+                  echo 'Username';
+              }
             ?></h5>
             </div>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Profile</a>
-            <a class="dropdown-item" href="#">Settings</a>
+            <a class="dropdown-item" href="#">Change Password</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="../admin/logout.php">Logout</a>
           </div>

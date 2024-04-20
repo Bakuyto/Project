@@ -210,10 +210,10 @@ if (!isset($_SESSION['username'])) {
               </form>
               <div class="container">
             <div class="table-responsive" style="height:40vh;">
-              <table class="table ">
+              <table class="table table-bordered">
                 <thead>
                   <tr class="sticky-top top-0" style="z-index:1;">
-                    <th class="text-center text-white" scope="col" style="background-color: var(--blue); height:50px;">
+                    <th class="border text-center text-white" scope="col" style="background-color: var(--blue); height:50px;">
                       User List
                     </th>
                   </tr>
@@ -393,12 +393,6 @@ if (!isset($_SESSION['username'])) {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- JavaScript code to display the alert message -->
-<script>
-    <?php if(isset($_GET['message'])): ?>
-    alert("<?php echo $_GET['message']; ?>");
-    <?php endif; ?>
-</script>
   <script>
  $(document).ready(function (){
    $('#exampleModal').on('show.bs.modal', function (event) {

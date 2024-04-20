@@ -1,38 +1,49 @@
+<?php
+session_start();
+
+// Set a cookie named "loggedIn" with the value "false" and expiration time of 1 minutes
+setcookie("loggedIn", "false", time() + 60, "/");
+
+// Check if the user is not logged in
+if (!isset($_SESSION['username'])) {
+  // Redirect to the login page
+  header("Location: ../common/login.php");
+  exit(); // Ensure that script execution stops after the redirect
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Main Page</title>
   <link rel="stylesheet" href="assets/css/style.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-<?php include 'include/header.php'; ?>
-
-<!-- Main Content -->
-<div class="container-fluid border">
-<div class="container-fluid px-4 main-header d-flex justify-content-between py-3">
+<div class="container-fluid p-0 m-0" style="height:100vh;">
+  <?php include 'include/header.php'; ?>
+  <div class="container-fluid px-5 main-header d-flex justify-content-between py-2" style="height:60px;">
         <form id="searchForm">
           <input class="form-control me-1" type="search"  id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:260px">
         </form>
 
         <div class="form-inline d-flex flex-row gap-1">
-          <button type="button" class="btn btn-primary" onclick="$('#addModal').modal('show')">Create</button>
+          <button type="button" class="btn btn-primary" style="height:40px" onclick="$('#addModal').modal('show')">Create</button>
           <input type="number" id="row" style="width:80px; height: 40px;" class="form-control"/>
-          <button type="button" class="btn btn-success" id="filter">Filter</button>
+          <button type="button" class="btn btn-success" style="height:40px" id="filter">Filter</button>
         </div>
-      </div>
-</div>
+      </div>  
+<div class="fill" style="height: calc(100vh - 60px - 60px);">
 
 <section>
-  <div class="tables container-fluid px-5 tbl-container d-flex flex-column justify-content-center align-content-center" style="height:75 vh;">
-    <div class="row tbl-fixed">
-      <table class="table-striped table-condensed" style="width:1920px !important;" id="myTable">
-      <thead>
-            <tr>
+  <div class="tables container-fluid px-5 tbl-container d-flex flex-column justify-content-center align-content-center">
+    <div class="table-container tbl-fixed">
+      <table class="table-striped table-condensed" style="width:auto !important;" id="myTable">
+        <thead>
+          <tr>
             <?php
               include '../connection/connect.php';
 
@@ -41,7 +52,7 @@
 
               if ($result && $result->num_rows > 0) {
                   $row = $result->fetch_assoc(); // Fetching only the first row
-                  echo "<th class='text-center border-end'>No<br><br><span ></span></th>";
+                  echo "<th class='text-center'>No<br><br><span ></span></th>";
                   // Iterate through each column
                   foreach ($row as $column_name => $value) {
                     
@@ -75,7 +86,7 @@
                       }
 
                       // Output the table header for each column
-                      echo "<th id='$column_name' class='text-center border-end' style='$background_color'>";
+                      echo "<th id='$column_name' class='text-center text-wrap' style='$background_color'>";
                       // Special treatment for specific columns
                       switch ($column_name) {
                           case 'ETA':
@@ -107,28 +118,20 @@
                   }
               }
               ?>
-
-            </tr>
-
-          </thead>
-           <tbody>
-
-          </tbody>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
       </table>
     </div>
   </div>
-</section>
+</section> 
+</div>
+           
 
-<div class="container">
-<div class="buttons d-flex align-content-end justify-content-end mt-3 px-2">
-      <div class="page-of mt-2 me-2">Page <span id="current-page">1</span> of <span id="total-pages">1</span></div>
-      <button id="prev-btn">Prev</button>
-      <input type="number" placeholder="1" id="page-number" disabled>
-      <button id="next-btn">Next</button>
-    </div>
-</div>
-</div>
-<?php include 'include/footer.php'; ?>
+
+<?php include 'include/footer.php' ?>
+  <!-- </div> -->
 <!-- Modal -->
 <div class="modal fade" style="--bs-modal-width: 1000px !important;" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -138,9 +141,9 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="actions/process_form.php">
+                <form  method="POST" action="actions/process_form.php">
                     <div class="row g-3" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
-                        <?php
+                    <?php
                             include '../connection/connect.php';
 
                             $sql = "SELECT
@@ -156,9 +159,24 @@
                                 $first = true; // Flag to track the first column
                                 while ($row = $result->fetch_assoc()) {
                                     $department_name = $row["department_name"];
+
+                                    // Rename the department names if they match the specified ones
+                                    switch ($department_name) {
+                                        case 'product_name':
+                                            $label = 'Product Name';
+                                            break;
+                                        case 'Consignment_Stock':
+                                            $label = 'Consignment Stock';
+                                            break;
+                                        case 'Pre_Order':
+                                            $label = 'Pre Order';
+                                            break;
+                                        default:
+                                            $label = $department_name;
+                                    }
                                     ?>
                                     <div class="col-12 mb-3" style="flex: 0 0 auto; width: 200px;">
-                                        <label class="form-label text-center fw-bolder w-100"><?= $department_name ?></label>
+                                        <label class="form-label text-center fw-bolder w-100"><?= $label ?></label>
                                         <input type="text" class="form-control<?= $first ? ' required' : '' ?>" id="<?= $department_name ?>" name="<?= $department_name ?>"<?= $first ? ' required' : '' ?>>
                                     </div>
                                     <?php
@@ -181,11 +199,29 @@
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Include jQuery library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="assets/js/colResizable.js" ></script>
+<script src="assets/js/colResizable.min.js" ></script>
+
+
+<script>
+$(document).ready(function () {
+  $("#myTable").colResizable({
+    liveDrag: true,
+    resizeMode: 'fit'
+  });
+});
+</script>
+
 <!-- Make tbody editable -->
 <script>
   $(document).ready(function() {
     var currentPage = 1; // Current page
-    var rowsPerPage = 20; // Number of rows per page
+    var rowsPerPage = 30; // Number of rows per page
     var totalRecords; // Total number of records
     var data; // Variable to hold the fetched data
 
@@ -199,10 +235,10 @@
       cell.attr("contenteditable", "true").focus();
 
       // On blur event, send AJAX request to update the value
-      cell.one("blur", function() {
-        var newValue = cell.text().trim();
-        updateValue(cell, newValue, oldValue, column);
-      });
+      // cell.one("blur", function() {
+      //   var newValue = cell.text().trim();
+      //   updateValue(cell, newValue, oldValue, column);
+      // });
 
       // On pressing Enter key, confirm the edited value
       cell.on("keydown", function(event) {

@@ -14,5 +14,5 @@ echo "Session destroyed successfully.";
 // Redirect to the login page
 header("Location: ../common/login.php");
 exit; // Ensure script execution stops after redirection
-?>
+
 

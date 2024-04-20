@@ -1,3 +1,7 @@
+*{
+  margin: 0;
+  padding: 0;
+}
 :root{
   --blue:#28ACE8;
   --white: #ffff;
@@ -9,20 +13,20 @@
   overflow: hidden;
 }
 
-.table-container, .tbl-fixed {
+.table-container.tbl-fixed {
   overflow-y: scroll;
-  height: fit-content;
-  max-height: 70vh;
+  overflow-x: scroll;
+  /* border: 1px solid red; */
 }
+
 table {
   min-width: max-content;
   border-collapse: separate;
-}
-table tr th{
   border: 1px solid lightgrey;
 }
+
 th, td {
-  padding: 8px;
+  padding: 4px;
   text-align: left;
 }
 
@@ -31,25 +35,51 @@ tr:nth-child(even) {
 }
 
 table th {
-  /* position: sticky;
-  top: 0; */
+  position: sticky;
+  top: 0;
   background-color: var(--blue);
+  border: 1px solid lightgrey;
   padding-left: 20px;
   padding-right: 20px;
   height: 60px;
 }
 
 table tr td {
-  border: 1px solid var(--grey);
   text-align: center;
+  border: 1px solid lightgrey;
 }
 
 tr:nth-child(even) {
   background-color: rgba(211, 211, 211, 0.521);
 }
 
+/* @media only screen and (max-width: 768px) {
+  .table-container.tbl-fixed {
+    height: 70vh;
+  }
+} */
+@media only screen and (min-width: 769px) and (max-width: 1366px) {
+  .table-container.tbl-fixed {
+    /* border: 1px solid orange; */
+    height: 72vh;
+  }
+}
+
+@media only screen and (min-width: 1367px) and (max-width: 1600px) {
+  .table-container.tbl-fixed {
+    /* border: 1px solid green; */
+    height: 80vh;
+  }
+}
+@media only screen and (min-width: 1601px) {
+  .table-container.tbl-fixed {
+    /* border: 1px solid pink; */
+    height: 81vh;
+  }
+}
+
 /* Pagination button */
-.buttons {
+/* .buttons {
   margin-top: 10px;
   display: flex;
   justify-content: center;
@@ -75,4 +105,4 @@ tr:nth-child(even) {
 
 #page-number:focus {
   outline: none;
-}
+} */

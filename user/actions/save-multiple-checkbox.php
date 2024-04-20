@@ -1,37 +1,64 @@
 <?php
 include '../../connection/connect.php';
 
-  // Handling form submission for creating a new department's transaction
-  if(isset($_POST['save_multiple_checkbox'])) {
-    $department_pk = $_POST['department_pk']; // Get the department_pk from the form
-    $brands = $_POST['brands']; // Get the selected brands array from the form
-  
-    // Check if any brand is selected
-    if(!empty($brands)) {
-        // Prepare the stored procedure call
-        $stmt = $conn->prepare("CALL Insert_Multiple_Checkbox(?, ?)");
-  
-        // Bind parameters
-        $stmt->bind_param("is", $department_pk, $brand);
-  
-        // Execute the stored procedure for each selected brand
-        foreach($brands as $brand) {
-            $stmt->execute();
-        }
-  
-        // Close the statement
-        $stmt->close();
-  
-        // Redirect or output success message
-        echo "Data inserted successfully!";
-        header("Location: ../create-user.php ");
-        // You can redirect the user to another page or show a success message here
+// Handling form submission for creating a new department's transaction
+if(isset($_POST['save_multiple_checkbox'])) {
+    // Validate department_pk
+    if(isset($_POST['department_pk']) && !empty($_POST['department_pk']) && is_numeric($_POST['department_pk'])) {
+        $department_pk = intval($_POST['department_pk']);
     } else {
-        // No brands selected, handle this case
-        echo "Please select at least one brand!";
-        // You can redirect the user back to the form or show an error message
+        // Handle the case where department_pk is missing or empty
+        $_SESSION['status'] = "Error: department_pk is missing or empty.";
+        header("Location: ../create-user.php");
+        exit();
     }
-    }
-  
+    // Check if brands array is set and not empty
+    if(isset($_POST['brands']) && !empty($_POST['brands'])) {
+        $brands = $_POST['brands'];
 
-$conn->close();
+        // Use prepared statements to prevent SQL injection
+        $insert_sql = "CALL Insert_Multiple_Checkbox(?, ?)";
+        $insert_stmt = $conn->prepare($insert_sql);
+
+        if ($insert_stmt) {
+            // Bind parameters
+            $insert_stmt->bind_param("is", $department_pk, $brand);
+
+            // Loop through brands array and execute the prepared statement for each brand
+            foreach($brands as $brand) {
+                if ($insert_stmt->execute()) {
+                    continue; // Move to the next iteration if successful
+                } else {
+                    // Handle insertion failure
+                    $_SESSION['status'] = "Insertion failed: " . $insert_stmt->error;
+                    header("Location: ../create-user.php");
+                    exit();
+                }
+            }
+            // Close the prepared statement
+            $insert_stmt->close();
+        } else {
+            // Handle statement preparation failure
+            $_SESSION['status'] = "Statement preparation failed: " . $conn->error;
+            header("Location: ../create-user.php");
+            exit();
+        }
+        
+        // Set success message and redirect
+        $_SESSION['status'] = "Inserted Successfully";
+        header("Location: ../create-user.php");
+        exit();
+    } else {
+        // No brands selected, show an alert and redirect
+        echo '<script>alert("Please select at least one brand!");</script>';
+        // Redirect to the current page after showing the alert
+        echo '<script>window.location.href = "../create-user.php";</script>';
+        exit();
+    }
+} else {
+    // Handle case where save_multiple_checkbox is not set
+    $_SESSION['status'] = "Error: save_multiple_checkbox is not set.";
+    header("Location: ../create-user.php");
+    exit();
+}
+?>
