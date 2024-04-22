@@ -2,17 +2,27 @@
 session_start();
 include '../../connection/connect.php';
 
+// Function to sanitize input data
+function sanitize_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+// Check if the request is POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate the received data
     if (isset($_POST['user_pk'], $_POST['currentPassword'], $_POST['newPassword'], $_POST['confirmPassword'])) {
-        $user_pk = $_POST['user_pk'];
-        $currentPassword = $_POST['currentPassword'];
-        $newPassword = $_POST['newPassword'];
-        $confirmPassword = $_POST['confirmPassword'];
+        $user_pk = sanitize_input($_POST['user_pk']);
+        $currentPassword = sanitize_input($_POST['currentPassword']);
+        $newPassword = sanitize_input($_POST['newPassword']);
+        $confirmPassword = sanitize_input($_POST['confirmPassword']);
 
-        // Validate if the new password matches confirm password
+        // Check if new password matches confirm password
         if ($newPassword !== $confirmPassword) {
-            echo '<script>window.alert("New password and confirm password do not match."); window.location.href="../main.php";</script>';
+            $response = array("success" => false, "message" => "New password and confirm password do not match.");
+            echo json_encode($response);
             exit;
         }
 
@@ -24,51 +34,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows == 1) { // Changed to check if exactly one row is returned
+            if ($result->num_rows == 1) {
                 $row = $result->fetch_assoc();
                 $storedPassword = $row['user_log_password'];
 
                 // Verify if the current password matches the one stored in the database
                 if ($currentPassword === $storedPassword) {
-                    // Current password is valid, update the password
+                    // Update the password
                     $updateSql = "UPDATE tbluser SET user_log_password = ? WHERE user_pk = ?";
                     $stmt_update = $conn->prepare($updateSql);
                     if ($stmt_update) {
                         $stmt_update->bind_param("si", $newPassword, $user_pk);
                         if ($stmt_update->execute()) {
-                            echo '<script>window.alert("Password updated successfully."); window.location.href="../main.php";</script>';
-                            exit;
+                            $response = array("success" => true, "message" => "Password updated successfully.");
                         } else {
-                            echo '<script>window.alert("Error updating password.");</script>';
-                            exit;
+                            $response = array("success" => false, "message" => "Error updating password.");
                         }
                         $stmt_update->close();
                     } else {
-                        echo '<script>window.alert("Error preparing update statement."); window.location.href="../main.php";</script>';
-                        exit;
+                        $response = array("success" => false, "message" => "Error preparing update statement.");
                     }
                 } else {
-                    echo '<script>window.alert("Incorrect current password."); window.location.href="../main.php";</script>';
-                    exit;
+                    $response = array("success" => false, "message" => "Incorrect current password.");
                 }
             } else {
-                echo '<script>window.alert("User not found."); window.location.href="../main.php";</script>';
-                exit;
+                $response = array("success" => false, "message" => "User not found.");
             }
             $stmt->close();
         } else {
-            echo '<script>window.alert("Error preparing statement."); window.location.href="../main.php";</script>';
-            exit;
+            $response = array("success" => false, "message" => "Error preparing statement.");
         }
     } else {
-        echo '<script>window.alert("Required fields are missing."); window.location.href="../main.php";</script>';
-        exit;
+        $response = array("success" => false, "message" => "Required fields are missing.");
     }
 } else {
-    echo "Update user data not received.";
-    exit;
+    $response = array("success" => false, "message" => "Update user data not received.");
 }
 
+// Output the JSON response
+echo json_encode($response);
+
+// Close the database connection
 $conn->close();
 ?>
-    

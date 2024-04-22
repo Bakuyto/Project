@@ -124,7 +124,46 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
     </div>
   </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+    console.log("Document is ready."); // Check if document is ready
+    $("#changePasswordForm").submit(function(event){
+        console.log("Form submission intercepted."); // Check if form submission is intercepted
+        event.preventDefault();
+        var formData = $(this).serialize();
+        console.log("Form data serialized:", formData);
+        
+        $.ajax({
+    type: "POST",
+    url: "actions/change_password.php",
+    data: formData,
+    dataType: "json",
+    success: function(response) {
+        // Check if the request was successful
+        if (response.success) {
+            // If successful, display success message
+            alert(response.message);
+            // Clear input fields
+            $("#currentPassword, #newPassword, #confirmPassword").val('');
+        } else {
+            // If not successful, display error message
+            alert(response.message);
 
+            $("#currentPassword, #newPassword, #confirmPassword").val('');
+
+        }
+    },
+    error: function(xhr, status, error) {
+        // If there was an error with the request, display a generic error message
+        alert("An error occurred while processing your request. Please try again later.");
+        console.log(xhr.responseText);
+    }
+});
+
+    });
+});
+</script>
 
 <script>
 document.getElementById('changePasswordBtn').addEventListener('click', function() {
@@ -144,5 +183,4 @@ document.getElementById('changePasswordBtn').addEventListener('click', function(
     xhr.send('user_pk=' + userPk );
 }); // <-- Closing parenthesis was missing here
 </script>
-
 
