@@ -60,7 +60,7 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
           </a>
           <!-- Dropdown Menu -->
           <div class="dropdown-menu dropdown-menu-right mt-5 bg-white"
-            aria-labelledby="navbarDropdown" style="margin-left:-10px;">
+            aria-labelledby="navbarDropdown" style="margin-left:-20px;">
             <div class="profile-info">
               <h5 class="ms-3"><?php 
                 if(isset($_SESSION['username'])) {
@@ -78,8 +78,8 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
               }
             ?></h5>
             </div>
-            <div class="dropdown-divider"></div>
-            <button type="button" id="changePasswordBtn" data-userpk="<?php echo $_SESSION['user_pk']; ?>" data-toggle="modal" data-target="#changePasswordModal" class="dropdown-item" href="#">Change Password</button>
+            <div class="dropdown-divider"></div>        
+            <button type="button" id="changePasswordBtn" data-userpk="<?php echo $_SESSION['user_pk']; ?>" onclick="$('#changePasswordModal').modal('show');" class="dropdown-item">Change Password</button>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="../admin/logout.php">Logout</a>
           </div>
@@ -92,11 +92,11 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
 
 <!-- Modal -->
 <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           <!-- <span aria-hidden="true">&times;</span> -->
         </button>
       </div>
@@ -115,53 +115,93 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
         <label for="confirmPassword">Confirm New Password</label>
         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
     </div>
+    
     <div class="d-flex justify-content-center mt-2">
         <button type="submit" class="w-50 btn btn-primary mt-2">Submit</button>
     </div>
 </form>
-
       </div>
     </div>
   </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-white bg-success">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Password Changed successfully.
+            </div>
+            <div class="modal-footer" style="border:none;">
+                <button type="button " class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-white bg-danger">
+        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="errorMessage"></p>
+      </div>
+      <div class="modal-footer" style="border-top:none;">
+      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <script>
-$(document).ready(function(){
-    console.log("Document is ready."); // Check if document is ready
-    $("#changePasswordForm").submit(function(event){
-        console.log("Form submission intercepted."); // Check if form submission is intercepted
-        event.preventDefault();
-        var formData = $(this).serialize();
-        console.log("Form data serialized:", formData);
-        
-        $.ajax({
-    type: "POST",
-    url: "actions/change_password.php",
-    data: formData,
-    dataType: "json",
-    success: function(response) {
-        // Check if the request was successful
-        if (response.success) {
-            // If successful, display success message
-            alert(response.message);
-            // Clear input fields
-            $("#currentPassword, #newPassword, #confirmPassword").val('');
-        } else {
-            // If not successful, display error message
-            alert(response.message);
+$(document).ready(function() {
+  $('#changePasswordForm').submit(function(e) {
+      e.preventDefault(); // Prevent the form from submitting normally
 
-            $("#currentPassword, #newPassword, #confirmPassword").val('');
+      // Serialize the form data
+      var formData = $(this).serialize();
 
-        }
-    },
-    error: function(xhr, status, error) {
-        // If there was an error with the request, display a generic error message
-        alert("An error occurred while processing your request. Please try again later.");
-        console.log(xhr.responseText);
-    }
-});
-
-    });
+      // Send an AJAX request
+      $.ajax({
+          type: 'POST',
+          url: $(this).attr('action'),
+          data: $(this).serialize(),
+          dataType: 'json',
+          success: function(response) {
+              if (response.success) {
+                  // If password change is successful, show success modal and close password change modal
+                  $('#successModal').modal('show');
+                  $("#currentPassword, #newPassword, #confirmPassword").val('');
+                  $('#changePasswordModal').modal('hide');
+              } else {
+                  // If there's an error, show error modal with appropriate message
+                  $('#errorMessage').text(response.message);
+                  $('#errorModal').modal('show');
+                  $('#changePasswordModal').modal('hide');
+              }
+          },
+          error: function(xhr, status, error) {
+              // If AJAX request fails, show generic error message
+              console.error(xhr.responseText);
+              $('#errorMessage').text('An error occurred while processing your request. Please try again.');
+              $('#errorModal').modal('show');
+          }
+      });
+  });
 });
 </script>
 

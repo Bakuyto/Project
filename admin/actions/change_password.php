@@ -2,22 +2,15 @@
 session_start();
 include '../../connection/connect.php';
 
-// Function to sanitize input data
-function sanitize_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
 
 // Check if the request is POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate the received data
     if (isset($_POST['user_pk'], $_POST['currentPassword'], $_POST['newPassword'], $_POST['confirmPassword'])) {
-        $user_pk = sanitize_input($_POST['user_pk']);
-        $currentPassword = sanitize_input($_POST['currentPassword']);
-        $newPassword = sanitize_input($_POST['newPassword']);
-        $confirmPassword = sanitize_input($_POST['confirmPassword']);
+        $user_pk =$_POST['user_pk'];
+        $currentPassword = $_POST['currentPassword'];
+        $newPassword = $_POST['newPassword'];
+        $confirmPassword = $_POST['confirmPassword'];
 
         // Check if new password matches confirm password
         if ($newPassword !== $confirmPassword) {

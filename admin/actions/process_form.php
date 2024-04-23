@@ -10,9 +10,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SERVER['HTTP_X_REQUESTED_WIT
     foreach ($_POST as $key => $value) {
         // Prevent SQL injection by using prepared statements
         $escaped_value = $conn->real_escape_string($value);
-        
+
         // Set default value to '0' if the field is empty
         $values[$key] = !empty($escaped_value) ? $escaped_value : '0';
+
+        // Check if product_name is empty and handle it as required
+        if ($key === 'product_name' && empty($escaped_value)) {
+            echo json_encode(array("success" => false, "error" => "Product name is required"));
+            exit;
+        }
     }
 
     // Now, you can process the submitted data, for example, inserting it into the database
@@ -23,14 +29,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SERVER['HTTP_X_REQUESTED_WIT
     $sql = "INSERT INTO tblproduct_transaction ($columns) VALUES ($columnValues)";
     if ($conn->query($sql) === TRUE) {
         // Insertion successful for tblproduct_transaction
-        
+
         // Get the ID generated for the inserted record
         $last_insert_id = $conn->insert_id;
 
         // Now insert into tblproduct_sales_months with the obtained ID
         $product_fk = $last_insert_id; // Use the ID from tblproduct_transaction
         $sql_sales_months = "INSERT INTO tblproduct_sales_months (product_fk) VALUES ('$product_fk')";
-        
+
         if ($conn->query($sql_sales_months) === TRUE) {
             // Insertion successful for tblproduct_sales_months
             echo json_encode(array("success" => true)); // Send success response

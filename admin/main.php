@@ -132,8 +132,8 @@ if (!isset($_SESSION['username'])) {
 
 <?php include 'include/footer.php' ?>
 <!-- Modal -->
-<div class="modal fade" style="--bs-modal-width: 1000px !important;" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h2 class="modal-title" id="addModalLabel">Create</h2>
@@ -176,7 +176,7 @@ if (!isset($_SESSION['username'])) {
                                 ?>
                                 <div class="col-12 mb-3" style="flex: 0 0 auto; width: 200px;">
                                     <label class="form-label text-center fw-bolder w-100"><?= $label ?></label>
-                                    <input type="text" class="form-control<?= $first ? ' required' : '' ?>" id="<?= $department_name ?>" name="<?= $department_name ?>"<?= $first ? ' required' : '' ?>>
+                                    <input type="<?= $department_name === 'product_name' ? 'text' : 'number' ?>" class="form-control<?= $first ? ' required' : '' ?>" id="<?= $department_name ?>" name="<?= $department_name ?>"<?= $first ? ' required' : '' ?>>
                                 </div>
                                 <?php
                                 $first = false; // Unset flag after the first iteration
@@ -196,6 +196,45 @@ if (!isset($_SESSION['username'])) {
         </div>
     </div>
 </div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successsModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-white bg-success" >
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body fw-bolder" style="border:none;">
+                Form submitted successfully.
+            </div>
+            <div class="modal-footer fw-bolder" style="border:none;">
+                <button type="button " class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorrModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <!-- <span aria-hidden="true">&times;</span> -->
+        </button>
+      </div>
+      <div class="modal-body" style="border:none;">
+        <p class="h5 fw-bolder" id="errorrMessage">Product name is required</p>
+      </div>
+      <div class="modal-footer" style="border:none;">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -483,10 +522,12 @@ $(document).ready(function () {
 
 
 <script>
-  $(document).ready(function () {
+$(document).ready(function () {
     $('#submitButton').click(function () {
         // Serialize form data
         var formData = $('#addForm').serialize();
+
+        // console.log("Form data:", formData); // Debugging statement
 
         // AJAX request
         $.ajax({
@@ -494,30 +535,35 @@ $(document).ready(function () {
             url: 'actions/process_form.php',
             data: formData,
             success: function (response) {
+                console.log("AJAX success response:", response); // Debugging statement
+
                 // Parse the JSON response
                 var responseData = JSON.parse(response);
                 
                 // Check if the operation was successful
                 if (responseData.success) {
-                    // Alert success
-                    alert('Form submitted successfully.');
+                    // Show success modal
+                    $('#successsModal').modal('show');
                     
                     // Clear form inputs
                     $('#addForm')[0].reset();
                 } else {
-                    // Alert error
-                    alert('An error occurred: ' + responseData.error);
+                    // Show error modal
+                    $('#errorrModal').modal('show');
+                    $('#addModal').modal('hide');
                 }
             },
             error: function (xhr, status, error) {
                 // Handle error
-                console.error(error); // Log error for debugging
+                console.error("AJAX error:", error); // Log error for debugging
                 // Display error message to the user
                 alert('An error occurred. Please try again later.');
             }
         });
     });
 });
-
 </script>
+
+
+
 </html>
