@@ -191,7 +191,7 @@ $(document).ready(function() {
                   // If there's an error, show error modal with appropriate message
                   $('#errorMessage').text(response.message);
                   $('#errorModal').modal('show');
-                  $('#changePasswordModal').modal('hide');
+                  // $('#changePasswordModal').modal('hide');
               }
           },
           error: function(xhr, status, error) {

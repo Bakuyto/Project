@@ -2,12 +2,11 @@
 session_start();
 include '../../connection/connect.php';
 
-
 // Check if the request is POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate the received data
     if (isset($_POST['user_pk'], $_POST['currentPassword'], $_POST['newPassword'], $_POST['confirmPassword'])) {
-        $user_pk =$_POST['user_pk'];
+        $user_pk = $_POST['user_pk'];
         $currentPassword = $_POST['currentPassword'];
         $newPassword = $_POST['newPassword'];
         $confirmPassword = $_POST['confirmPassword'];

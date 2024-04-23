@@ -488,7 +488,7 @@ $(document).ready(function () {
   });
 </script>
 <!-- Sum Column -->
-<!-- <script>
+<script>
     $(document).ready(function() {
     // Function to calculate and update sums
     function updateSums() {
@@ -518,7 +518,7 @@ $(document).ready(function () {
     // Initial calculation and update on page load
     updateSums();
 });
-</script> -->
+</script>
 
 
 <script>
