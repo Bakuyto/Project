@@ -1,5 +1,8 @@
-<?php 
+<?php
 session_start();
+
+// Set a cookie named "loggedIn" with the value "false" and expiration time of 1 minutes
+setcookie("loggedIn", "false", time() + 60, "/");
 
 // Check if the user is not logged in
 if (!isset($_SESSION['username'])) {
@@ -23,32 +26,33 @@ if (!isset($_SESSION['username'])) {
   <?php include 'include/header.php'; ?>
   
   <!-- Main Content -->
-  <div class="container">
+  <div class="container-fluid px-5 pt-4 pb-4">
       <div class="row m-auto text-center">
-        <div class="box1 col-sm-12 col-lg-4 border">
-          <div class="box-header">
-            <div class="h1 mt-5">New Department</div>
-            <form method="POST" action="actions/insert-department.php">
-              <input name="department_name" class="form-control m-auto mt-5 border-black" style="width:80%;" required>
-              <div class="save-but d-flex justify-content-center m-auto mt-5">
+      <div class="box1 col-sm-12 col-lg-4 border">
+    <div class="box-header">
+        <div class="h1 mt-5">New Department</div>
+        <form method="POST" action="actions/insert-department.php">
+            <input name="department_name" class="form-control m-auto mt-5 border-black" style="width:80%;" required>
+            <div class="save-but d-flex justify-content-center m-auto mt-5">
                 <button type="submit" name="submit_department" style="background-color: var(--blue);"
-                  class="btn fw-bolder text-white mb-5 w-50">Save</button>
-              </div>
-            </form>
-          </div>
-          <div class="container">
-            <div class="table-container tbl-fixed" style="height:90vh;">
-              <table class="table table-bordered">
+                    class="btn fw-bolder text-white mb-5 w-50">Save</button>
+            </div>
+        </form>
+    </div>
+    <div class="container">
+        <div class="table-container tbl-fixed" style="height:90vh;">
+            <table class="table table-bordered">
                 <thead>
-                  <tr>
-                    <th class="border text-center text-white" scope="col" style="background-color: var(--blue); height:50px;">
-                      Department
-                    </th>
-                  </tr>
+                    <tr>
+                        <th class="border text-center text-white" scope="col"
+                            style="background-color: var(--blue); height:50px;">
+                            Department
+                        </th>
+                    </tr>
                 </thead>
                 <tbody>
 
-                <?php
+                    <?php
                     include '../connection/connect.php';
                     $sql = "CALL Load_All_department"; // SQL query to select data from the table
                     $result = $conn->query($sql); // Execute the query
@@ -67,7 +71,7 @@ if (!isset($_SESSION['username'])) {
                                             class='btn btn-primary plus-btn fw-bolder' 
                                             data-bs-toggle='modal' 
                                             data-bs-target='#exampleModal'>
-                                            +
+                                            <i class='fa-solid fa-plus'></i>
                                         </button>
                                     </form>
                                     </td>
@@ -77,13 +81,13 @@ if (!isset($_SESSION['username'])) {
                         echo "<tr><td colspan='1'>0 results</td></tr>"; // Output if no results found
                     }
                     $conn->close(); // Close the database connection
-                ?>  
+                    ?>
 
                 </tbody>
-              </table>
-            </div>
-          </div>
+            </table>
         </div>
+    </div>
+      </div>
         <div class="box2 col-sm-12 col-lg-4 border">
           <div class="box-header">
             <div class="h1 mt-5">New Transaction</div>
@@ -206,10 +210,10 @@ if (!isset($_SESSION['username'])) {
               </form>
               <div class="container">
             <div class="table-responsive" style="height:40vh;">
-              <table class="table table-bordered">
+              <table class="table ">
                 <thead>
                   <tr class="sticky-top top-0" style="z-index:1;">
-                    <th class="border text-center text-white" scope="col" style="background-color: var(--blue); height:50px;">
+                    <th class="text-center text-white" scope="col" style="background-color: var(--blue); height:50px;">
                       User List
                     </th>
                   </tr>
@@ -249,7 +253,6 @@ if (!isset($_SESSION['username'])) {
     </div>
   </div>
   </div>
-  <?php include 'include/footer.php'; ?>
   <!-- Modal -->
 <div id="updateModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -325,7 +328,7 @@ if (!isset($_SESSION['username'])) {
 </div>
 
 
- <!-- Modal -->
+<!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -335,31 +338,36 @@ if (!isset($_SESSION['username'])) {
             </div>
             <div class="modal-body">
                 <form method='POST' action="actions/save-multiple-checkbox.php">
-                  <?php
-                  include '../connection/connect.php';
+                    <?php
+                    include '../connection/connect.php';
 
-                  $sql = "CALL Load_All_Transaction"; 
-                  $result = $conn->query($sql); // Execute the query
+                    // Initialize $department_pk
+                    $department_pk = isset($_POST['department_pk']) ? $_POST['department_pk'] : '';
 
-                  if ($result && $result->num_rows > 0) {
-                      // Output the hidden input field for department_pk
-                      echo "<input type='hidden' name='department_pk' id='department_pk_input' value='department_pk'>";
-                      
-                      // Loop through your checkboxes and output them
-                      while ($row = $result->fetch_assoc()) {
-                          echo "<div class='form-group mb-3 d-flex justify-content-between'>
-                                  <label>" . $row["department_name"] . "</label>
-                                  <input class='form-check-input' type='checkbox' name='brands[]' value='" . $row["department_name"] . "'>
-                                </div>";
-                      }
-                  } else {
-                      echo "<label>No results found</label>"; // Output if no results found
-                  }
-                  ?>
-                            <div class='form-group mb-3 d-flex justify-content-end'>
-                                <button type='button' class='btn btn-secondary mx-2' data-bs-dismiss='modal'>Close</button>
-                                <button type='submit' name='save_multiple_checkbox' class='btn btn-primary'>Submit</button>
-                            </div>
+                    // Output the hidden input field for department_pk
+                    echo "<input type='hidden' name='department_pk' id='department_pk_input' value='$department_pk'>";
+
+                    // Output the checkboxes
+                    $sql = "CALL Load_All_Transaction";
+                    $result = $conn->query($sql); // Execute the query
+
+                    if ($result && $result->num_rows > 0) {
+                        // Loop through your checkboxes and output them
+                        while ($row = $result->fetch_assoc()) {
+                            $brand_name = $row["department_name"];
+                            echo "<div class='form-group mb-3 d-flex justify-content-between'>
+                                      <label>$brand_name</label>
+                                      <input class='form-check-input' type='checkbox' name='brands[]' value='$brand_name'>
+                                  </div>";
+                        }
+                    } else {
+                        echo "<label>No results found</label>"; // Output if no results found
+                    }
+                    ?>
+                    <div class='form-group mb-3 d-flex justify-content-end'>
+                        <button type='button' class='btn btn-secondary mx-2' data-bs-dismiss='modal'>Close</button>
+                        <button type='submit' name='save_multiple_checkbox' class='btn btn-primary'>Submit</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -390,6 +398,12 @@ if (!isset($_SESSION['username'])) {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- JavaScript code to display the alert message -->
+<script>
+    <?php if(isset($_GET['message'])): ?>
+    alert("<?php echo $_GET['message']; ?>");
+    <?php endif; ?>
+</script>
   <script>
  $(document).ready(function (){
    $('#exampleModal').on('show.bs.modal', function (event) {
@@ -446,4 +460,36 @@ if (!isset($_SESSION['username'])) {
         });
       });
 </script>
+
+<script>
+    $(document).ready(function (){
+        $('#exampleModal').on('shown.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var department_pk = button.data('department-pk');
+            var modal = $(this);
+            modal.find('#department_pk_input').val(department_pk);
+
+            // Send AJAX request to fetch existing data
+            $.ajax({
+                url: 'actions/fetch-existing-data.php',
+                type: 'POST',
+                data: { department_pk: department_pk },
+                success: function(response) {
+                    // Parse the response as JSON
+                    var existingData = JSON.parse(response);
+
+                    // Loop through existing data and mark checkboxes as checked
+                    existingData.forEach(function(brand_name) {
+                        modal.find("input[value='" + brand_name + "']").prop('checked', true);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+
 </html>

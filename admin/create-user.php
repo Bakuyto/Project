@@ -71,7 +71,7 @@ if (!isset($_SESSION['username'])) {
                                             class='btn btn-primary plus-btn fw-bolder' 
                                             data-bs-toggle='modal' 
                                             data-bs-target='#exampleModal'>
-                                            +
+                                            <i class='fa-solid fa-plus'></i>
                                         </button>
                                     </form>
                                     </td>
@@ -341,18 +341,23 @@ if (!isset($_SESSION['username'])) {
                     <?php
                     include '../connection/connect.php';
 
-                    $sql = "CALL Load_All_Transaction"; 
+                    // Initialize $department_pk
+                    $department_pk = isset($_POST['department_pk']) ? $_POST['department_pk'] : '';
+
+                    // Output the hidden input field for department_pk
+                    echo "<input type='hidden' name='department_pk' id='department_pk_input' value='$department_pk'>";
+
+                    // Output the checkboxes
+                    $sql = "CALL Load_All_Transaction";
                     $result = $conn->query($sql); // Execute the query
 
                     if ($result && $result->num_rows > 0) {
-                        // Output the hidden input field for department_pk
-                        echo "<input type='hidden' name='department_pk' id='department_pk_input' value='department_pk'>";
-                        
                         // Loop through your checkboxes and output them
                         while ($row = $result->fetch_assoc()) {
+                            $brand_name = $row["department_name"];
                             echo "<div class='form-group mb-3 d-flex justify-content-between'>
-                                      <label>" . $row["department_name"] . "</label>
-                                      <input class='form-check-input' type='checkbox' name='brands[]' value='" . $row["department_name"] . "'>
+                                      <label>$brand_name</label>
+                                      <input class='form-check-input' type='checkbox' name='brands[]' value='$brand_name'>
                                   </div>";
                         }
                     } else {
@@ -455,4 +460,36 @@ if (!isset($_SESSION['username'])) {
         });
       });
 </script>
+
+<script>
+    $(document).ready(function (){
+        $('#exampleModal').on('shown.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var department_pk = button.data('department-pk');
+            var modal = $(this);
+            modal.find('#department_pk_input').val(department_pk);
+
+            // Send AJAX request to fetch existing data
+            $.ajax({
+                url: 'actions/fetch-existing-data.php',
+                type: 'POST',
+                data: { department_pk: department_pk },
+                success: function(response) {
+                    // Parse the response as JSON
+                    var existingData = JSON.parse(response);
+
+                    // Loop through existing data and mark checkboxes as checked
+                    existingData.forEach(function(brand_name) {
+                        modal.find("input[value='" + brand_name + "']").prop('checked', true);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+
 </html>

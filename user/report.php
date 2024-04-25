@@ -1,5 +1,8 @@
-<?php 
+<?php
 session_start();
+
+// Set a cookie named "loggedIn" with the value "false" and expiration time of 1 minutes
+setcookie("loggedIn", "false", time() + 60, "/");
 
 // Check if the user is not logged in
 if (!isset($_SESSION['username'])) {
@@ -20,7 +23,6 @@ if (!isset($_SESSION['username'])) {
 </head>
 <body>
   <?php include 'include/header.php'; ?>
-  <?php include 'include/footer.php'; ?>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

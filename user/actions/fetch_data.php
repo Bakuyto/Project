@@ -15,6 +15,9 @@ if(isset($_GET['search'])) {
 $sql = "CALL update_table_column('$searchText')";
 $result = $conn->query($sql);
 
+// Debug: Output SQL query for debugging
+echo "SQL Query: $sql";
+
 // Prepare an array to hold the fetched data
 $data = array();
 
@@ -25,6 +28,10 @@ if ($result && $result->num_rows > 0) {
         $data[] = $row;
     }
 }
+
+// Debug: Output fetched data for debugging
+echo "Fetched Data: ";
+print_r($data);
 
 // Close the database connection
 $conn->close();

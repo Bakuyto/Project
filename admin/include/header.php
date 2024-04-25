@@ -72,6 +72,10 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
                       } elseif ($_SESSION['user_level_fk'] == 2) {
                           echo ' (Staff)';
                       }
+                      // Display user department if available
+                  if(isset($_SESSION['user_department_fk'])) {
+                    echo '<br>Department: ' . $_SESSION['user_department_fk'];
+                  }
                   }
               } else {
                   echo 'Username';

@@ -19,11 +19,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $row = mysqli_fetch_assoc($result);
     
         // Check if 'user_level_fk' and 'user_pk' are present in the fetched row
-        if (isset($row['user_level_fk']) && isset($row['user_pk'])) {
+        if (isset($row['user_level_fk']) && isset($row['user_pk']) && isset($row['user_department_fk'])) {
             // Store username, user_level_fk, and user_pk in session
             $_SESSION['username'] = $myusername;
             $_SESSION['user_level_fk'] = $row['user_level_fk'];
             $_SESSION['user_pk'] = $row['user_pk'];
+            $_SESSION['user_department_fk'] = $row['user_department_fk']; // Changed session variable name
     
             // Redirect to appropriate panel based on user level
             if ($row["user_level_fk"] == "2") {
