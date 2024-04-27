@@ -246,7 +246,7 @@ if (!isset($_SESSION['username'])) {
 <script src="assets/js/colResizable.js" ></script>
 <script src="assets/js/colResizable.min.js" ></script>
 
-
+<!-- Resizable Table -->
 <script>
 $(document).ready(function () {
   $("#myTable").colResizable({
@@ -256,7 +256,7 @@ $(document).ready(function () {
 });
 </script>
 
-
+<!-- Make tbody editable -->
 <script>
   $(document).ready(function() {
     var currentPage = 1; // Current page
@@ -362,13 +362,14 @@ function updateTable(data, permissions) {
         var tr = $("<tr>").attr("id", "row_" + row.product_pk);
 
         // Add a loop ID column
-        var loopIdTd = $("<td>").text(startingLoopId + index);
+        var loopIdTd = $("<td>").text(startingLoopId + index).css("color","grey");
         tr.append(loopIdTd);
 
         $.each(row, function(column_name, value) {
             if (column_name !== 'product_pk' && column_name !== 'product_status' && column_name !== 'product_fk') {
                 var td = $("<td>").attr({
                     "id": column_name,
+                    "style": "color:grey",
                     "data-column": column_name,
                     "contenteditable": "false" // Set default to false
                 }).text(value);
@@ -377,7 +378,7 @@ function updateTable(data, permissions) {
                 permissions.forEach(function(permission) {
                     if (permission === column_name) {
                         // Allow editing
-                        td.attr("contenteditable", "true").addClass("editable").css("border","2px solid grey");
+                        td.attr("contenteditable", "true").addClass("editable text-dark").css("border","2px solid grey");
                     }
                 });
 
@@ -502,252 +503,8 @@ function updateValue(cell, newValue, oldValue) {
   });
 </script>
 
-<!-- Make tbody editable -->
-<!-- <script>
-  $(document).ready(function() {
-    var currentPage = 1; // Current page
-    var rowsPerPage = 30; // Number of rows per page
-    var totalRecords; // Total number of records
-    var data; // Variable to hold the fetched data
-
-    // Click event handler for editing cells
-    $(document).on("click", "td.editable", function() {
-      var cell = $(this);
-      var oldValue = cell.text().trim();
-      var column = cell.attr("data-column");
-
-      // Set the contenteditable attribute to true to make the cell editable
-      cell.attr("contenteditable", "true").focus();
-
-      // On blur event, send AJAX request to update the value
-      // cell.one("blur", function() {
-      //   var newValue = cell.text().trim();
-      //   updateValue(cell, newValue, oldValue, column);
-      // });
-
-      // On pressing Enter key, confirm the edited value
-      cell.on("keydown", function(event) {
-        if (event.key === "Enter") {
-          event.preventDefault(); // Prevent default behavior of Enter key
-          var newValue = cell.text().trim();
-          updateValue(cell, newValue, oldValue, column);
-        }
-      });
-
-      // Input validation for numeric columns
-      if (column !== "product_name") {
-        cell.on("input", function(event) {
-          var value = $(this).text().trim();
-          if (isNaN(value)) {
-            $(this).text(oldValue); // Revert the cell text to the original value
-          }
-        });
-      }
-    });
-
-
-     // Event listener for form submission
-     $("#searchForm").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        // Retrieve the search input value
-        var searchText = $("#searchInput").val().trim();
-
-        // Call the function to fetch data with the search text
-        fetchData(searchText);
-    });
-
-    // Function to fetch updated data from the server
-    function fetchData(searchText = '') {
-        $.when(
-            $.ajax({
-                url: "actions/fetch_data.php?search=" + searchText,
-                type: "GET",
-                dataType: "json",
-                success: function(response) {
-                    data = response;
-                },
-                error: function(xhr, status, error) {
-                    console.error("Data Fetch Error:", error);
-                }
-            }),
-            $.ajax({
-                url: "actions/fetch_permissions.php", // Adjust URL for permission data
-                type: "GET",
-                dataType: "json",
-                success: function(response) {
-                    permissions = response;
-                },
-                error: function(xhr, status, error) {
-                    console.error("Permission Fetch Error:", error);
-                }
-            })
-        ).then(function() {
-            totalRecords = data.length;
-            updateTable(data);
-            updatePagination();
-        });
-    }
-
-    // Call fetchData when the page loads to fetch initial data
-    fetchData();
-
-    // Update the table content with the fetched data
-    function updateTable(data) {
-        $('tbody').empty(); // Clear existing table rows
-
-        if (data.length === 0) {
-        // If no results found, display message in a single cell row
-        var tr = $("<tr>").appendTo("tbody");
-        $("<td colspan='100'>").text("No results found").appendTo(tr);
-        return;
-    }
-
-        var startIndex = (currentPage - 1) * rowsPerPage;
-        var endIndex = startIndex + rowsPerPage;
-        var paginatedData = data.slice(startIndex, endIndex);
-
-        // Calculate the starting loop ID for the current page
-        var startingLoopId = (currentPage - 1) * rowsPerPage + 1;
-
-        $.each(paginatedData, function(index, row) {
-            var tr = $("<tr>").attr("id", "row_" + row.product_pk);
-
-            // Add a loop ID column
-            var loopIdTd = $("<td>").text(startingLoopId + index);
-            tr.append(loopIdTd);
-
-            $.each(row, function(column_name, value) {
-                if (column_name !== 'product_pk' && column_name !== 'product_status' && column_name !== 'product_fk') {
-                    var td = $("<td>").attr({
-                        "id": column_name,
-                        "class": "editable",
-                        "data-column": column_name,
-                        "contenteditable": "true",
-                        "type": "number"
-                    }).text(value);
-                    tr.append(td);
-                }
-            });
-            $('tbody').append(tr);
-        });
-    }
-
-    // Function to update pagination controls
-    function updatePagination() {
-      var totalPages = Math.ceil(totalRecords / rowsPerPage);
-      $("#current-page").text(currentPage);
-      $("#total-pages").text(totalPages);
-      $("#page-number").val(currentPage); // Update input field value
-    }
-
-
-    function updateValue(cell, newValue, oldValue) {
-      var column = cell.attr("data-column");
-
-      // If column is not product_name, validate if newValue is numeric
-      if (column !== "product_name" && isNaN(newValue)) {
-        alert("Please enter a valid numeric value.");
-        cell.text(oldValue); // Revert the cell text to the original value
-        return;
-      }
-
-      var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
-
-      // Send AJAX request to update the value
-      $.ajax({
-        url: "actions/update.php",
-        type: "POST",
-        data: {
-          id: productId,
-          column: column,
-          newValue: newValue
-        },
-        dataType: "json",
-
-        success: function(response) {
-          console.log("AJAX Success:", response);
-          if (response.success) {
-            cell.text(newValue); // Update the cell text with the new value
-            // Retrieve the search input value
-            var searchText = $("#searchInput").val().trim();
-            fetchData(searchText); // Fetch new data after successful update
-          } else {
-            console.error("Update failed:", response.message);
-            cell.text(oldValue); // Revert the cell text to the original value
-          }
-        },
-
-        error: function(xhr, status, error) {
-          console.error("AJAX Error:", error);
-          cell.text(oldValue); // Revert the cell text to the original value
-        },
-        complete: function() {
-          // Remove the contenteditable attribute and reattach click event handler
-          cell.removeAttr("contenteditable");
-        }
-      });
-    }
-
-    // Function to handle pagination
-    function paginate(direction) {
-      var totalPages = Math.ceil(totalRecords / rowsPerPage);
-      if (direction === "next" && currentPage < totalPages) {
-        currentPage++;
-      } else if (direction === "prev" && currentPage > 1) {
-        currentPage--;
-      }
-      fetchData(); // Fetch data for the updated page
-    }
-
-    // Previous button click event
-    $("#prev-btn").click(function() {
-      paginate("prev");
-    });
-
-    // Next button click event
-    $("#next-btn").click(function() {
-      paginate("next");
-    });
-
-    // Input field change event
-    $("#page-number").on("change", function() {
-      var pageNum = parseInt($(this).val());
-      if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= Math.ceil(totalRecords / rowsPerPage)) {
-        currentPage = pageNum;
-        fetchData(); // Fetch data for the updated page
-      }
-    });
-
-
-    // Combine filtering and pagination logic
-    $('#filter').on('click', function() {
-      const rowLimit = $('#row').val();
-      filterAndPaginate(rowLimit);
-    });
-
-    function filterAndPaginate(rowLimit) {
-      const $table = $("#myTable");
-      const $tbodyRows = $table.find("tbody tr");
-      $tbodyRows.hide();
-
-      if (!rowLimit || parseInt(rowLimit) <= 0) {
-        // Show error message or handle this case as per your requirement
-        location.reload();
-        return;
-      } else {
-        $tbodyRows.slice(0, parseInt(rowLimit)).show();
-      }
-
-      currentPage = 1;
-      rowsPerPage = parseInt(rowLimit); // Update rowsPerPage based on the filtered value
-      fetchData();
-    }
-
-  });
-</script> -->
 <!-- Sum Column -->
-<!-- <script>
+<script>
     $(document).ready(function() {
     // Function to calculate and update sums
     function updateSums() {
@@ -777,9 +534,9 @@ function updateValue(cell, newValue, oldValue) {
     // Initial calculation and update on page load
     updateSums();
 });
-</script> -->
+</script>
 
-
+<!-- Adding New Value -->
 <script>
 $(document).ready(function () {
     $('#submitButton').click(function () {
@@ -822,7 +579,5 @@ $(document).ready(function () {
     });
 });
 </script>
-
-
 
 </html>

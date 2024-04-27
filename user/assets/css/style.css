@@ -19,6 +19,16 @@
   /* border: 1px solid red; */
 }
 
+.fixed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background-color: #fff; /* Match your table background color */
+  border-bottom: 1px solid #ccc; /* Match your table border color */
+}
+
+
 table {
   min-width: max-content;
   border-collapse: separate;

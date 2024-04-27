@@ -72,10 +72,6 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
                       } elseif ($_SESSION['user_level_fk'] == 2) {
                           echo ' (Staff)';
                       }
-                      // Display user department if available
-                      if(isset($_SESSION['user_department_fk'])) {
-                        echo '<br>Department: ' . $_SESSION['user_department_fk'];
-                      }
                   }
               } else {
                   echo 'Username';
@@ -137,7 +133,7 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
         <div class="modal-content">
             <div class="modal-header text-white bg-success">
                 <h5 class="modal-title" id="successModalLabel">Success</h5>
-                <button type="button" class="btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Password Changed successfully.

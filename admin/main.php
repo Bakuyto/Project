@@ -11,7 +11,7 @@ if (!isset($_SESSION['username'])) {
   exit(); // Ensure that script execution stops after the redirect
 }
 ?>
-<!DOCTYPE html>
+<!DOCTYPE html >
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -31,6 +31,7 @@ if (!isset($_SESSION['username'])) {
         </form>
 
         <div class="form-inline d-flex flex-row gap-1">
+          <button type="button" class="btn text-white btn-danger" style="height:40px;">Generate</button>
           <button type="button" class="btn text-white" style="height:40px;background-color: #28ACE8;" onclick="$('#addModal').modal('show')">Create</button>
           <input type="number" id="row" style="width:80px; height: 40px;" class="form-control"/>
           <button type="button" class="btn btn-success" style="height:40px" id="filter">Filter</button>
@@ -127,9 +128,8 @@ if (!isset($_SESSION['username'])) {
   </div>
 </section> 
 </div>
+</div>
            
-
-
 <?php include 'include/footer.php' ?>
 <!-- Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
@@ -245,7 +245,6 @@ if (!isset($_SESSION['username'])) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="assets/js/colResizable.js" ></script>
 <script src="assets/js/colResizable.min.js" ></script>
-
 
 <script>
 $(document).ready(function () {
@@ -487,6 +486,7 @@ $(document).ready(function () {
 
   });
 </script>
+
 <!-- Sum Column -->
 <script>
     $(document).ready(function() {
@@ -519,7 +519,6 @@ $(document).ready(function () {
     updateSums();
 });
 </script>
-
 
 <script>
 $(document).ready(function () {
@@ -563,7 +562,4 @@ $(document).ready(function () {
     });
 });
 </script>
-
-
-
 </html>

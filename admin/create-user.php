@@ -347,23 +347,9 @@ if (!isset($_SESSION['username'])) {
                     // Output the hidden input field for department_pk
                     echo "<input type='hidden' name='department_pk' id='department_pk_input' value='$department_pk'>";
 
-                    // Output the checkboxes
-                    $sql = "CALL Load_All_Transaction";
-                    $result = $conn->query($sql); // Execute the query
-
-                    if ($result && $result->num_rows > 0) {
-                        // Loop through your checkboxes and output them
-                        while ($row = $result->fetch_assoc()) {
-                            $brand_name = $row["department_name"];
-                            echo "<div class='form-group mb-3 d-flex justify-content-between'>
-                                      <label>$brand_name</label>
-                                      <input class='form-check-input' type='checkbox' name='brands[]' value='$brand_name'>
-                                  </div>";
-                        }
-                    } else {
-                        echo "<label>No results found</label>"; // Output if no results found
-                    }
                     ?>
+                    <!-- Output the checkboxes dynamically -->
+                    <div id="checkboxes_container"></div>
                     <div class='form-group mb-3 d-flex justify-content-end'>
                         <button type='button' class='btn btn-secondary mx-2' data-bs-dismiss='modal'>Close</button>
                         <button type='submit' name='save_multiple_checkbox' class='btn btn-primary'>Submit</button>
@@ -393,17 +379,71 @@ if (!isset($_SESSION['username'])) {
       </div>
     </div>
   </div>
+
+  <!-- Modal for Success Message -->
+<div class="modal fade" id="successModall" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-white bg-success">
+                <h5 class="modal-title" id="exampleModalLabel">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <?php
+                // Output success message from URL parameter
+                if (isset($_GET['message'])) {
+                    echo $_GET['message'];
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Error Message -->
+<div class="modal fade" id="errorModall" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-white bg-danger">
+                <h5 class="modal-title" id="exampleModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>No Brands Have Been Selected!!!!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+// Check if success parameter is present in the URL
+if (isset($_GET['success']) && $_GET['success'] === 'true') {
+    // Output JavaScript to trigger the success modal
+    echo "<script>
+            $(document).ready(function(){
+                $('#successModall').modal('show');
+            });
+          </script>";
+}
+
+// Check if error parameter is present in the URL
+if (isset($_GET['error']) && $_GET['error'] === 'true') {
+    // Output JavaScript to trigger the error modal
+    echo "<script>
+            $(document).ready(function(){
+                $('#errorModall').modal('show');
+            });
+          </script>";
+}
+?>
+
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- JavaScript code to display the alert message -->
-<script>
-    <?php if(isset($_GET['message'])): ?>
-    alert("<?php echo $_GET['message']; ?>");
-    <?php endif; ?>
-</script>
+
+
   <script>
  $(document).ready(function (){
    $('#exampleModal').on('show.bs.modal', function (event) {
@@ -462,34 +502,21 @@ if (!isset($_SESSION['username'])) {
 </script>
 
 <script>
-    $(document).ready(function (){
-        $('#exampleModal').on('shown.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var department_pk = button.data('department-pk');
-            var modal = $(this);
-            modal.find('#department_pk_input').val(department_pk);
-
-            // Send AJAX request to fetch existing data
-            $.ajax({
-                url: 'actions/fetch-existing-data.php',
-                type: 'POST',
-                data: { department_pk: department_pk },
-                success: function(response) {
-                    // Parse the response as JSON
-                    var existingData = JSON.parse(response);
-
-                    // Loop through existing data and mark checkboxes as checked
-                    existingData.forEach(function(brand_name) {
-                        modal.find("input[value='" + brand_name + "']").prop('checked', true);
-                    });
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    console.error(xhr.responseText);
-                }
-            });
+$(document).ready(function() {
+    $('.plus-btn').click(function() {
+        var department_pk = $(this).data('department-pk');
+        $.ajax({
+            url: 'actions/get-check-status.php', // PHP script to fetch checkboxes based on department_pk
+            type: 'POST',
+            data: {
+                department_pk: department_pk
+            },
+            success: function(response) {
+                $('#checkboxes_container').html(response); // Populate checkboxes in the modal
+            }
         });
     });
+});
 </script>
 
 </html>

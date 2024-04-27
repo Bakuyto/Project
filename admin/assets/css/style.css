@@ -25,10 +25,10 @@ table {
   border: 1px solid lightgrey;
 }
 
-th, td {
+/* th, td {
   padding: 4px;
   text-align: left;
-}
+} */
 
 tr:nth-child(even) {
   background-color: #f2f2f2;
@@ -42,6 +42,7 @@ table th {
   padding-left: 20px;
   padding-right: 20px;
   height: 60px;
+  z-index: 2;
 }
 
 table tr td {
@@ -53,11 +54,6 @@ tr:nth-child(even) {
   background-color: rgba(211, 211, 211, 0.521);
 }
 
-/* @media only screen and (max-width: 768px) {
-  .table-container.tbl-fixed {
-    height: 70vh;
-  }
-} */
 @media only screen and (min-width: 769px) and (max-width: 1366px) {
   .table-container.tbl-fixed {
     /* border: 1px solid orange; */
@@ -78,32 +74,4 @@ tr:nth-child(even) {
   }
 }
 
-/* Pagination button */
-/* .buttons {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-}
-
-.buttons button {
-  border: none;
-  padding: 0.4rem 1.2rem;
-  background-color: var(--blue);
-  color: black;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-#page-number {
-  border: none;
-  text-align: center;
-  width: 3rem;
-  border-radius: 5px;
-  border: 1px solid var(--grey);
-}
-
-#page-number:focus {
-  outline: none;
-} */
 
