@@ -235,6 +235,50 @@ if (!isset($_SESSION['username'])) {
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="productStatusModal" tabindex="-1" aria-labelledby="productStatusModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productStatusModalLabel">Select Product Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="productStatusForm" action="actions/Insert_product_status.php" method="post">
+          <?php
+            // Fetch the current status if available
+            if(isset($_SESSION['user_department_fk'])) {
+              $id = intval($_SESSION['user_department_fk']);
+              $sql = "SELECT product_status FROM tbldepartment WHERE department_pk = $id";
+              $result = $conn->query($sql);
+              if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $current_status = $row["product_status"];
+              }
+              $result->close();
+            }
+          ?>
+          <div class="mb-3 form-check">
+            <input type="radio" id="active" name="status" value="1" class="form-check-input"<?php if($current_status == 1) echo ' checked'; ?>>
+            <label for="active" class="form-check-label">Active</label>
+          </div>
+          <div class="mb-3 form-check">
+            <input type="radio" id="inactive" name="status" value="0" class="form-check-input"<?php if($current_status == 0) echo ' checked'; ?>>
+            <label for="inactive" class="form-check-label">Inactive</label>
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -504,7 +548,7 @@ function updateValue(cell, newValue, oldValue) {
 </script>
 
 <!-- Sum Column -->
-<script>
+<!-- <script>
     $(document).ready(function() {
     // Function to calculate and update sums
     function updateSums() {
@@ -534,7 +578,7 @@ function updateValue(cell, newValue, oldValue) {
     // Initial calculation and update on page load
     updateSums();
 });
-</script>
+</script> -->
 
 <!-- Adding New Value -->
 <script>

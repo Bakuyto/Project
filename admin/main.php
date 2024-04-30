@@ -26,109 +26,106 @@ if (!isset($_SESSION['username'])) {
 <div class="container-fluid p-0 m-0" style="height:100vh;">
   <?php include 'include/header.php'; ?>
   <div class="container-fluid px-5 main-header d-flex justify-content-between py-2" style="height:60px;">
-        <form id="searchForm">
-          <input class="form-control me-1" type="search"  id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:260px">
-        </form>
+    <form id="searchForm">
+      <input class="form-control me-1" type="search" id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:260px">
+    </form>
 
-        <div class="form-inline d-flex flex-row gap-1">
-          <button type="button" class="btn text-white btn-danger" style="height:40px;">Generate</button>
-          <button type="button" class="btn text-white" style="height:40px;background-color: #28ACE8;" onclick="$('#addModal').modal('show')">Create</button>
-          <input type="number" id="row" style="width:80px; height: 40px;" class="form-control"/>
-          <button type="button" class="btn btn-success" style="height:40px" id="filter">Filter</button>
-        </div>
-      </div>  
-<div class="fill" style="height: calc(100vh - 60px - 60px);">
-
-<section>
-  <div class="tables container-fluid px-5 tbl-container d-flex flex-column justify-content-center align-content-center">
-    <div class="table-container tbl-fixed">
-      <table class="table-striped table-condensed" style="width:auto !important;" id="myTable">
-        <thead>
-          <tr>
-            <?php
-              include '../connection/connect.php';
-
-              $sql = "CALL update_table_column('')";
-              $result = $conn->query($sql);
-
-              if ($result && $result->num_rows > 0) {
-                  $row = $result->fetch_assoc(); // Fetching only the first row
-                  echo "<th class='text-center'>No<br><br><span ></span></th>";
-                  // Iterate through each column
-                  foreach ($row as $column_name => $value) {
-                    
-                      // Skip rendering specific columns
-                      if ($column_name == 'product_pk' || $column_name == 'product_status' || $column_name == 'product_fk') {
-                          continue;
-                      }
-
-                      // Define background colors for specific columns
-                      $background_color = '';
-                      switch ($column_name) {
-                          case 'ETA':
-                          case 'RMA':
-                              $background_color = 'background-color: #92D050;';
-                              break;
-                          case 'Consignment_Stock':
-                              $background_color = 'background-color: red;';
-                              break;
-                          case 'Pre_Order':
-                              $background_color = 'background-color: #FFC000;';
-                              break;
-                          case 'Total':
-                          case 'Current_Stock':
-                              $background_color = 'background-color: #F79646;';
-                              break;
-                          case 'product_name';
-                              $background_color = 'background-color:#4BACC6;';
-                              break;
-                          default:
-                              $background_color = ''; // No specific background color
-                      }
-
-                      // Output the table header for each column
-                      echo "<th id='$column_name' class='text-center text-wrap' style='$background_color'>";
-                      // Special treatment for specific columns
-                      switch ($column_name) {
-                          case 'ETA':
-                              echo "ETA";
-                              break;
-                          case 'product_name':
-                              echo "Product Name <br>";
-                              break;
-                          case 'RMA':
-                              echo "RMA";
-                              break;
-                          case 'Consignment_Stock':
-                              echo "Consignment Stock";
-                              break;
-                          case 'Pre_Order':
-                              echo "Pre Order";
-                              break;
-                          case 'Total':
-                              echo "Total";
-                              break;
-                          case 'Current_Stock':
-                              echo "Current Stock";
-                              break;
-                          default:
-                              // Output column name as is for other columns
-                              echo $column_name;
-                      }
-                      echo "<br><span id='$column_name'></span><span id='{$column_name}_sum'></span></th>";
-                  }
-              }
-              ?>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+    <div class="form-inline d-flex flex-row gap-1">
+      <button type="button" class="btn btn-danger" onclick="$('#InsertModal').modal('show')"  style="height:40px;">Generate</button>
+      <button type="button" class="btn text-white" style="height:40px;background-color: #28ACE8;" onclick="$('#addModal').modal('show')">Create</button>
+      <input type="number" id="row" style="width:80px; height: 40px;" class="form-control" />
+      <button type="button" class="btn btn-success" style="height:40px" id="filter">Filter</button>
     </div>
   </div>
-</section> 
+  <div class="fill" style="height: calc(100vh - 60px - 60px);">
+    <section>
+      <div class="tables container-fluid px-5 tbl-container d-flex flex-column justify-content-center align-content-center">
+        <div class="table-container tbl-fixed">
+          <table class="table-striped table-condensed" style="width:auto !important;" id="myTable">
+            <thead>
+              <tr>
+                <?php
+                include '../connection/connect.php';
+                $sql = "CALL update_table_column('')";
+                $result = $conn->query($sql);
+
+                if ($result && $result->num_rows > 0) {
+                  $row = $result->fetch_assoc(); // Fetching only the first row
+                  echo "<th class='text-center'>No<br><br><span ></span></th>";
+                  foreach ($row as $column_name => $value) {
+                    // Skip rendering specific columns
+                    if ($column_name == 'product_pk' || $column_name == 'product_status' || $column_name == 'product_fk') {
+                      continue;
+                    }
+
+                    // Define background colors for specific columns
+                    $background_color = '';
+                    switch ($column_name) {
+                      case 'ETA':
+                      case 'RMA':
+                        $background_color = 'background-color: #92D050;';
+                        break;
+                      case 'Consignment_Stock':
+                        $background_color = 'background-color: red;';
+                        break;
+                      case 'Pre_Order':
+                        $background_color = 'background-color: #FFC000;';
+                        break;
+                      case 'Total':
+                      case 'Current_Stock':
+                        $background_color = 'background-color: #F79646;';
+                        break;
+                      case 'product_name';
+                        $background_color = 'background-color:#4BACC6;';
+                        break;
+                      default:
+                        $background_color = ''; // No specific background color
+                    }
+
+                    // Output the table header for each column
+                    echo "<th id='$column_name' class='text-center text-wrap' style='$background_color'>";
+                    // Special treatment for specific columns
+                    switch ($column_name) {
+                      case 'ETA':
+                        echo "ETA";
+                        break;
+                      case 'product_name':
+                        echo "Product Name <br>";
+                        break;
+                      case 'RMA':
+                        echo "RMA";
+                        break;
+                      case 'Consignment_Stock':
+                        echo "Consignment Stock";
+                        break;
+                      case 'Pre_Order':
+                        echo "Pre Order";
+                        break;
+                      case 'Total':
+                        echo "Total";
+                        break;
+                      case 'Current_Stock':
+                        echo "Current Stock";
+                        break;
+                      default:
+                        // Output column name as is for other columns
+                        echo $column_name;
+                    }
+                    echo "<br><span id='$column_name'></span><span id='{$column_name}_sum'></span></th>";
+                  }
+                }
+                ?>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
 </div>
-</div>
+
            
 <?php include 'include/footer.php' ?>
 <!-- Modal -->
@@ -203,7 +200,7 @@ if (!isset($_SESSION['username'])) {
         <div class="modal-content">
             <div class="modal-header text-white bg-success" >
                 <h5 class="modal-title" id="successModalLabel">Success</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body fw-bolder" style="border:none;">
                 Form submitted successfully.
@@ -221,7 +218,7 @@ if (!isset($_SESSION['username'])) {
     <div class="modal-content">
       <div class="modal-header bg-danger text-white">
         <h5 class="modal-title" id="errorModalLabel">Error</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
           <!-- <span aria-hidden="true">&times;</span> -->
         </button>
       </div>
@@ -235,6 +232,66 @@ if (!isset($_SESSION['username'])) {
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="InsertModal" tabindex="-1" role="dialog" aria-labelledby="InsertModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color: #28ACE8;">
+        <h5 class="modal-title" id="InsertModalLabel">Generate</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to insert these data?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" id="saveChangesBtn" class="btn text-white" style="background-color: #28ACE8;">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="insertSuccessModal" tabindex="-1" role="dialog" aria-labelledby="insertSuccessModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-white bg-success">
+        <h5 class="modal-title" id="insertSuccessModalLabel">Generate</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        Your data has been successfully inserted.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="InserterrorModal" tabindex="-1" role="dialog" aria-labelledby="InserterrorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-white bg-danger">
+        <h5 class="modal-title" id="InserterrorModalLabel">Error</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Error message will be displayed here -->
+        <p id="InserterrorMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -245,6 +302,36 @@ if (!isset($_SESSION['username'])) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="assets/js/colResizable.js" ></script>
 <script src="assets/js/colResizable.min.js" ></script>
+
+<script>
+    $(document).ready(function(){
+        $('#saveChangesBtn').click(function(){
+            // Send AJAX request
+            $.ajax({
+                url: 'actions/Insert_data.php',
+                type: 'post',
+                data: {Insert_data: true}, // Set the Insert_data parameter to true
+                success: function(response){
+                    // Check the response if needed
+                    console.log(response);
+                    // Show the modal on successful insertion
+                    $('#insertSuccessModal').modal('show');
+                    $('#InsertModal').modal('hide');
+                },
+                error: function(xhr, status, error){
+                    // Show error modal with department names that have product_status = 0
+                    var departments = JSON.parse(xhr.responseText);
+                    var errorMessage = "The following departments still not ready:\n" + departments.join(", ");
+                    $('#InserterrorMessage').text(errorMessage);
+                    $('#InserterrorModal').modal('show');
+                    $('#InsertModal').modal('hide');
+                }
+            });
+        });
+    });
+</script>
+
+
 
 <script>
 $(document).ready(function () {
@@ -488,7 +575,7 @@ $(document).ready(function () {
 </script>
 
 <!-- Sum Column -->
-<script>
+<!-- <script>
     $(document).ready(function() {
     // Function to calculate and update sums
     function updateSums() {
@@ -518,7 +605,7 @@ $(document).ready(function () {
     // Initial calculation and update on page load
     updateSums();
 });
-</script>
+</script> -->
 
 <script>
 $(document).ready(function () {

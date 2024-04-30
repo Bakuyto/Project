@@ -16,7 +16,6 @@
 .table-container.tbl-fixed {
   overflow-y: scroll;
   overflow-x: scroll;
-  /* border: 1px solid red; */
 }
 
 table {
@@ -25,10 +24,10 @@ table {
   border: 1px solid lightgrey;
 }
 
-/* th, td {
+th, td {
   padding: 4px;
   text-align: left;
-} */
+}
 
 tr:nth-child(even) {
   background-color: #f2f2f2;

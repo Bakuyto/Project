@@ -73,6 +73,7 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
                           echo ' (Staff)';
                       }
                   }
+                  
               } else {
                   echo 'Username';
               }
