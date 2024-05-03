@@ -17,7 +17,7 @@ if (!isset($_SESSION['username'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Main Page</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/styling.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -31,98 +31,102 @@ if (!isset($_SESSION['username'])) {
     </form>
 
     <div class="form-inline d-flex flex-row gap-1">
-      <button type="button" class="btn btn-danger" onclick="$('#InsertModal').modal('show')"  style="height:40px;">Generate</button>
+      <button type="button" id="saveChangesBtn" class="btn btn-danger"  style="height:40px;">Generate</button>
       <button type="button" class="btn text-white" style="height:40px;background-color: #28ACE8;" onclick="$('#addModal').modal('show')">Create</button>
       <input type="number" id="row" style="width:80px; height: 40px;" class="form-control" />
       <button type="button" class="btn btn-success" style="height:40px" id="filter">Filter</button>
     </div>
   </div>
   <div class="fill" style="height: calc(100vh - 60px - 60px);">
-    <section>
-      <div class="tables container-fluid px-5 tbl-container d-flex flex-column justify-content-center align-content-center">
-        <div class="table-container tbl-fixed">
-          <table class="table-striped table-condensed" style="width:auto !important;" id="myTable">
-            <thead>
-              <tr>
-                <?php
-                include '../connection/connect.php';
-                $sql = "CALL update_table_column('')";
-                $result = $conn->query($sql);
+  <section>
+  <div class="tables container-fluid px-5 tbl-container d-flex flex-column justify-content-center align-content-center">
+    <div class="table-container tbl-fixed">
+      <!-- Main table -->
+      <table class="table-striped table-condensed" style="width:auto !important;" id="myTable">
+        <thead class="new-thead sticky-thead">
+          <?php
+          include '../connection/connect.php';
+          $sql = "CALL update_table_column('')";
+          $result = $conn->query($sql);
 
-                if ($result && $result->num_rows > 0) {
-                  $row = $result->fetch_assoc(); // Fetching only the first row
-                  echo "<th class='text-center'>No<br><br><span ></span></th>";
-                  foreach ($row as $column_name => $value) {
-                    // Skip rendering specific columns
-                    if ($column_name == 'product_pk' || $column_name == 'product_status' || $column_name == 'product_fk') {
-                      continue;
-                    }
+          if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc(); // Fetching only the first row
+            echo "<tr>"; // Add opening <tr> tag here
+            echo "<th class='text-center sticky'>No<br><br><span ></span></th>";
+            foreach ($row as $column_name => $value) {
+              // Skip rendering specific columns
+              if ($column_name == 'product_pk' || $column_name == 'product_status' || $column_name == 'product_fk') {
+                continue;
+              }
 
-                    // Define background colors for specific columns
-                    $background_color = '';
-                    switch ($column_name) {
-                      case 'ETA':
-                      case 'RMA':
-                        $background_color = 'background-color: #92D050;';
-                        break;
-                      case 'Consignment_Stock':
-                        $background_color = 'background-color: red;';
-                        break;
-                      case 'Pre_Order':
-                        $background_color = 'background-color: #FFC000;';
-                        break;
-                      case 'Total':
-                      case 'Current_Stock':
-                        $background_color = 'background-color: #F79646;';
-                        break;
-                      case 'product_name';
-                        $background_color = 'background-color:#4BACC6;';
-                        break;
-                      default:
-                        $background_color = ''; // No specific background color
-                    }
+              // Define background colors for specific columns
+              $background_color = '';
+              switch ($column_name) {
+                case 'ETA':
+                case 'RMA':
+                  $background_color = 'background-color: #92D050;';
+                  break;
+                case 'Consignment_Stock':
+                  $background_color = 'background-color: red;';
+                  break;
+                case 'Pre_Order':
+                  $background_color = 'background-color: #FFC000;';
+                  break;
+                case 'Total':
+                case 'Current_Stock':
+                  $background_color = 'background-color: #F79646;';
+                  break;
+                case 'product_name';
+                  $background_color = 'background-color:#4BACC6;';
+                  break;
+                default:
+                  $background_color = ''; // No specific background color
+              }
 
-                    // Output the table header for each column
-                    echo "<th id='$column_name' class='text-center text-wrap' style='$background_color'>";
-                    // Special treatment for specific columns
-                    switch ($column_name) {
-                      case 'ETA':
-                        echo "ETA";
-                        break;
-                      case 'product_name':
-                        echo "Product Name <br>";
-                        break;
-                      case 'RMA':
-                        echo "RMA";
-                        break;
-                      case 'Consignment_Stock':
-                        echo "Consignment Stock";
-                        break;
-                      case 'Pre_Order':
-                        echo "Pre Order";
-                        break;
-                      case 'Total':
-                        echo "Total";
-                        break;
-                      case 'Current_Stock':
-                        echo "Current Stock";
-                        break;
-                      default:
-                        // Output column name as is for other columns
-                        echo $column_name;
-                    }
-                    echo "<br><span id='$column_name'></span><span id='{$column_name}_sum'></span></th>";
-                  }
-                }
-                ?>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+
+              // Output the table header for each column
+              echo "<th id='$column_name' class='text-center' style='$background_color'";
+              echo "<div class='sticky-background'>"; // Open div for sticky background
+              // Special treatment for specific columns
+              switch ($column_name) {
+                case 'ETA':
+                  echo "ETA";
+                  break;
+                case 'product_name':
+                  echo "Product Name <br>";
+                  break;
+                case 'RMA':
+                  echo "RMA";
+                  break;
+                case 'Consignment_Stock':
+                  echo "Consignment Stock";
+                  break;
+                case 'Pre_Order':
+                  echo "Pre Order";
+                  break;
+                case 'Total':
+                  echo "Total";
+                  break;
+                case 'Current_Stock':
+                  echo "Current Stock";
+                  break;
+                default:
+                  // Output column name as is for other columns
+                  echo $column_name;
+              }
+              echo "</div>"; // Close div for sticky background
+              echo "<br><span id='$column_name'></span><span id='{$column_name}_sum'></span></th>";
+            }
+            echo "</tr>"; // Add closing </tr> tag here
+          }
+          ?>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
   </div>
 </div>
 
@@ -225,7 +229,7 @@ if (!isset($_SESSION['username'])) {
       <div class="modal-body" style="border:none;">
         <p class="h5 fw-bolder" id="errorrMessage">Product name is required</p>
       </div>
-      <div class="modal-footer" style="border:none;">
+      <div class="modal-footer" style=" :none;">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
@@ -236,37 +240,24 @@ if (!isset($_SESSION['username'])) {
 <div class="modal fade" id="InsertModal" tabindex="-1" role="dialog" aria-labelledby="InsertModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
+      <form id="InsertModalForm" method="POST">
       <div class="modal-header text-white" style="background-color: #28ACE8;">
         <h5 class="modal-title" id="InsertModalLabel">Generate</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
         </button>
       </div>
       <div class="modal-body">
-        Are you sure you want to insert these data?
+        Please Enter Your Password To Insert Data:
+        <input type="hidden" name="user_pk" value="<?php echo isset($_SESSION['user_pk']) ? $_SESSION['user_pk'] : ''; ?>"> <!-- Hidden field to send user primary key -->
+        <div class="password-container">
+          <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+          <i id="togglePasswordInsert" class="show-password fa-regular fa-eye-slash"></i> <!-- Unique ID for the eye icon -->
+          </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" id="saveChangesBtn" class="btn text-white" style="background-color: #28ACE8;">Save changes</button>
+        <button type="submit" name="Insert_data" class="btn text-white" style="background-color: #28ACE8;">Save changes</button>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="insertSuccessModal" tabindex="-1" role="dialog" aria-labelledby="insertSuccessModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-white bg-success">
-        <h5 class="modal-title" id="insertSuccessModalLabel">Generate</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
-        </button>
-      </div>
-      <div class="modal-body">
-        Your data has been successfully inserted.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
+      </form>
     </div>
   </div>
 </div>
@@ -274,23 +265,61 @@ if (!isset($_SESSION['username'])) {
 <!-- Error Modal -->
 <div class="modal fade" id="InserterrorModal" tabindex="-1" role="dialog" aria-labelledby="InserterrorModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-white bg-danger">
-        <h5 class="modal-title" id="InserterrorModalLabel">Error</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- Error message will be displayed here -->
-        <p id="InserterrorMessage"></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <div class="modal-content">
+        <form id="saveanywayForm" method="POST">
+        <div class="modal-header text-white bg-warning" style="background-color: #28ACE8;">
+          <h5 class="modal-title" id="InsertModalLabel">!!! Warning !!!</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="InserterrorMessage"></p>
+          Please Enter Your Password To Insert Data:
+          <input type="hidden" name="user_pk" value="<?php echo isset($_SESSION['user_pk']) ? $_SESSION['user_pk'] : ''; ?>"> <!-- Hidden field to send user primary key -->
+          <div class="password-container">
+            <input type="password" name="password" id="passwordError" class="form-control" placeholder="Password" required> <!-- Unique ID for the password input field -->
+            <i id="togglePasswordError" class="show-password fa-regular fa-eye-slash"></i> <!-- Unique ID for the eye icon -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="hidden" name="saveanyway" value="true"> 
+          <button type="submit" name="saveanyway" class="btn text-white bg-warning">Save Anyway</button>
+        </div>
+        </form>
       </div>
     </div>
-  </div>
 </div>
 
+<!-- Success Modal -->
+<div class="modal fade" id="saveanywaysuccessModal" tabindex="-1" role="dialog" aria-labelledby="saveanywaysuccessModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header text-white bg-success">
+          <h5 class="modal-title" id="saveanywaysuccessModalLabel">Success</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          Data inserted successfully
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="saveanywayerrorModal" tabindex="-1" role="dialog" aria-labelledby="saveanywayerrorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-white bg-danger" style="background-color: #28ACE8;">
+                <h5 class="modal-title" id="saveanywayerrorModalLabel">Error</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="saveanywayErrorMessage"></p>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -304,34 +333,199 @@ if (!isset($_SESSION['username'])) {
 <script src="assets/js/colResizable.min.js" ></script>
 
 <script>
-    $(document).ready(function(){
-        $('#saveChangesBtn').click(function(){
-            // Send AJAX request
-            $.ajax({
-                url: 'actions/Insert_data.php',
-                type: 'post',
-                data: {Insert_data: true}, // Set the Insert_data parameter to true
-                success: function(response){
-                    // Check the response if needed
-                    console.log(response);
-                    // Show the modal on successful insertion
-                    $('#insertSuccessModal').modal('show');
+    $(document).ready(function() {
+      // Function to freeze columns
+      $.fn.freezeColumns = function() {
+        var freezePos = 0;
+        var totalColumnName = 'December'; // Name of the column to freeze at
+        $('thead th').each(function(index, val) {
+          var $self = $(this);
+          var curWidth = $self.outerWidth();
+          if ($self.text().trim() === totalColumnName) {
+            return false; // Exit loop after the 'Total' column
+          }
+          $('th:nth-child(' + parseInt(index + 1) + '), td:nth-child(' + parseInt(index + 1) + ')').addClass('sticky').css('left', freezePos);
+          freezePos += curWidth;
+        });
+      };
+
+      $(document).freezeColumns();
+
+      // Synchronize horizontal scrolling of thead with tbody
+      $('.table-container').on('scroll', function() {
+        var scrollLeft = $(this).scrollLeft();
+        $('.sticky-thead').css('left', -scrollLeft);
+      });
+    });
+  </script>
+
+
+<script>
+  const passwordFieldInsert = document.getElementById('password');
+  const togglePasswordButtonInsert = document.getElementById('togglePasswordInsert');
+  
+  const passwordFieldError = document.getElementById('passwordError');
+  const togglePasswordButtonError = document.getElementById('togglePasswordError');
+
+  togglePasswordButtonInsert.addEventListener('click', function() {
+    const type = passwordFieldInsert.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordFieldInsert.setAttribute('type', type);
+    
+    // Toggle eye icon
+    if (type === 'password') {
+      togglePasswordButtonInsert.classList.remove('fa-eye');
+      togglePasswordButtonInsert.classList.add('fa-eye-slash');
+    } else {
+      togglePasswordButtonInsert.classList.remove('fa-eye-slash');
+      togglePasswordButtonInsert.classList.add('fa-eye');
+    }
+  });
+
+  togglePasswordButtonError.addEventListener('click', function() {
+    const type = passwordFieldError.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordFieldError.setAttribute('type', type);
+    
+    // Toggle eye icon
+    if (type === 'password') {
+      togglePasswordButtonError.classList.remove('fa-eye');
+      togglePasswordButtonError.classList.add('fa-eye-slash');
+    } else {
+      togglePasswordButtonError.classList.remove('fa-eye-slash');
+      togglePasswordButtonError.classList.add('fa-eye');
+    }
+  });
+</script>
+
+
+<script>
+$(document).ready(function(){    
+    $('#InsertModalForm').submit(function(e){
+        console.log("Form submitted"); // Debugging statement
+        e.preventDefault();
+        
+        $.ajax({
+            type: 'POST',
+            url: 'actions/Insert_data.php',
+            data: $(this).serialize() + '&Insert_data=1', // Add Insert_data parameter here
+            dataType: 'json',
+            success: function(response){
+                console.log("AJAX request successful"); // Debugging statement
+                if(response.success){
+                  $('#saveanywaysuccessModal').modal('show').on('hidden.bs.modal', function () {
+                        location.reload();
+                    });
                     $('#InsertModal').modal('hide');
+                    $('#InsertModalForm')[0].reset();
+                } else {
+                    $('#saveanywayerrorModal').modal('show');
+                    $('#InsertModal').modal('hide');
+                    $('#saveanywayErrorMessage').text(response.error);
+                    $('#InsertModalForm')[0].reset();
+                }
+            },
+            error: function(xhr, status, error){
+                console.log("AJAX request failed"); // Debugging statement
+                console.log(xhr.responseText); // Log the responseText for debugging
+                $('#saveanywayerrorModal').modal('show');
+                $('#InsertModal').modal('hide');
+                var errorMessage = xhr.responseJSON ? xhr.responseJSON.error : "An error occurred";
+                $('#saveanywayErrorMessage').text(errorMessage);
+                $('#InsertModalForm')[0].reset();
+            }
+        });
+    });
+});
+
+</script>
+
+
+<script>
+    $(document).ready(function(){
+        $('#saveanywayForm').submit(function(e){
+            e.preventDefault();
+            
+            $.ajax({
+                type: 'POST',
+                url: 'actions/save_anyway.php',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response){
+                    if(response.success){
+                        $('#saveanywaysuccessModal').modal('show');
+                        $('#InserterrorModal').modal('hide');
+                        $('#saveanywayForm')[0].reset();
+                    } else {
+                        $('#saveanywayerrorModal').modal('show');
+                        // $('#InserterrorModal').modal('hide');
+                        $('#saveanywayErrorMessage').text(response.error);
+                        $('#saveanywayForm')[0].reset();
+                    }
                 },
                 error: function(xhr, status, error){
-                    // Show error modal with department names that have product_status = 0
-                    var departments = JSON.parse(xhr.responseText);
-                    var errorMessage = "The following departments still not ready:\n" + departments.join(", ");
-                    $('#InserterrorMessage').text(errorMessage);
-                    $('#InserterrorModal').modal('show');
-                    $('#InsertModal').modal('hide');
+                    console.log(xhr.responseText);
                 }
             });
         });
     });
 </script>
 
+<script>
+    $(document).ready(function(){
+        $('#saveChangesBtn').click(function(){
+            // Send AJAX request
+            $.ajax({
+                url: 'actions/check_product_status.php',
+                type: 'post',
+                data: {saveChangesBtn: true}, // Set the Insert_data parameter to true
+                success: function(response){
+                    // Check the response if needed
+                    console.log(response);
+                    // Show the modal on successful insertion
+                    // $('#insertSuccessModal').modal('show');
+                    $('#InsertModal').modal('show');
+                },
+                error: function(xhr, status, error) {
+    // Show error modal with department names that have product_status = 0
+    var departments = JSON.parse(xhr.responseText);
+    var errorMessage = "The following departments are still not ready:";
+    
+    // Create an unordered list element
+    var departmentList = $('<ul>');
+    
+    // Populate the list with departments
+    departments.forEach(function(department) {
+        // Create a list item for each department
+        var listItem = $('<li>').text(department);
+        // Add margin-right to the list item
+        listItem.css('margin-right', '10px');
+        // Append the list item to the list
+        departmentList.append(listItem);
+    });
+    
+    // Add CSS class to make the list items display vertically using flexbox
+    departmentList.css({
+        'display': 'flex',
+        'flex-direction': 'row',
+        'list-style-type': 'none'
+    });
+    
+    // Append the list to the error message
+    errorMessage += departmentList.prop('outerHTML');
+    
+    // Set the error message in the error modal
+    $('#InserterrorMessage').html(errorMessage);
+    
+    // Show the error modal
+    $('#InserterrorModal').modal('show');
+    
+    // Hide the insert modal
+    $('#InsertModal').modal('hide');
+}
 
+            });
+        });
+    });
+</script>
 
 <script>
 $(document).ready(function () {
@@ -409,6 +603,7 @@ $(document).ready(function () {
                 totalRecords = data.length;
                 updateTable(data);
                 updatePagination();
+                $(document).freezeColumns();
             },
             error: function(xhr, status, error) {
                 console.error("AJAX Error:", error);

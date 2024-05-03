@@ -1,104 +1,90 @@
 <?php
+session_start(); // Start session if not already started
+$response = array(); // Initialize an array to store the response
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(isset($_POST['Insert_data'])) {
         // Include the connection file
         include '../../connection/connect.php';
 
-        // Check if any product_status values are not 1 or NULL
-        $check_sql = "SELECT COUNT(*) AS count FROM tbldepartment WHERE product_status IS NULL OR product_status != 1";
-        $check_result = $conn->query($check_sql);
-        
-        if ($check_result) {
-            $row = $check_result->fetch_assoc();
-            $count = $row['count'];
-            if ($count > 0) {
-                // Some product_status values are not 1 or NULL, so prevent insertion
-                echo "Cannot insert data because not all product_status values are set to 1.";
-                exit; // Stop further execution
-            }
-        } else {
-            // Error in executing the check query
-            echo "Error checking product_status: " . $conn->error;
-            exit; // Stop further execution
-        }
-
-        // Prepare the SQL statement
-        $sql = "CALL Insert_data()";
-
-        // Assuming you are using mysqli for database connection
-        if ($conn->query($sql) === TRUE) {
-            // Reset all product_status values to 0
-            $reset_sql = "UPDATE tbldepartment SET product_status = 0";
-            if ($conn->query($reset_sql) === TRUE) {
-                echo "Data inserted successfully and product_status values reset to 0.";
-            } else {
-                echo "Error resetting product_status values: " . $conn->error;
-            }
-        } else {
-            // Respond with an error message
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        }
-    } else {
-        // Respond with a message indicating that Insert_data is not set
-        echo "Insert_data is not set";
-    }
-}
-?>
-
-
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if(isset($_POST['Insert_data'])) {
-        // Include the connection file
-        include '../../connection/connect.php';
-
-        // Fetch department names with product_status = 0
-        $check_sql = "SELECT department_name FROM tbldepartment WHERE product_status = 0";
-        $check_result = $conn->query($check_sql);
-        
-        if ($check_result) {
-            $departments = [];
-            while ($row = $check_result->fetch_assoc()) {
-                $departments[] = $row['department_name'];
-            }
+        // Validate user_pk
+        if(isset($_POST['user_pk']) && is_numeric($_POST['user_pk'])) {
+            $user_pk = $_POST['user_pk'];
             
-            if (!empty($departments)) {
-                // Some departments have product_status set to 0, so prevent insertion
+            // Validate entered password
+            if(isset($_POST['password'])) {
+                $entered_password = $_POST['password'];
+
+                // Prepare and execute statement to retrieve user's password
+                $stmt = $conn->prepare("SELECT user_log_password FROM tbluser WHERE user_pk = ?");
+                if ($stmt) {
+                    $stmt->bind_param("i", $user_pk);
+                    $stmt->execute();
+                    $stmt->store_result();
+                    
+                    if ($stmt->num_rows > 0) {
+                        $stmt->bind_result($user_log_password);
+                        $stmt->fetch();
+                        
+                        // Verify password
+                        if ($entered_password === $user_log_password) {
+                            // Proceed with data insertion
+                            $sql = "CALL Insert_data()";
+
+                            if ($conn->query($sql) === TRUE) {
+                                $reset_sql = "UPDATE tbldepartment SET product_status = 0";
+                                if ($conn->query($reset_sql) === TRUE) {
+                                    $response['success'] = true;
+                                    $response['message'] = "Data inserted successfully";
+                                } else {
+                                    // Respond with an error message
+                                    http_response_code(500); // Set HTTP response code to indicate server error
+                                    $response['error'] = "Error resetting product_status values: " . $conn->error;
+                                }
+                            } else {
+                                // Respond with an error message
+                                http_response_code(500); // Set HTTP response code to indicate server error
+                                $response['error'] = "Error inserting data: " . $conn->error;
+                            }
+                        } else {
+                            // Password does not match
+                            http_response_code(401); // Set HTTP response code to indicate unauthorized
+                            $response['error'] = "Incorrect password";
+                        }
+                    } else {
+                        // User not found
+                        http_response_code(404); // Set HTTP response code to indicate not found
+                        $response['error'] = "User not found";
+                    }
+                } else {
+                    // Database error
+                    $error_message = "Database error: " . $conn->error;
+                    error_log($error_message); // Log the error
+                    http_response_code(500); // Set HTTP response code to indicate server error
+                    $response['error'] = $error_message;
+                }
+            } else {
+                // Respond with a message indicating that password is not set
                 http_response_code(400); // Set HTTP response code to indicate failure
-                echo json_encode($departments); // Return department names with product_status = 0
-                exit; // Stop further execution
+                $response['error'] = "Password is not set";
             }
         } else {
-            // Error in executing the check query
-            http_response_code(500); // Set HTTP response code to indicate server error
-            echo "Error checking product_status: " . $conn->error;
-            exit; // Stop further execution
-        }
-
-        // Prepare the SQL statement
-        $sql = "CALL Insert_data()";
-
-        // Assuming you are using mysqli for database connection
-        if ($conn->query($sql) === TRUE) {
-            $reset_sql = "UPDATE tbldepartment SET product_status = 0";
-            if ($conn->query($reset_sql) === TRUE) {
-                echo "Data inserted successfully and product_status values reset to 0.";
-                exit;
-            } else {
-                echo "Error resetting product_status values: " . $conn->error;
-                exit;
-            } // Stop further execution
-        } else {
-            // Respond with an error message
-            http_response_code(500); // Set HTTP response code to indicate server error
-            echo "Error inserting data: " . $conn->error;
-            exit; // Stop further execution
+            // Respond with a message indicating that user_pk is not set or invalid
+            http_response_code(400); // Set HTTP response code to indicate failure
+            $response['error'] = "Invalid user_pk";
         }
     } else {
         // Respond with a message indicating that Insert_data is not set
         http_response_code(400); // Set HTTP response code to indicate failure
-        echo "Insert_data is not set";
-        exit; // Stop further execution
+        $response['error'] = "Insert_data is not set";
     }
+} else {
+    // Respond with a message indicating invalid request method
+    http_response_code(405); // Set HTTP response code to indicate method not allowed
+    $response['error'] = "Invalid request method";
 }
+
+// Send the JSON response
+header('Content-Type: application/json');
+echo json_encode($response);
 ?>

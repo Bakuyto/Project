@@ -1,5 +1,5 @@
-
-  * {
+  
+* {
   margin: 0;
   padding: 0;
 }
@@ -23,38 +23,31 @@
 
 table {
   min-width: max-content;
-  /* border-collapse: separate; */
-
+  border: 2px solid lightgrey;
 }
 
 th,
 td {
-  padding: 4px;
-  text-align: left;
-}
-
-tr:nth-child(even) {
-  background-color: #f2f2f2;
+  padding: 8px;
 }
 
 table th {
   position: sticky;
   top: 0;
   background-color: var(--blue);
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
   height: 60px;
-  z-index: 2;
+  z-index: 1;
 }
 
-table tr td {
+table thead tr th{
+  text-align: center;
+  outline: 2px solid lightgrey;
+}
+table tbody tr td{
   text-align: center;
 }
-
-tr:nth-child(even) {
-  background-color: rgba(211, 211, 211, 0.521);
-}
-
 @media only screen and (min-width: 769px) and (max-width: 1366px) {
   .table-container.tbl-fixed {
     height: 72vh;
@@ -89,3 +82,32 @@ tr:nth-child(even) {
   cursor: pointer;
 }
 
+/* Sticky Header Styles */
+table thead th.sticky {
+position: sticky;
+top: 0;
+z-index: 2;
+}
+
+/* Sticky Body Styles */
+table tbody {
+position: relative;
+}
+
+/* Apply sticky positioning */
+table tbody tr.sticky,
+table tbody th.sticky,
+table tbody td.sticky {
+position: sticky;
+background: white;
+outline: 2px solid lightgrey;
+z-index: 1;
+}
+table tbody tr td{
+outline:1px solid lightgrey;
+}
+table tbody tr.sticky td:nth-child(n+2),
+table tbody td.sticky:nth-child(n+2) {
+left: auto;
+transform: translateX(-1px);
+}
