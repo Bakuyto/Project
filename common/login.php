@@ -22,6 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($row['user_level_fk']) && isset($row['user_pk']) && isset($row['user_department_fk'])) {
             // Store username, user_level_fk, and user_pk in session
             $_SESSION['username'] = $myusername;
+            $_SESSION['user_log_password'] = $row['user_log_password'];
+            $_SESSION['user_full_name'] = $row['user_full_name'];
             $_SESSION['user_level_fk'] = $row['user_level_fk'];
             $_SESSION['user_pk'] = $row['user_pk'];
             $_SESSION['user_department_fk'] = $row['user_department_fk']; // Changed session variable name
@@ -60,6 +62,7 @@ mysqli_close($conn);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
+  <link rel="icon" href="assets/img/a.jpg">
     <link rel="stylesheet" href="assets/css/login.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     

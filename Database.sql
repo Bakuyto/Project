@@ -23,18 +23,16 @@ DROP TABLE IF EXISTS `tbldepartment`;
 CREATE TABLE `tbldepartment` (
   `department_pk` int(11) NOT NULL AUTO_INCREMENT,
   `department_name` varchar(100) COLLATE utf8_unicode_ci DEFAULT '',
+  `product_status` int(11) DEFAULT '0' COMMENT '1=Active, 0=InActive',
   PRIMARY KEY (`department_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tbldepartment` */
 
-insert  into `tbldepartment`(`department_pk`,`department_name`) values 
-(1,'Stock'),
-(2,'Sale'),
-(3,'Account'),
-(4,'Admin'),
-(5,'Marketing'),
-(6,'Super Admin');
+insert  into `tbldepartment`(`department_pk`,`department_name`,`product_status`) values 
+(1,'Stock',1),
+(2,'Marketing',0),
+(3,'Admin',0);
 
 /*Table structure for table `tblproduct_sales_months` */
 
@@ -88,101 +86,13 @@ insert  into `tblproduct_sales_months`(`product_fk`,`January`,`February`,`March`
 (26,0,0,0,0,0,0,0,0,0,0,0,0),
 (27,0,0,0,0,0,0,0,0,0,0,0,0),
 (28,0,0,0,0,0,0,0,0,0,0,0,0),
+(29,0,0,0,0,0,0,0,0,0,0,0,0),
 (30,0,0,0,0,0,0,0,0,0,0,0,0),
 (31,0,0,0,0,0,0,0,0,0,0,0,0),
 (32,0,0,0,0,0,0,0,0,0,0,0,0),
 (33,0,0,0,0,0,0,0,0,0,0,0,0),
 (34,0,0,0,0,0,0,0,0,0,0,0,0),
-(35,0,0,0,0,0,0,0,0,0,0,0,0),
-(36,0,0,0,0,0,0,0,0,0,0,0,0),
-(37,0,0,0,0,0,0,0,0,0,0,0,0),
-(38,0,0,0,0,0,0,0,0,0,0,0,0),
-(39,0,0,0,0,0,0,0,0,0,0,0,0),
-(40,0,0,0,0,0,0,0,0,0,0,0,0),
-(41,0,0,0,0,0,0,0,0,0,0,0,0),
-(42,0,0,0,0,0,0,0,0,0,0,0,0),
-(43,0,0,0,0,0,0,0,0,0,0,0,0),
-(44,0,0,0,0,0,0,0,0,0,0,0,0),
-(45,0,0,0,0,0,0,0,0,0,0,0,0),
-(46,0,0,0,0,0,0,0,0,0,0,0,0),
-(47,0,0,0,0,0,0,0,0,0,0,0,0),
-(48,0,0,0,0,0,0,0,0,0,0,0,0),
-(49,0,0,0,0,0,0,0,0,0,0,0,0),
-(50,0,0,0,0,0,0,0,0,0,0,0,0),
-(51,0,0,0,0,0,0,0,0,0,0,0,0),
-(52,0,0,0,0,0,0,0,0,0,0,0,0),
-(53,0,0,0,0,0,0,0,0,0,0,0,0),
-(54,0,0,0,0,0,0,0,0,0,0,0,0),
-(55,0,0,0,0,0,0,0,0,0,0,0,0),
-(56,0,0,0,0,0,0,0,0,0,0,0,0),
-(57,0,0,0,0,0,0,0,0,0,0,0,0),
-(58,0,0,0,0,0,0,0,0,0,0,0,0),
-(59,0,0,0,0,0,0,0,0,0,0,0,0),
-(60,0,0,0,0,0,0,0,0,0,0,0,0),
-(61,0,0,0,0,0,0,0,0,0,0,0,0),
-(62,0,0,0,0,0,0,0,0,0,0,0,0),
-(63,0,0,0,0,0,0,0,0,0,0,0,0),
-(64,0,0,0,0,0,0,0,0,0,0,0,0),
-(65,0,0,0,0,0,0,0,0,0,0,0,0),
-(66,0,0,0,0,0,0,0,0,0,0,0,0),
-(67,0,0,0,0,0,0,0,0,0,0,0,0),
-(68,0,0,0,0,0,0,0,0,0,0,0,0),
-(69,0,0,0,0,0,0,0,0,0,0,0,0),
-(70,0,0,0,0,0,0,0,0,0,0,0,0),
-(71,0,0,0,0,0,0,0,0,0,0,0,0),
-(72,0,0,0,0,0,0,0,0,0,0,0,0),
-(73,0,0,0,0,0,0,0,0,0,0,0,0),
-(74,0,0,0,0,0,0,0,0,0,0,0,0),
-(75,0,0,0,0,0,0,0,0,0,0,0,0),
-(76,0,0,0,0,0,0,0,0,0,0,0,0),
-(77,0,0,0,0,0,0,0,0,0,0,0,0),
-(78,0,0,0,0,0,0,0,0,0,0,0,0),
-(79,0,0,0,0,0,0,0,0,0,0,0,0),
-(80,0,0,0,0,0,0,0,0,0,0,0,0),
-(81,0,0,0,0,0,0,0,0,0,0,0,0),
-(82,0,0,0,0,0,0,0,0,0,0,0,0),
-(83,0,0,0,0,0,0,0,0,0,0,0,0),
-(84,0,0,0,0,0,0,0,0,0,0,0,0),
-(85,0,0,0,0,0,0,0,0,0,0,0,0),
-(86,0,0,0,0,0,0,0,0,0,0,0,0),
-(87,0,0,0,0,0,0,0,0,0,0,0,0),
-(88,0,0,0,0,0,0,0,0,0,0,0,0),
-(89,0,0,0,0,0,0,0,0,0,0,0,0),
-(90,0,0,0,0,0,0,0,0,0,0,0,0),
-(91,0,0,0,0,0,0,0,0,0,0,0,0),
-(92,0,0,0,0,0,0,0,0,0,0,0,0),
-(93,0,0,0,0,0,0,0,0,0,0,0,0),
-(94,0,0,0,0,0,0,0,0,0,0,0,0),
-(95,0,0,0,0,0,0,0,0,0,0,0,0),
-(96,0,0,0,0,0,0,0,0,0,0,0,0),
-(97,0,0,0,0,0,0,0,0,0,0,0,0),
-(98,0,0,0,0,0,0,0,0,0,0,0,0),
-(99,0,0,0,0,0,0,0,0,0,0,0,0),
-(100,0,0,0,0,0,0,0,0,0,0,0,0),
-(101,0,0,0,0,0,0,0,0,0,0,0,0),
-(102,0,0,0,0,0,0,0,0,0,0,0,0),
-(103,0,0,0,0,0,0,0,0,0,0,0,0),
-(104,0,0,0,0,0,0,0,0,0,0,0,0),
-(105,0,0,0,0,0,0,0,0,0,0,0,0),
-(106,0,0,0,0,0,0,0,0,0,0,0,0),
-(107,0,0,0,0,0,0,0,0,0,0,0,0),
-(108,0,0,0,0,0,0,0,0,0,0,0,0),
-(109,0,0,0,0,0,0,0,0,0,0,0,0),
-(110,0,0,0,0,0,0,0,0,0,0,0,0),
-(111,0,0,0,0,0,0,0,0,0,0,0,0),
-(112,0,0,0,0,0,0,0,0,0,0,0,0),
-(113,0,0,0,0,0,0,0,0,0,0,0,0),
-(114,0,0,0,0,0,0,0,0,0,0,0,0),
-(115,0,0,0,0,0,0,0,0,0,0,0,0),
-(116,0,0,0,0,0,0,0,0,0,0,0,0),
-(117,0,0,0,0,0,0,0,0,0,0,0,0),
-(118,0,0,0,0,0,0,0,0,0,0,0,0),
-(119,0,0,0,0,0,0,0,0,0,0,0,0),
-(120,0,0,0,0,0,0,0,0,0,0,0,0),
-(121,0,0,0,0,0,0,0,0,0,0,0,0),
-(122,0,0,0,0,0,0,0,0,0,0,0,0),
-(123,0,0,0,0,0,0,0,0,0,0,0,0),
-(124,0,0,0,0,0,0,0,0,0,0,0,0);
+(35,0,0,0,0,0,0,0,0,0,0,0,0);
 
 /*Table structure for table `tblproduct_sales_months_history` */
 
@@ -192,7 +102,7 @@ CREATE TABLE `tblproduct_sales_months_history` (
   `datetime` timestamp NULL DEFAULT NULL,
   `product_fk` int(11) DEFAULT NULL,
   `January` int(11) DEFAULT '0',
-  `Fabruary` int(11) DEFAULT '0',
+  `February` int(11) DEFAULT '0',
   `March` int(11) DEFAULT '0',
   `April` int(11) DEFAULT '0',
   `May` int(11) DEFAULT '0',
@@ -201,12 +111,81 @@ CREATE TABLE `tblproduct_sales_months_history` (
   `August` int(11) DEFAULT '0',
   `September` int(11) DEFAULT '0',
   `October` int(11) DEFAULT '0',
-  `Nevember` int(11) DEFAULT '0',
+  `November` int(11) DEFAULT '0',
   `December` int(11) DEFAULT '0',
   KEY `product_fk` (`product_fk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tblproduct_sales_months_history` */
+
+insert  into `tblproduct_sales_months_history`(`datetime`,`product_fk`,`January`,`February`,`March`,`April`,`May`,`June`,`July`,`August`,`September`,`October`,`November`,`December`) values 
+('2024-07-07 13:32:30',1,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',2,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',3,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',4,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',5,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',6,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',7,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',8,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',9,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',10,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',11,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',12,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',13,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',14,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',15,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-07-07 13:32:30',16,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',1,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',2,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',3,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',4,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',5,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',6,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',7,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',8,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',9,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',10,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',11,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',12,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',13,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',14,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',15,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-12-25 13:39:24',16,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',1,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',2,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',3,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',4,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',5,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',6,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',7,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',8,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',9,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',10,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',11,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',12,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',13,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',14,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',15,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',16,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',17,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',18,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',19,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',20,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',21,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',22,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',23,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',24,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',25,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',26,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',27,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',28,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',29,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',30,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',31,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',32,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',33,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',34,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-08 10:55:45',35,0,0,0,0,0,0,0,0,0,0,0,0);
 
 /*Table structure for table `tblproduct_transaction` */
 
@@ -220,137 +199,47 @@ CREATE TABLE `tblproduct_transaction` (
   `RMA` int(11) DEFAULT '0',
   `Consignment_Stock` int(11) DEFAULT '0',
   `Pre_Order` int(11) DEFAULT '0',
-  `Product` int(11) DEFAULT '0',
   PRIMARY KEY (`product_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tblproduct_transaction` */
 
-insert  into `tblproduct_transaction`(`product_pk`,`product_name`,`product_status`,`ETA`,`RMA`,`Consignment_Stock`,`Pre_Order`,`Product`) values 
-(1,'Naraka',1,0,0,0,0,0),
-(2,'Mesa',1,0,0,0,0,0),
-(3,'bopha',1,0,0,0,0,0),
-(4,'Masha',1,0,0,0,0,0),
-(5,'Taka',1,0,0,0,0,0),
-(6,'Messi',1,0,0,0,0,0),
-(7,'Ronaldo',1,0,0,0,0,0),
-(8,'Dora',1,0,0,0,0,0),
-(9,'Battle',1,0,0,0,0,0),
-(10,'Tazong',1,0,0,0,0,0),
-(11,'Razer',1,0,0,0,0,0),
-(12,'Flutter',1,0,0,0,0,0),
-(13,'React',1,0,0,3,0,0),
-(14,'Node.js',1,0,0,4,0,0),
-(15,'PHP',1,0,0,0,0,0),
-(16,'HTML',1,0,0,0,0,0),
-(17,'Bootstrap',1,0,0,0,0,0),
-(18,'Javascript',1,0,0,0,0,0),
-(19,'Java',1,0,0,0,0,0),
-(20,'C#',1,0,0,0,0,0),
-(21,'Web Developer',1,0,0,0,0,0),
-(22,'Software Developer',1,0,0,0,0,0),
-(23,'Forex',1,0,0,0,0,0),
-(24,'sting',1,0,0,0,0,0),
-(25,'sting1',1,0,0,0,0,0),
-(26,'Coca',1,0,0,0,0,0),
-(27,'Fanta',1,0,0,0,0,0),
-(28,'Coffee',1,0,0,0,0,0),
-(29,'Coffeeee',1,0,0,0,0,0),
-(30,'Benfica',1,0,0,0,0,0),
-(31,'Liverpool',1,0,0,0,0,0),
-(32,'Chelsea',1,0,0,0,0,0),
-(33,'Saga',1,0,0,0,0,0),
-(34,'Vespa',1,0,0,0,0,0),
-(35,'Plata',1,0,0,0,0,0),
-(36,'Bosba',1,0,0,0,0,0),
-(37,'Zamba',1,0,0,0,0,0),
-(38,'Zamba II',1,0,0,0,0,0),
-(39,'Leonardo',1,0,0,0,0,0),
-(40,'Leonardo II',1,0,0,0,0,0),
-(41,'Honda',1,0,0,0,0,0),
-(42,'Suzuki',1,0,0,0,0,0),
-(43,'Ducati',1,0,0,0,0,0),
-(44,'Ducati',1,0,0,0,0,0),
-(45,'Ducati',1,0,0,0,0,0),
-(46,'Ducati II',1,0,0,0,0,0),
-(47,'Neymar',1,0,0,0,0,0),
-(48,'Halal',1,0,0,0,0,0),
-(49,'Asernal',1,0,0,0,0,0),
-(50,'Asernal II',1,0,0,0,0,0),
-(51,'Asernal IIII',1,0,0,0,0,0),
-(52,'Kairi',1,0,0,0,0,0),
-(53,'CW',1,0,0,0,0,0),
-(54,'Kiboy',1,0,0,0,0,0),
-(55,'Saka',1,0,0,0,0,0),
-(56,'Mata',1,0,0,0,0,0),
-(57,'Donut',1,100,10,0,0,0),
-(58,'Spider Man',1,0,0,0,0,0),
-(59,'Doctor Strange',1,0,0,0,0,0),
-(60,'Shazam',1,0,0,0,0,0),
-(61,'Loki',1,0,0,0,0,0),
-(62,'Wonder Woman',1,0,0,0,0,0),
-(63,'1111',1,0,0,0,0,0),
-(64,'Zlatan',1,0,0,0,0,0),
-(65,'Ronney',1,0,0,0,0,0),
-(66,'CR7',1,0,0,0,0,0),
-(67,'Maradona',1,0,0,0,0,0),
-(68,'Donkey',1,0,0,0,0,0),
-(69,'Donkey 2',1,0,0,0,0,0),
-(70,'Rizzy',1,0,0,0,0,0),
-(71,'Rizzy',1,0,0,0,0,0),
-(72,'Rizzy',1,0,0,0,0,0),
-(73,'Frozen',1,0,0,0,0,0),
-(74,'Jorta',1,0,0,0,0,0),
-(75,'2222',1,0,0,0,0,0),
-(76,'asdf',1,0,0,0,0,0),
-(77,'33',1,0,0,0,0,0),
-(78,'1',1,0,0,0,0,0),
-(79,'22',1,0,0,0,0,0),
-(80,'123',1,0,0,0,0,0),
-(81,'1234',1,0,0,0,0,0),
-(82,'Taki',1,0,0,0,0,0),
-(83,'1',1,0,0,0,0,0),
-(84,'ad',1,0,0,0,0,0),
-(85,'adfa',1,0,0,0,0,0),
-(86,'America',1,0,0,0,0,0),
-(87,'Meta',1,0,0,0,0,0),
-(88,'Barbie',1,0,0,0,0,0),
-(89,'Facebook',1,0,0,0,0,0),
-(90,'Phnom Penh',1,0,0,0,0,0),
-(91,'0',1,0,0,0,0,0),
-(92,'0',1,0,0,0,0,0),
-(93,'Lazer',1,0,0,0,0,0),
-(94,'0',1,0,0,0,0,0),
-(95,'0',1,0,0,0,0,0),
-(96,'0',1,0,0,0,0,0),
-(97,'aaa',0,0,0,0,0,0),
-(98,'C2',0,0,0,0,0,0),
-(99,'C3',0,0,0,0,0,0),
-(100,'c4',0,0,0,0,0,0),
-(101,'0',1,0,0,0,0,0),
-(102,'0',1,0,0,0,0,0),
-(103,'0',1,0,0,0,0,0),
-(104,'0',1,0,0,0,0,0),
-(105,'AAA',1,0,0,0,0,0),
-(106,'0',1,0,0,0,0,0),
-(107,'MF',1,0,0,0,0,0),
-(108,'BattleGround',1,0,0,0,0,0),
-(109,'Battle Ground',1,0,0,0,0,0),
-(110,'Dota',1,0,0,0,0,0),
-(111,'Dato',1,0,0,0,0,0),
-(112,'0',1,0,0,0,0,0),
-(113,'0',1,0,0,0,0,0),
-(114,'0',1,0,0,0,0,0),
-(115,'Fuiya',1,0,0,0,0,0),
-(116,'Apex Legend',1,0,0,0,0,0),
-(117,'Manga',1,0,0,0,0,0),
-(118,'Overwatch 2',1,0,0,0,0,0),
-(119,'Redragon',1,0,0,0,0,0),
-(120,'God',1,0,0,0,0,0),
-(121,'Brother',1,0,0,0,0,0),
-(122,'Sister',1,0,0,0,0,0),
-(123,'Grandpa',1,0,0,0,0,0),
-(124,'Grandma',1,0,0,0,0,0);
+insert  into `tblproduct_transaction`(`product_pk`,`product_name`,`product_status`,`ETA`,`RMA`,`Consignment_Stock`,`Pre_Order`) values 
+(1,'Naraka',1,0,0,10,0),
+(2,'Fanta',1,0,0,0,10),
+(3,'Apex Legend',1,0,0,0,0),
+(4,'AK',1,0,0,0,0),
+(5,'JX',1,0,0,0,0),
+(6,'Cambodia',1,0,0,0,0),
+(7,'Coca',1,0,0,0,0),
+(8,'Dasani',1,0,0,0,0),
+(9,'Mirinda',1,0,0,0,0),
+(10,'Fafa',1,0,0,0,0),
+(11,'Cat',1,0,0,0,0),
+(12,'Dog',1,0,0,0,0),
+(13,'Dianosur',1,0,0,0,0),
+(14,'Nike',1,0,0,0,0),
+(15,'Addidas',1,0,0,0,0),
+(16,'Puma',1,0,0,0,0),
+(17,'Salah',1,0,0,0,0),
+(18,'Nasa',1,0,0,0,0),
+(19,'USA',1,0,0,0,0),
+(20,'Panama',1,0,0,0,0),
+(21,'Japanese',1,0,0,0,0),
+(22,'Canada',1,0,0,0,0),
+(23,'Yakuza',1,0,0,0,0),
+(24,'Brazil',1,0,0,0,0),
+(25,'England',1,0,0,0,0),
+(26,'Spain',1,0,0,0,0),
+(27,'Argentina',1,0,0,0,0),
+(28,'Sweden',1,0,0,0,0),
+(29,'Vietnam',1,0,0,0,0),
+(30,'Laos',1,0,0,0,0),
+(31,'China',1,0,0,0,0),
+(32,'Finland',1,0,0,0,0),
+(33,'Korea',1,0,0,0,0),
+(34,'Brada',1,0,0,0,0),
+(35,'Mabochioka',1,0,0,0,0);
 
 /*Table structure for table `tblproduct_transaction_history` */
 
@@ -359,19 +248,86 @@ DROP TABLE IF EXISTS `tblproduct_transaction_history`;
 CREATE TABLE `tblproduct_transaction_history` (
   `user_fk` int(11) DEFAULT NULL,
   `product_fk` int(11) DEFAULT NULL,
+  `product_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dateTime` timestamp NULL DEFAULT NULL,
   `ETA` int(11) DEFAULT '0',
   `RMA` int(11) DEFAULT '0',
   `Consignment_Stock` int(11) DEFAULT '0',
-  `Show_Room` int(11) DEFAULT '0',
   `Pre_Order` int(11) DEFAULT '0',
-  `Product` int(11) DEFAULT '0',
   KEY `user_fk` (`user_fk`),
-  KEY `product_fk` (`product_fk`),
-  CONSTRAINT `tblproduct_transaction_history_ibfk_1` FOREIGN KEY (`user_fk`) REFERENCES `tbluser` (`user_pk`)
+  KEY `product_fk` (`product_fk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tblproduct_transaction_history` */
+
+insert  into `tblproduct_transaction_history`(`user_fk`,`product_fk`,`product_name`,`dateTime`,`ETA`,`RMA`,`Consignment_Stock`,`Pre_Order`) values 
+(1,1,'Naraka','2024-07-07 13:32:30',1,10,0,0),
+(2,2,'Fanta','2024-07-07 13:32:30',0,0,0,0),
+(3,3,'Apex Legend','2024-07-07 13:32:30',0,0,0,0),
+(4,4,'AK','2024-07-07 13:32:30',0,0,0,0),
+(5,5,'JX','2024-07-07 13:32:30',0,0,0,0),
+(6,6,'Cambodia','2024-07-07 13:32:30',0,0,0,0),
+(7,7,'Coca','2024-07-07 13:32:30',0,0,0,0),
+(8,8,'Dasani','2024-07-07 13:32:30',0,0,0,0),
+(9,9,'Mirinda','2024-07-07 13:32:30',0,0,0,0),
+(10,10,'Fafa','2024-07-07 13:32:30',0,0,0,0),
+(11,11,'Cat','2024-07-07 13:32:30',0,0,0,0),
+(12,12,'Dog','2024-07-07 13:32:30',0,0,0,0),
+(13,13,'Dianosur','2024-07-07 13:32:30',0,0,0,0),
+(14,14,'Nike','2024-07-07 13:32:30',0,0,0,0),
+(15,15,'Addidas','2024-07-07 13:32:30',0,0,0,0),
+(16,16,'Puma','2024-07-07 13:32:30',0,0,0,0),
+(1,1,'Naraka','2024-12-25 13:39:24',10,10,100,0),
+(2,2,'Fanta','2024-12-25 13:39:24',0,0,0,0),
+(3,3,'Apex Legend','2024-12-25 13:39:24',0,0,0,0),
+(4,4,'AK','2024-12-25 13:39:24',0,0,0,0),
+(5,5,'JX','2024-12-25 13:39:24',0,0,0,0),
+(6,6,'Cambodia','2024-12-25 13:39:24',0,0,0,0),
+(7,7,'Coca','2024-12-25 13:39:24',0,0,0,0),
+(8,8,'Dasani','2024-12-25 13:39:24',0,0,0,0),
+(9,9,'Mirinda','2024-12-25 13:39:24',0,0,0,0),
+(10,10,'Fafa','2024-12-25 13:39:24',0,0,0,0),
+(11,11,'Cat','2024-12-25 13:39:24',0,0,0,0),
+(12,12,'Dog','2024-12-25 13:39:24',0,0,0,0),
+(13,13,'Dianosur','2024-12-25 13:39:24',0,0,0,0),
+(14,14,'Nike','2024-12-25 13:39:24',0,0,0,0),
+(15,15,'Addidas','2024-12-25 13:39:24',0,0,0,0),
+(16,16,'Puma','2024-12-25 13:39:24',0,0,0,0),
+(1,1,'Naraka','2024-05-08 10:55:45',150,0,1321,0),
+(2,2,'Fanta','2024-05-08 10:55:45',250,0,0,0),
+(3,3,'Apex Legend','2024-05-08 10:55:45',0,0,0,0),
+(4,4,'AK','2024-05-08 10:55:45',1500,0,800,0),
+(5,5,'JX','2024-05-08 10:55:45',0,0,0,0),
+(6,6,'Cambodia','2024-05-08 10:55:45',0,0,0,0),
+(7,7,'Coca','2024-05-08 10:55:45',0,0,0,0),
+(8,8,'Dasani','2024-05-08 10:55:45',0,0,0,0),
+(9,9,'Mirinda','2024-05-08 10:55:45',0,0,0,0),
+(10,10,'Fafa','2024-05-08 10:55:45',0,0,0,0),
+(11,11,'Cat','2024-05-08 10:55:45',0,0,0,0),
+(12,12,'Dog','2024-05-08 10:55:45',0,0,0,0),
+(13,13,'Dianosur','2024-05-08 10:55:45',0,0,0,0),
+(14,14,'Nike','2024-05-08 10:55:45',0,0,0,0),
+(15,15,'Addidas','2024-05-08 10:55:45',0,0,0,0),
+(16,16,'Puma','2024-05-08 10:55:45',0,0,0,0),
+(17,17,'Salah','2024-05-08 10:55:45',0,0,0,0),
+(18,18,'Nasa','2024-05-08 10:55:45',0,0,0,0),
+(19,19,'USA','2024-05-08 10:55:45',0,0,0,0),
+(20,20,'Panama','2024-05-08 10:55:45',0,0,0,0),
+(21,21,'Japanese','2024-05-08 10:55:45',0,0,0,0),
+(22,22,'Canada','2024-05-08 10:55:45',0,0,0,0),
+(23,23,'Yakuza','2024-05-08 10:55:45',0,0,0,0),
+(24,24,'Brazil','2024-05-08 10:55:45',0,0,0,0),
+(25,25,'England','2024-05-08 10:55:45',0,0,0,0),
+(26,26,'Spain','2024-05-08 10:55:45',0,0,0,0),
+(27,27,'Argentina','2024-05-08 10:55:45',0,0,0,0),
+(28,28,'Sweden','2024-05-08 10:55:45',0,0,0,0),
+(29,29,'Vietnam','2024-05-08 10:55:45',0,0,0,0),
+(30,30,'Laos','2024-05-08 10:55:45',0,0,0,0),
+(31,31,'China','2024-05-08 10:55:45',0,0,0,0),
+(32,32,'Finland','2024-05-08 10:55:45',0,0,0,0),
+(33,33,'Korea','2024-05-08 10:55:45',0,0,0,0),
+(34,34,'Brada','2024-05-08 10:55:45',0,0,0,0),
+(35,35,'Mabochioka','2024-05-08 10:55:45',0,0,0,0);
 
 /*Table structure for table `tblproductadjustpermission` */
 
@@ -387,12 +343,11 @@ CREATE TABLE `tblproductadjustpermission` (
 /*Data for the table `tblproductadjustpermission` */
 
 insert  into `tblproductadjustpermission`(`department_fk`,`product_tran_name_str`) values 
-(2,'RMA'),
-(2,'Consignment_Stock'),
-(6,'RMA'),
-(6,'Consignment_Stock'),
-(6,'RMA'),
-(6,'Consignment_Stock');
+(1,'ETA'),
+(1,'RMA'),
+(2,'ETA'),
+(3,'ETA'),
+(3,'RMA');
 
 /*Table structure for table `tbluser` */
 
@@ -408,20 +363,18 @@ CREATE TABLE `tbluser` (
   PRIMARY KEY (`user_pk`),
   KEY `tbluser_ibfk_2` (`user_level_fk`),
   KEY `tbluser_ibfk_3` (`user_department_fk`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tbluser` */
 
 insert  into `tbluser`(`user_pk`,`user_department_fk`,`user_level_fk`,`user_full_name`,`user_log_name`,`user_log_password`) values 
-(23,6,1,'heng','heng','123'),
-(24,6,1,'dolla','dolla','123'),
-(25,6,1,'Hello','hello','123'),
-(27,6,2,'dara','Ry Dara','123'),
-(28,6,1,'Benny','Benny','123'),
-(29,6,1,'Kaka','Kaka','123'),
-(30,6,1,'MengSUE','SUE','123'),
-(31,6,2,'Mengsue','bro meng','123'),
-(32,6,1,'John Cena','John Cena','123');
+(1,3,1,'Dolla Sok','Dolla','123'),
+(2,1,2,'Dara','Dara','123'),
+(3,3,2,'Heng','Heng','123'),
+(4,3,1,'John Cena','John Cena','123'),
+(5,1,2,'Kaka','Kaka','123'),
+(6,2,2,'Benny','Benny','123'),
+(7,2,2,'Lisa','Lisa','123');
 
 /*Table structure for table `tbluserlevel` */
 
@@ -471,11 +424,6 @@ BEGIN
         PREPARE stmt1 FROM @query1;
         EXECUTE stmt1;
         DEALLOCATE PREPARE stmt1;
-        -- Drop the column for tblproduct_transaction_history
-        SET @query2 = CONCAT('ALTER TABLE `inventorymanagement`.`tblproduct_transaction_history` DROP COLUMN ', column_name , ';');
-        PREPARE stmt2 FROM @query2;
-        EXECUTE stmt2;
-        DEALLOCATE PREPARE stmt2;
         
         -- Delete from tblproductadjustpermission where product_tran_name_str matches
         SET @delete_query = CONCAT('DELETE FROM tblproductadjustpermission WHERE product_tran_name_str = ''', column_name, ''';');
@@ -550,6 +498,63 @@ BEGIN
 END */$$
 DELIMITER ;
 
+/* Procedure structure for procedure `Insert_data` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `Insert_data` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`%` PROCEDURE `Insert_data`()
+BEGIN
+    DECLARE columns_query VARCHAR(1000);
+    DECLARE column_names VARCHAR(1000);
+    DECLARE column_values VARCHAR(1000);
+    DECLARE existing_count_trans INT;
+    DECLARE existing_count_sales INT;
+
+    -- Get column names from tblproduct_transaction
+    SET @columns_query = CONCAT('SELECT GROUP_CONCAT(column_name) INTO @column_names FROM information_schema.columns WHERE table_schema = \'inventorymanagement\' AND table_name = \'tblproduct_transaction\' AND column_name NOT IN (\'product_pk\', \'product_status\');');
+    PREPARE stmt_columns FROM @columns_query;
+    EXECUTE stmt_columns;
+    DEALLOCATE PREPARE stmt_columns;
+
+    -- Generate column names for INSERT statement
+    SET @column_names = REPLACE(@column_names, 'product_name,', ''); -- Remove 'product_name' from the column names
+    SET @column_names = TRIM(BOTH ',' FROM @column_names); -- Trim any leading or trailing commas
+
+    -- Generate column values for INSERT statement
+    SET @column_values = REPLACE(@column_names, ',', ', ');
+
+    -- Check if data with the same year and month already exists in tblproduct_transaction_history
+    SELECT COUNT(*) INTO existing_count_trans FROM tblproduct_transaction_history WHERE YEAR(dateTime) = YEAR(NOW()) AND MONTH(dateTime) = MONTH(NOW());
+
+    IF existing_count_trans > 0 THEN
+        -- Delete existing data with the same year and month
+        DELETE FROM tblproduct_transaction_history WHERE YEAR(dateTime) = YEAR(NOW()) AND MONTH(dateTime) = MONTH(NOW());
+    END IF;
+
+    -- Generate dynamic SQL to insert data into tblproduct_transaction_history from tblproduct_transaction
+    SET @sql1 = CONCAT('INSERT INTO tblproduct_transaction_history (dateTime, user_fk, product_fk, product_name, ', @column_names, ') SELECT NOW(), product_pk AS user_fk, product_pk, product_name, ', @column_values, ' FROM tblproduct_transaction;');
+    PREPARE stmt1 FROM @sql1;
+    EXECUTE stmt1;
+    DEALLOCATE PREPARE stmt1;
+    
+    -- Check if data with the same year and month already exists in tblproduct_sales_months_history
+    SELECT COUNT(*) INTO existing_count_sales FROM tblproduct_sales_months_history WHERE YEAR(datetime) = YEAR(NOW()) AND MONTH(datetime) = MONTH(NOW());
+
+    IF existing_count_sales > 0 THEN
+        -- Delete existing data with the same year and month
+        DELETE FROM tblproduct_sales_months_history WHERE YEAR(datetime) = YEAR(NOW()) AND MONTH(datetime) = MONTH(NOW());
+    END IF;
+
+    -- Generate dynamic SQL to insert data into tblproduct_sales_months_history from tblproduct_sales_months
+    SET @sql2 = CONCAT('INSERT INTO tblproduct_sales_months_history (datetime, product_fk, January, February, March, April, May, June, July, August, September, October, November, December) SELECT NOW(), product_fk, January, February, March, April, May, June, July, August, September, October, November, December FROM tblproduct_sales_months;');
+    PREPARE stmt2 FROM @sql2;
+    EXECUTE stmt2;
+    DEALLOCATE PREPARE stmt2;
+END */$$
+DELIMITER ;
+
 /* Procedure structure for procedure `Insert_department` */
 
 /*!50003 DROP PROCEDURE IF EXISTS  `Insert_department` */;
@@ -569,11 +574,14 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Multiple_Checkbox`(department_pk INT,brands VARCHAR(100))
+/*!50003 CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Multiple_Checkbox`(department_pk INT, brands VARCHAR(100))
 BEGIN
-    -- insert into tblproductadjustpermission
-    INSERT INTO `tblproductadjustpermission` (`department_fk`,`product_tran_name_str`)
-    VALUES(department_pk,brands);
+    -- Check if the record already exists
+    IF NOT EXISTS (SELECT 1 FROM `tblproductadjustpermission` WHERE `department_fk` = department_pk AND `product_tran_name_str` = brands) THEN
+        -- Insert the record
+        INSERT INTO `tblproductadjustpermission` (`department_fk`, `product_tran_name_str`)
+        VALUES (department_pk, brands);
+    END IF;
 END */$$
 DELIMITER ;
 
@@ -647,6 +655,54 @@ DELIMITER $$
 BEGIN
 		select * from `tblproduct_transaction` where `product_status` = 1 limit lm; 
 	END */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `Load_Report_Data` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `Load_Report_Data` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`%` PROCEDURE `Load_Report_Data`(IN input_month VARCHAR(100), IN input_year VARCHAR(100))
+BEGIN
+    DECLARE start_date DATETIME;
+    DECLARE end_date DATETIME;
+    
+    IF input_month IS NULL AND input_year IS NULL THEN
+        SET start_date = (SELECT MIN(`datetime`) FROM tblproduct_transaction_history);
+        SET end_date = (SELECT MAX(`datetime`) FROM tblproduct_transaction_history);
+    ELSE
+        SET start_date = STR_TO_DATE(CONCAT(input_year, '-', input_month, '-01'), '%Y-%m-%d');
+        SET end_date = LAST_DAY(start_date);
+    END IF;
+
+    SELECT t1.*, t2.*
+    FROM (
+        SELECT DISTINCT *
+        FROM tblproduct_transaction_history
+        WHERE `datetime` BETWEEN start_date AND end_date
+    ) AS t1
+    INNER JOIN (
+        SELECT DISTINCT * 
+        FROM tblproduct_sales_months_history
+        WHERE `datetime` BETWEEN start_date AND end_date
+    ) AS t2 ON t1.product_fk = t2.product_fk AND t1.datetime = t2.datetime
+    ORDER BY t1.datetime, t1.product_fk;
+END */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `Product_Status` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `Product_Status` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`%` PROCEDURE `Product_Status`(IN department_id INT, IN new_status VARCHAR(255))
+BEGIN
+    UPDATE tbldepartment 
+    SET product_status = new_status 
+    WHERE department_pk = department_id;
+END */$$
 DELIMITER ;
 
 /* Procedure structure for procedure `sp_AddMonthsToTempTable` */

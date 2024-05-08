@@ -17,11 +17,13 @@ if (!isset($_SESSION['username'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Main Page</title>
-  <link rel="stylesheet" href="assets/css/styling.css">
+  <link rel="icon" href="assets/img/a.jpg">
+  <link rel="stylesheet" href="assets/css/stylee.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
 <div class="container-fluid p-0 m-0" style="height:100vh;">
   <?php include 'include/header.php'; ?>
@@ -52,7 +54,7 @@ if (!isset($_SESSION['username'])) {
           if ($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc(); // Fetching only the first row
             echo "<tr>"; // Add opening <tr> tag here
-            echo "<th class='text-center sticky'>No<br><br><span ></span></th>";
+            echo "<th class='text-center sticky'>No</th>";
             foreach ($row as $column_name => $value) {
               // Skip rendering specific columns
               if ($column_name == 'product_pk' || $column_name == 'product_status' || $column_name == 'product_fk') {
@@ -85,7 +87,7 @@ if (!isset($_SESSION['username'])) {
 
 
               // Output the table header for each column
-              echo "<th id='$column_name' class='text-center' style='$background_color'";
+              echo "<th id='$column_name' name='$column_name' class='text-center' style='$background_color'";
               echo "<div class='sticky-background'>"; // Open div for sticky background
               // Special treatment for specific columns
               switch ($column_name) {
@@ -115,13 +117,14 @@ if (!isset($_SESSION['username'])) {
                   echo $column_name;
               }
               echo "</div>"; // Close div for sticky background
-              echo "<br><span id='$column_name'></span><span id='{$column_name}_sum'></span></th>";
+              echo "</th>";
             }
             echo "</tr>"; // Add closing </tr> tag here
           }
           ?>
         </thead>
         <tbody>
+          
         </tbody>
       </table>
     </div>
@@ -132,7 +135,7 @@ if (!isset($_SESSION['username'])) {
 
            
 <?php include 'include/footer.php' ?>
-<!-- Modal -->
+<!-- ADD Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -189,7 +192,7 @@ if (!isset($_SESSION['username'])) {
                     </div>
                     <!-- Submit button -->
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
+                        <!-- <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button> -->
                         <button type="button" id="submitButton" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
@@ -198,7 +201,7 @@ if (!isset($_SESSION['username'])) {
     </div>
 </div>
 
-<!-- Success Modal -->
+<!-- Create Success Modal -->
 <div class="modal fade" id="successsModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -207,36 +210,29 @@ if (!isset($_SESSION['username'])) {
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body fw-bolder" style="border:none;">
-                Form submitted successfully.
-            </div>
-            <div class="modal-footer fw-bolder" style="border:none;">
-                <button type="button " class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+              <p class="h6 fw-bolder" id="errorrMessage">Form submitted successfully.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Error Modal -->
+<!-- Create Error Modal -->
 <div class="modal fade" id="errorrModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header bg-danger text-white">
         <h5 class="modal-title" id="errorModalLabel">Error</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
-          <!-- <span aria-hidden="true">&times;</span> -->
         </button>
       </div>
       <div class="modal-body" style="border:none;">
-        <p class="h5 fw-bolder" id="errorrMessage">Product name is required</p>
-      </div>
-      <div class="modal-footer" style=" :none;">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        <p class="h6 fw-bolder" id="errorrMessage">Product name is required</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Insert Modal For ALL Department Is Equal 1 -->
 <div class="modal fade" id="InsertModal" tabindex="-1" role="dialog" aria-labelledby="InsertModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -262,7 +258,7 @@ if (!isset($_SESSION['username'])) {
   </div>
 </div>
 
-<!-- Error Modal -->
+<!-- Insert Error Modal For Departments or One of the Departments is still Equal 0 or All of the departments Equal 0 -->
 <div class="modal fade" id="InserterrorModal" tabindex="-1" role="dialog" aria-labelledby="InserterrorModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -290,7 +286,7 @@ if (!isset($_SESSION['username'])) {
     </div>
 </div>
 
-<!-- Success Modal -->
+<!-- ErrorSaveAnyway Success Modal -->
 <div class="modal fade" id="saveanywaysuccessModal" tabindex="-1" role="dialog" aria-labelledby="saveanywaysuccessModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -306,7 +302,7 @@ if (!isset($_SESSION['username'])) {
     </div>
 </div>
 
-<!-- Error Modal -->
+<!-- ErrorSaveAnyway Error Modal -->
 <div class="modal fade" id="saveanywayerrorModal" tabindex="-1" role="dialog" aria-labelledby="saveanywayerrorModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -333,32 +329,32 @@ if (!isset($_SESSION['username'])) {
 <script src="assets/js/colResizable.min.js" ></script>
 
 <script>
-    $(document).ready(function() {
-      // Function to freeze columns
-      $.fn.freezeColumns = function() {
-        var freezePos = 0;
-        var totalColumnName = 'December'; // Name of the column to freeze at
-        $('thead th').each(function(index, val) {
-          var $self = $(this);
-          var curWidth = $self.outerWidth();
-          if ($self.text().trim() === totalColumnName) {
-            return false; // Exit loop after the 'Total' column
-          }
-          $('th:nth-child(' + parseInt(index + 1) + '), td:nth-child(' + parseInt(index + 1) + ')').addClass('sticky').css('left', freezePos);
-          freezePos += curWidth;
+    $(document).ready(function () {
+        // Function to freeze columns
+        $.fn.freezeColumns = function () {
+            var freezePos = 0;
+            var totalColumnName = 'December'; // Name of the column to freeze at
+            $('thead th').each(function (index, val) {
+                var $self = $(this);
+                var curWidth = $self.outerWidth();
+                if ($self.text().trim() === totalColumnName) {
+                    return false; // Exit loop after the 'Total' column
+                }
+                $('th:nth-child(' + parseInt(index + 1) + '), td:nth-child(' + parseInt(index + 1) + ')').addClass('sticky').css('left', freezePos);
+                freezePos += curWidth;
+            });
+        };
+
+        // Freeze columns
+        $(document).freezeColumns();
+
+        // Initialize colResizable
+        $("#myTable").colResizable({
+            liveDrag: true,
+            resizeMode: 'fit'
         });
-      };
-
-      $(document).freezeColumns();
-
-      // Synchronize horizontal scrolling of thead with tbody
-      $('.table-container').on('scroll', function() {
-        var scrollLeft = $(this).scrollLeft();
-        $('.sticky-thead').css('left', -scrollLeft);
-      });
     });
-  </script>
-
+</script>
 
 <script>
   const passwordFieldInsert = document.getElementById('password');
@@ -527,61 +523,70 @@ $(document).ready(function(){
     });
 </script>
 
-<script>
-$(document).ready(function () {
-  $("#myTable").colResizable({
-    liveDrag: true,
-    resizeMode: 'fit'
-  });
-});
-</script>
-
 <!-- Make tbody editable -->
 <script>
-  $(document).ready(function() {
+$(document).ready(function() {
     var currentPage = 1; // Current page
     var rowsPerPage = 30; // Number of rows per page
     var totalRecords; // Total number of records
     var data; // Variable to hold the fetched data
 
-    // Click event handler for editing cells
-    $(document).on("click", "td.editable", function() {
-      var cell = $(this);
-      var oldValue = cell.text().trim();
-      var column = cell.attr("data-column");
+    $(document).on("keydown", "tbody td.editable", function(event) {
+    // Cache frequently used elements
+    var cell = $(this);
+    var tableRows = $("tbody tr");
+    var numCols = tableRows.eq(0).find("td").length;
 
-      // Set the contenteditable attribute to true to make the cell editable
-      cell.attr("contenteditable", "true").focus();
+    // Get current cell index and text length
+    var columnIndex = cell.index();
+    var rowIndex = cell.closest("tr").index();
+    var textLength = cell.text().length;
 
-      // On blur event, send AJAX request to update the value
-      // cell.one("blur", function() {
-      //   var newValue = cell.text().trim();
-      //   updateValue(cell, newValue, oldValue, column);
-      // });
+    // Function to focus on a cell and set selection range
+    function focusCell(row, col) {
+        var targetCell = tableRows.eq(row).find("td").eq(col);
+        targetCell.focus().get(0).setSelectionRange(textLength, textLength);
+    }
 
-      // On pressing Enter key, confirm the edited value
-      cell.on("keydown", function(event) {
-        if (event.key === "Enter") {
-          event.preventDefault(); // Prevent default behavior of Enter key
-          var newValue = cell.text().trim();
-          updateValue(cell, newValue, oldValue, column);
+    // Handle arrow key events
+    switch (event.key) {
+        case "ArrowLeft":
+            if (columnIndex > 0) {
+                focusCell(rowIndex, columnIndex - 1);
+            }
+            break;
+        case "ArrowUp":
+            if (rowIndex > 0) {
+                focusCell(rowIndex - 1, columnIndex);
+            }
+            break;
+        case "ArrowRight":
+            if (columnIndex < numCols - 1) {
+                focusCell(rowIndex, columnIndex + 1);
+            }
+            break;
+        case "ArrowDown":
+            var numRows = tableRows.length;
+            if (rowIndex < numRows - 1) {
+                focusCell(rowIndex + 1, columnIndex);
+            }
+            break;
+    }
+});
+
+    // Input validation for numeric columns
+    $(document).on("input", "tbody td.editable", function(event) {
+        var column = $(this).attr("data-column");
+        var value = $(this).text().trim();
+        
+        // Check if the entered value is numeric for non-"Product Name" columns
+        if (column !== "product_name" && !(/^\d*\.?\d*$/.test(value))) {
+            $(this).text("0"); // Display "0" if not numeric
         }
-      });
-
-      // Input validation for numeric columns
-      if (column !== "product_name") {
-        cell.on("input", function(event) {
-          var value = $(this).text().trim();
-          if (isNaN(value)) {
-            $(this).text(oldValue); // Revert the cell text to the original value
-          }
-        });
-      }
     });
-
-
-     // Event listener for form submission
-     $("#searchForm").submit(function(event) {
+    
+    // Event listener for form submission
+    $("#searchForm").submit(function(event) {
         event.preventDefault(); // Prevent the default form submission
 
         // Retrieve the search input value
@@ -618,12 +623,34 @@ $(document).ready(function () {
     function updateTable(data) {
         $('tbody').empty(); // Clear existing table rows
 
+        // Calculate totals for each column
+        var columnTotals = {};
+        $.each(data, function(index, row) {
+            $.each(row, function(column_name, value) {
+                if (column_name !== 'product_pk' && column_name !== 'product_status' && column_name !== 'product_fk') {
+                    // Handle NaN for product name column
+                    if (column_name === 'Product Name' && value === null) {
+                        value = ''; // Set value to empty string for product name column
+                    }
+                    columnTotals[column_name] = (columnTotals[column_name] || 0) + parseFloat(value);
+                }
+            });
+        });
+
+        // Add total row to the top of tbody
+        var totalRow = $("<tr>");
+        totalRow.append("<td class='text-center text-danger fw-bolder'>Total</td>");
+        $.each(columnTotals, function(column_name, total) {
+            totalRow.append("<td><span id='" + column_name + "_sum' class='text-center text-danger fw-bolder'>" + total + "</span></td>");
+        });
+        $('tbody').append(totalRow);
+
         if (data.length === 0) {
-        // If no results found, display message in a single cell row
-        var tr = $("<tr>").appendTo("tbody");
-        $("<td colspan='100'>").text("No results found").appendTo(tr);
-        return;
-    }
+            // If no results found, display message in a single cell row
+            var tr = $("<tr>").appendTo("tbody");
+            $("<td colspan='100'>").text("No results found").appendTo(tr);
+            return;
+        }
 
         var startIndex = (currentPage - 1) * rowsPerPage;
         var endIndex = startIndex + rowsPerPage;
@@ -641,166 +668,218 @@ $(document).ready(function () {
 
             $.each(row, function(column_name, value) {
                 if (column_name !== 'product_pk' && column_name !== 'product_status' && column_name !== 'product_fk') {
+                    // Handle NaN for product name column
+                    if (column_name === 'product_name' && value === null) {
+                        value = ''; // Set value to empty string for product name column
+                    }
                     var td = $("<td>").attr({
                         "id": column_name,
-                        "class": "editable",
                         "data-column": column_name,
-                        "contenteditable": "true",
                         "type": "number"
                     }).text(value);
+                    
+                    // Check if column_name is 'Current Stock' or 'Total'
+                    if (column_name !== 'Current_Stock' && column_name !== 'Total') {
+                        td.addClass("editable");
+                        td.attr("contenteditable", "true");
+                    }
+
                     tr.append(td);
                 }
             });
+
             $('tbody').append(tr);
         });
     }
 
     // Function to update pagination controls
     function updatePagination() {
-      var totalPages = Math.ceil(totalRecords / rowsPerPage);
-      $("#current-page").text(currentPage);
-      $("#total-pages").text(totalPages);
-      $("#page-number").val(currentPage); // Update input field value
+        var totalPages = Math.ceil(totalRecords / rowsPerPage);
+        $("#current-page").text(currentPage);
+        $("#total-pages").text(totalPages);
+        $("#page-number").val(currentPage); // Update input field value
     }
 
 
     function updateValue(cell, newValue, oldValue) {
-      var column = cell.attr("data-column");
+        var column = cell.attr("data-column");
 
-      // If column is not product_name, validate if newValue is numeric
-      if (column !== "product_name" && isNaN(newValue)) {
-        alert("Please enter a valid numeric value.");
-        cell.text(oldValue); // Revert the cell text to the original value
-        return;
-      }
-
-      var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
-
-      // Send AJAX request to update the value
-      $.ajax({
-        url: "actions/update.php",
-        type: "POST",
-        data: {
-          id: productId,
-          column: column,
-          newValue: newValue
-        },
-        dataType: "json",
-
-        success: function(response) {
-          console.log("AJAX Success:", response);
-          if (response.success) {
-            cell.text(newValue); // Update the cell text with the new value
-            // Retrieve the search input value
-            var searchText = $("#searchInput").val().trim();
-            fetchData(searchText); // Fetch new data after successful update
-          } else {
-            console.error("Update failed:", response.message);
+        // If column is not product_name, validate if newValue is numeric
+        if (column !== "product_name" && isNaN(newValue)) {
+            alert("Please enter a valid numeric value.");
             cell.text(oldValue); // Revert the cell text to the original value
-          }
-        },
-
-        error: function(xhr, status, error) {
-          console.error("AJAX Error:", error);
-          cell.text(oldValue); // Revert the cell text to the original value
-        },
-        complete: function() {
-          // Remove the contenteditable attribute and reattach click event handler
-          cell.removeAttr("contenteditable");
+            return;
         }
-      });
+
+        var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
+
+        // Send AJAX request to update the value
+        $.ajax({
+            url: "actions/update.php",
+            type: "POST",
+            data: {
+                id: productId,
+                column: column,
+                newValue: newValue
+            },
+            dataType: "json",
+
+            success: function(response) {
+                console.log("AJAX Success:", response);
+                if (response.success) {
+                    cell.text(newValue); // Update the cell text with the new value
+                    // Retrieve the search input value
+                    var searchText = $("#searchInput").val().trim();
+                    fetchData(searchText); // Fetch new data after successful update
+                } else {
+                    console.error("Update failed:", response.message);
+                    cell.text(oldValue); // Revert the cell text to the original value
+                }
+            },
+
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", error);
+                cell.text(oldValue); // Revert the cell text to the original value
+            },
+            complete: function() {
+                // Remove the contenteditable attribute and reattach click event handler
+                cell.removeAttr("contenteditable");
+            }
+        });
     }
 
     // Function to handle pagination
     function paginate(direction) {
-      var totalPages = Math.ceil(totalRecords / rowsPerPage);
-      if (direction === "next" && currentPage < totalPages) {
-        currentPage++;
-      } else if (direction === "prev" && currentPage > 1) {
-        currentPage--;
-      }
-      fetchData(); // Fetch data for the updated page
+        var totalPages = Math.ceil(totalRecords / rowsPerPage);
+        if (direction === "next" && currentPage < totalPages) {
+            currentPage++;
+        } else if (direction === "prev" && currentPage > 1) {
+            currentPage--;
+        }
+        fetchData(); // Fetch data for the updated page
     }
 
     // Previous button click event
     $("#prev-btn").click(function() {
-      paginate("prev");
+        paginate("prev");
     });
 
     // Next button click event
     $("#next-btn").click(function() {
-      paginate("next");
+        paginate("next");
     });
 
     // Input field change event
     $("#page-number").on("change", function() {
-      var pageNum = parseInt($(this).val());
-      if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= Math.ceil(totalRecords / rowsPerPage)) {
-        currentPage = pageNum;
-        fetchData(); // Fetch data for the updated page
-      }
+        var pageNum = parseInt($(this).val());
+        if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= Math.ceil(totalRecords / rowsPerPage)) {
+            currentPage = pageNum;
+            fetchData(); // Fetch data for the updated page
+        }
     });
 
 
     // Combine filtering and pagination logic
     $('#filter').on('click', function() {
-      const rowLimit = $('#row').val();
-      filterAndPaginate(rowLimit);
+        const rowLimit = $('#row').val();
+        filterAndPaginate(rowLimit);
     });
 
     function filterAndPaginate(rowLimit) {
-      const $table = $("#myTable");
-      const $tbodyRows = $table.find("tbody tr");
-      $tbodyRows.hide();
+        const $table = $("#myTable");
+        const $tbodyRows = $table.find("tbody tr");
+        $tbodyRows.hide();
 
-      if (!rowLimit || parseInt(rowLimit) <= 0) {
-        // Show error message or handle this case as per your requirement
-        location.reload();
-        return;
-      } else {
-        $tbodyRows.slice(0, parseInt(rowLimit)).show();
-      }
+        if (!rowLimit || parseInt(rowLimit) <= 0) {
+            // Show error message or handle this case as per your requirement
+            location.reload();
+            return;
+        } else {
+            $tbodyRows.slice(0, parseInt(rowLimit)).show();
+        }
 
-      currentPage = 1;
-      rowsPerPage = parseInt(rowLimit); // Update rowsPerPage based on the filtered value
-      fetchData();
+        currentPage = 1;
+        rowsPerPage = parseInt(rowLimit); // Update rowsPerPage based on the filtered value
+        fetchData();
     }
 
-  });
+    // Event listener for Enter key to save edited value
+    $(document).on("keydown", "tbody td.editable", function(event) {
+        // Check if the key pressed is Enter
+        if (event.key === "Enter") {
+            event.preventDefault(); // Prevent default Enter behavior (newline)
+            
+            var cell = $(this);
+            var newValue = cell.text().trim();
+            var oldValue = cell.data("oldValue");
+
+            // Check if the value has changed
+            if (newValue !== oldValue) {
+                // Update the cell value
+                updateValue(cell, newValue, oldValue);
+            } else {
+                // If the value hasn't changed, simply remove the contenteditable attribute
+                cell.removeAttr("contenteditable");
+            }
+        }
+    });
+
+    // Function to handle when a cell is clicked for editing
+    $(document).on("click", "tbody td.editable", function(event) {
+        var cell = $(this);
+        // Store the old value for potential revert
+        cell.data("oldValue", cell.text().trim());
+        // Make the cell editable
+        cell.attr("contenteditable", "true");
+        // Focus on the cell
+        cell.focus();
+    });
+
+});
 </script>
 
+
 <!-- Sum Column -->
-<!-- <script>
-    $(document).ready(function() {
-    // Function to calculate and update sums
-    function updateSums() {
-        // AJAX request to fetch sum data from server
-        $.ajax({
-            url: 'actions/fetch_sums.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                // Update sums in the table
-                $.each(data, function(columnName, total) {
-                    $('#' + columnName + '_sum').text('(' + total + ')');
-                });
-                
-                // Call updateSums again after current update completes
-                updateSums();
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching sums:', error);
-                
-                // Call updateSums again in case of error
-                updateSums();
+<script>
+    $(document).ready(() => {
+      const updateSums = () => {
+    const sums = {};
+    const originalValues = {}; // Store original values
+
+    // Initialize sums object and store original values
+    $("#myTable th:not(:first)").each((index, element) => {
+        const columnName = $(element).attr('id');
+        sums[columnName] = 0;
+    });
+
+    $("#myTable tbody tr").each((index, row) => {
+        $(row).find("td").each((index, cell) => {
+            const columnName = $(cell).attr('data-column');
+            const cellValue = parseFloat($(cell).text().trim()) || 0;
+            sums[columnName] += cellValue;
+
+            // Store original value before editing
+            const cellId = $(cell).attr('id');
+            if (cellId) {
+                originalValues[cellId] = $(cell).text().trim();
             }
         });
-    }
+    });
 
-    // Initial calculation and update on page load
-    updateSums();
-});
-</script> -->
+      // Update sums
+      $.each(sums, (columnName, total) => {
+          $(`#${columnName}_sum`).text(total);
+      });
+
+      // Restore original values after editing
+      $.each(originalValues, (cellId, originalValue) => {
+          $(`#${cellId}`).text(originalValue);
+      });
+  };
+
+    });
+</script>
+
 
 <script>
 $(document).ready(function () {

@@ -17,7 +17,8 @@ if (!isset($_SESSION['username'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Main Page</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="assets/img/a.jpg">
+  <link rel="stylesheet" href="assets/css/styles.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -36,97 +37,97 @@ if (!isset($_SESSION['username'])) {
           <button type="button" class="btn btn-success" style="height:40px" id="filter">Filter</button>
         </div>
       </div>  
-<div class="fill" style="height: calc(100vh - 60px - 60px);">
-
-<section>
+      <div class="fill" style="height: calc(100vh - 60px - 60px);">
+  <section>
   <div class="tables container-fluid px-5 tbl-container d-flex flex-column justify-content-center align-content-center">
     <div class="table-container tbl-fixed">
+      <!-- Main table -->
       <table class="table-striped table-condensed" style="width:auto !important;" id="myTable">
-        <thead>
-          <tr>
-            <?php
-              include '../connection/connect.php';
+        <thead class="new-thead sticky-thead">
+          <?php
+          include '../connection/connect.php';
+          $sql = "CALL update_table_column('')";
+          $result = $conn->query($sql);
 
-              $sql = "CALL update_table_column('')";
-              $result = $conn->query($sql);
-
-              if ($result && $result->num_rows > 0) {
-                  $row = $result->fetch_assoc(); // Fetching only the first row
-                  echo "<th class='text-center'>No<br><br><span ></span></th>";
-                  // Iterate through each column
-                  foreach ($row as $column_name => $value) {
-                    
-                      // Skip rendering specific columns
-                      if ($column_name == 'product_pk' || $column_name == 'product_status' || $column_name == 'product_fk') {
-                          continue;
-                      }
-
-                      // Define background colors for specific columns
-                      $background_color = '';
-                      switch ($column_name) {
-                          case 'ETA':
-                          case 'RMA':
-                              $background_color = 'background-color: #92D050;';
-                              break;
-                          case 'Consignment_Stock':
-                              $background_color = 'background-color: red;';
-                              break;
-                          case 'Pre_Order':
-                              $background_color = 'background-color: #FFC000;';
-                              break;
-                          case 'Total':
-                          case 'Current_Stock':
-                              $background_color = 'background-color: #F79646;';
-                              break;
-                          case 'product_name';
-                              $background_color = 'background-color:#4BACC6;';
-                              break;
-                          default:
-                              $background_color = ''; // No specific background color
-                      }
-
-                      // Output the table header for each column
-                      echo "<th id='$column_name' class='text-center text-wrap' style='$background_color'>";
-                      // Special treatment for specific columns
-                      switch ($column_name) {
-                          case 'ETA':
-                              echo "ETA";
-                              break;
-                          case 'product_name':
-                              echo "Product Name <br>";
-                              break;
-                          case 'RMA':
-                              echo "RMA";
-                              break;
-                          case 'Consignment_Stock':
-                              echo "Consignment Stock";
-                              break;
-                          case 'Pre_Order':
-                              echo "Pre Order";
-                              break;
-                          case 'Total':
-                              echo "Total";
-                              break;
-                          case 'Current_Stock':
-                              echo "Current Stock";
-                              break;
-                          default:
-                              // Output column name as is for other columns
-                              echo $column_name;
-                      }
-                      echo "<br><span id='$column_name'></span><span id='{$column_name}_sum'></span></th>";
-                  }
+          if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc(); // Fetching only the first row
+            echo "<tr>"; // Add opening <tr> tag here
+            echo "<th class='text-center sticky'>No</th>";
+            foreach ($row as $column_name => $value) {
+              // Skip rendering specific columns
+              if ($column_name == 'product_pk' || $column_name == 'product_status' || $column_name == 'product_fk') {
+                continue;
               }
-              ?>
-          </tr>
+
+              // Define background colors for specific columns
+              $background_color = '';
+              switch ($column_name) {
+                case 'ETA':
+                case 'RMA':
+                  $background_color = 'background-color: #92D050;';
+                  break;
+                case 'Consignment_Stock':
+                  $background_color = 'background-color: red;';
+                  break;
+                case 'Pre_Order':
+                  $background_color = 'background-color: #FFC000;';
+                  break;
+                case 'Total':
+                case 'Current_Stock':
+                  $background_color = 'background-color: #F79646;';
+                  break;
+                case 'product_name';
+                  $background_color = 'background-color:#4BACC6;';
+                  break;
+                default:
+                  $background_color = ''; // No specific background color
+              }
+
+
+              // Output the table header for each column
+              echo "<th id='$column_name' class='text-center' style='$background_color'";
+              echo "<div class='sticky-background'>"; // Open div for sticky background
+              // Special treatment for specific columns
+              switch ($column_name) {
+                case 'ETA':
+                  echo "ETA";
+                  break;
+                case 'product_name':
+                  echo "Product Name <br>";
+                  break;
+                case 'RMA':
+                  echo "RMA";
+                  break;
+                case 'Consignment_Stock':
+                  echo "Consignment Stock";
+                  break;
+                case 'Pre_Order':
+                  echo "Pre Order";
+                  break;
+                case 'Total':
+                  echo "Total";
+                  break;
+                case 'Current_Stock':
+                  echo "Current Stock";
+                  break;
+                default:
+                  // Output column name as is for other columns
+                  echo $column_name;
+              }
+              echo "</div>"; // Close div for sticky background
+            }
+            echo "</tr>"; // Add closing </tr> tag here
+          }
+          ?>
         </thead>
         <tbody>
         </tbody>
       </table>
     </div>
   </div>
-</section> 
-</div>
+</section>
+  </div>
+        </div>
            
 
 
@@ -290,6 +291,33 @@ if (!isset($_SESSION['username'])) {
 <script src="assets/js/colResizable.js" ></script>
 <script src="assets/js/colResizable.min.js" ></script>
 
+<script>
+    $(document).ready(function() {
+      // Function to freeze columns
+      $.fn.freezeColumns = function() {
+        var freezePos = 0;
+        var totalColumnName = 'December'; // Name of the column to freeze at
+        $('thead th').each(function(index, val) {
+          var $self = $(this);
+          var curWidth = $self.outerWidth();
+          if ($self.text().trim() === totalColumnName) {
+            return false; // Exit loop after the 'Total' column
+          }
+          $('th:nth-child(' + parseInt(index + 1) + '), td:nth-child(' + parseInt(index + 1) + ')').addClass('sticky').css('left', freezePos);
+          freezePos += curWidth;
+        });
+      };
+
+      $(document).freezeColumns();
+
+      // Synchronize horizontal scrolling of thead with tbody
+      $('.table-container').on('scroll', function() {
+        var scrollLeft = $(this).scrollLeft();
+        $('.sticky-thead').css('left', -scrollLeft);
+      });
+    });
+  </script>
+
 <!-- Resizable Table -->
 <script>
 $(document).ready(function () {
@@ -310,41 +338,59 @@ $(document).ready(function () {
     // Add permissions variable
     var permissions = {};
 
-    // Click event handler for editing cells
-    $(document).on("click", "td.editable", function() {
-      var cell = $(this);
-      var oldValue = cell.text().trim();
-      var column = cell.attr("data-column");
+    $(document).on("keydown", "tbody td.editable", function(event) {
+    // Cache frequently used elements
+    var cell = $(this);
+    var tableRows = $("tbody tr");
+    var numCols = tableRows.eq(0).find("td").length;
 
-      // Set the contenteditable attribute to true to make the cell editable
-      cell.attr("contenteditable", "true").focus();
+    // Get current cell index and text length
+    var columnIndex = cell.index();
+    var rowIndex = cell.closest("tr").index();
+    var textLength = cell.text().length;
 
-      // On blur event, send AJAX request to update the value
-      // cell.one("blur", function() {
-      //   var newValue = cell.text().trim();
-      //   updateValue(cell, newValue, oldValue, column);
-      // });
+    // Function to focus on a cell and set selection range
+    function focusCell(row, col) {
+        var targetCell = tableRows.eq(row).find("td").eq(col);
+        targetCell.focus().get(0).setSelectionRange(textLength, textLength);
+    }
 
-      // On pressing Enter key, confirm the edited value
-      cell.on("keydown", function(event) {
-        if (event.key === "Enter") {
-          event.preventDefault(); // Prevent default behavior of Enter key
-          var newValue = cell.text().trim();
-          updateValue(cell, newValue, oldValue, column);
+    // Handle arrow key events
+    switch (event.key) {
+        case "ArrowLeft":
+            if (columnIndex > 0) {
+                focusCell(rowIndex, columnIndex - 1);
+            }
+            break;
+        case "ArrowUp":
+            if (rowIndex > 0) {
+                focusCell(rowIndex - 1, columnIndex);
+            }
+            break;
+        case "ArrowRight":
+            if (columnIndex < numCols - 1) {
+                focusCell(rowIndex, columnIndex + 1);
+            }
+            break;
+        case "ArrowDown":
+            var numRows = tableRows.length;
+            if (rowIndex < numRows - 1) {
+                focusCell(rowIndex + 1, columnIndex);
+            }
+            break;
+    }
+});
+
+    // Input validation for numeric columns
+    $(document).on("input", "tbody td.editable", function(event) {
+        var column = $(this).attr("data-column");
+        var value = $(this).text().trim();
+        
+        // Check if the entered value is numeric for non-"Product Name" columns
+        if (column !== "product_name" && !(/^\d*\.?\d*$/.test(value))) {
+            $(this).text("0"); // Display "0" if not numeric
         }
-      });
-
-      // Input validation for numeric columns
-      if (column !== "product_name") {
-        cell.on("input", function(event) {
-          var value = $(this).text().trim();
-          if (isNaN(value)) {
-            $(this).text(oldValue); // Revert the cell text to the original value
-          }
-        });
-      }
     });
-
 
      // Event listener for form submission
      $("#searchForm").submit(function(event) {
@@ -378,6 +424,7 @@ function fetchData(searchText = '') {
         totalRecords = data.length;
         updateTable(data, permissions); // Pass permissions to updateTable
         updatePagination();
+        $(document).freezeColumns();
     });
 }
 
@@ -387,6 +434,29 @@ function fetchData(searchText = '') {
 // Update the table content with the fetched data and apply permissions
 function updateTable(data, permissions) {
     $('tbody').empty(); // Clear existing table rows
+
+    // Calculate totals for each column
+    var columnTotals = {};
+    $.each(data, function(index, row) {
+        $.each(row, function(column_name, value) {
+            if (column_name !== 'product_pk' && column_name !== 'product_status' && column_name !== 'product_fk') {
+                // Handle NaN for product name column
+                if (column_name === 'Product Name' && value === null) {
+                    value = ''; // Set value to empty string for product name column
+                }
+                columnTotals[column_name] = (columnTotals[column_name] || 0) + parseFloat(value);
+            }
+        });
+    });
+
+    // Add total row to the top of tbody
+    var totalRow = $("<tr>");
+    totalRow.append("<td class='text-center text-danger fw-bolder'>Total</td>");
+    $.each(columnTotals, function(column_name, total) {
+        totalRow.append("<td><span id='" + column_name + "_sum' class='text-center text-danger fw-bolder'>" + total + "</span></td>");
+    });
+    $('tbody').append(totalRow);
+
 
     if (data.length === 0) {
         // If no results found, display message in a single cell row
@@ -422,7 +492,7 @@ function updateTable(data, permissions) {
                 permissions.forEach(function(permission) {
                     if (permission === column_name) {
                         // Allow editing
-                        td.attr("contenteditable", "true").addClass("editable text-dark").css("border","2px solid grey");
+                        td.attr("contenteditable", "true").addClass("editable text-dark fw-bolder").css("border","2px solid grey");
                     }
                 });
 
@@ -544,41 +614,80 @@ function updateValue(cell, newValue, oldValue) {
       fetchData();
     }
 
+    // Event listener for Enter key to save edited value
+    $(document).on("keydown", "tbody td.editable", function(event) {
+        // Check if the key pressed is Enter
+        if (event.key === "Enter") {
+            event.preventDefault(); // Prevent default Enter behavior (newline)
+            
+            var cell = $(this);
+            var newValue = cell.text().trim();
+            var oldValue = cell.data("oldValue");
+
+            // Check if the value has changed
+            if (newValue !== oldValue) {
+                // Update the cell value
+                updateValue(cell, newValue, oldValue);
+            } else {
+                // If the value hasn't changed, simply remove the contenteditable attribute
+                cell.removeAttr("contenteditable");
+            }
+        }
+    });
+
+    // Function to handle when a cell is clicked for editing
+    $(document).on("click", "tbody td.editable", function(event) {
+        var cell = $(this);
+        // Store the old value for potential revert
+        cell.data("oldValue", cell.text().trim());
+        // Make the cell editable
+        cell.attr("contenteditable", "true");
+        // Focus on the cell
+        cell.focus();
+    });
+
   });
 </script>
 
 <!-- Sum Column -->
-<!-- <script>
+<script>
     $(document).ready(function() {
-    // Function to calculate and update sums
-    function updateSums() {
-        // AJAX request to fetch sum data from server
-        $.ajax({
-            url: 'actions/fetch_sums.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                // Update sums in the table
-                $.each(data, function(columnName, total) {
-                    $('#' + columnName + '_sum').text('(' + total + ')');
-                });
-                
-                // Call updateSums again after current update completes
-                updateSums();
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching sums:', error);
-                
-                // Call updateSums again in case of error
-                updateSums();
-            }
-        });
-    }
+        // Function to calculate and update sums
+        function updateSums() {
+            // Initialize sums for each column
+            var sums = {};
 
-    // Initial calculation and update on page load
-    updateSums();
-});
-</script> -->
+            // Iterate over each table header (th) except the first one (No)
+            $("#myTable th:not(:first)").each(function() {
+                var columnName = $(this).attr('id'); // Get column name
+                sums[columnName] = 0; // Initialize sum for the column
+            });
+
+            // Iterate over each table row (tr)
+            $("#myTable tbody tr").each(function() {
+                // Iterate over each cell in the row (td)
+                $(this).find("td").each(function() {
+                    var columnName = $(this).attr('data-column'); // Get column name
+                    var cellValue = parseFloat($(this).text().trim()) || 0; // Parse cell value as float, default to 0 if NaN
+                    sums[columnName] += cellValue; // Add cell value to the sum of the column
+                });
+            });
+
+            // Update sums in the table footer
+            $.each(sums, function(columnName, total) {
+                $('#' + columnName + '_sum').text(total); // Update the sum display
+            });
+        }
+
+        // Initial calculation and update on page load
+        updateSums();
+
+        // Function to update sums when cell value changes
+        $(document).on("input", "#myTable td.editable", function() {
+            updateSums(); // Recalculate sums when a cell value changes
+        });
+    });
+</script>
 
 <!-- Adding New Value -->
 <script>
