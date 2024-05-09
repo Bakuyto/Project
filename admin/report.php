@@ -18,12 +18,87 @@ if (!isset($_SESSION['username'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Report</title>
   <link rel="icon" href="assets/img/a.jpg">
-  <link rel="stylesheet" href="assets/css/reports.css">
+  <!-- <link rel="stylesheet" href="assets/css/reports.css"> -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+<style>
+    .btn:hover {
+  transform: scaleY(1.1);
+  transition: 1s;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
 
+:root {
+  --blue: #28ACE8;
+  --white: #ffff;
+  --grey: rgb(211, 211, 211);
+}
+
+.tbl-container {
+  max-width: fit-content;
+  max-height: fit-content;
+  overflow: hidden;
+}
+
+.table-container.tbl-fixed {
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
+table {
+  min-width: max-content;
+  border: 2px solid lightgrey;
+}
+
+table th {
+  position: sticky;
+  top: 0;
+  background-color: var(--blue);
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 50px;
+  z-index: 1;
+}
+th,td{
+padding: 4px;
+}
+
+table thead tr th {
+  text-align: center;
+  outline: 2px solid lightgrey;
+}
+
+table tbody tr td {
+  text-align: center;
+  background-color: white;
+  outline: 1px solid lightgrey;
+}
+
+table tbody tr td.sticky{
+outline: 2px solid lightgrey;
+}
+/* Sticky Header Styles */
+table thead th.sticky {
+  position: sticky;
+  top: 0;
+  width: auto;
+  z-index: 2;
+}
+table tbody tr td.sticky {
+  position: sticky;
+  z-index: 1;
+}
+
+table tbody tr td:focus{
+font-weight: bolder;
+background-color: var(--blue);
+}
+</style>
 <body>
 <div class="container-fluid m-0 p-0" style="height:100vh;">
   <?php include 'include/header.php'; ?>
@@ -32,10 +107,10 @@ if (!isset($_SESSION['username'])) {
     <form >
     <input class="form-control" type="search" id="searchInput" placeholder="Search by Product Name" aria-label="Search" style="width:260px">
     </form>
-    <form id="filterForm" method="post" action="filter.php">
+    <form id="month_year_search" method="post">
         <label for="year">Date Selection: </label>
         <input type="month" id="year" name="year" style="height:38px;">
-        <button class="btn ms-1 text-white fw-bolder" type="submit" style="background-color: #28ACE8;height:40px; margin-top:-5px;">Filter</button>
+        <button class="btn ms-1 text-white fw-bolder" type="submit" style="background-color: #28ACE8;height:40px; margin-top:-5px;">search</button>
     </form>
     </div>
     <section>
@@ -48,7 +123,7 @@ if (!isset($_SESSION['username'])) {
                             <?php 
                             include '../connection/connect.php';
 
-                            $sql = "CALL Load_Report_Data(Null,Null)";
+                            $sql = "CALL Load_Report_Data()";
                             $result = $conn->query($sql);
 
                             if ($result->num_rows > 0) {
@@ -127,24 +202,13 @@ if (!isset($_SESSION['username'])) {
                         </tr>
                     </thead>
                     <tr id="sumRow">
-                        <td class="text-danger fw-bolder">Total: </td> <!-- Label cell for 'No' column -->
-                        <!-- Empty cells for other columns where sums will be displayed -->
-                        <?php
-                        foreach ($row as $column_name => $value) {
-                            // Skip rendering specific columns
-                            if ($column_name == 'user_fk' || $column_name == 'product_fk'||$column_name == 'datetime') {
-                                continue;
-                            }
-                            // Output empty cell for sum display
-                            echo "<td class='text-danger fw-bolder' id='{$column_name}_sum'></td>";
-                        }
-                        ?>
                     </tr>
                     <tbody id="tableBody">
+                    
                         <?php 
                         include '../connection/connect.php'; 
 
-                        $sql = "CALL Load_Report_Data(null,null)";
+                        $sql = "CALL Load_Report_Data()";
                         $result = $conn->query($sql);
 
                         if ($result->num_rows > 0) {
@@ -175,14 +239,16 @@ if (!isset($_SESSION['username'])) {
                             echo "<tr><td colspan='8'>0 results</td></tr>";
                         }
                         ?>
-                        <tr id="noResultsRow" style="display: none;">
-                        <td colspan="100">No results found</td> <!-- Adjust colspan based on the number of columns -->
-                    </tr>
+                        
                     </tbody>
+                    <tr id="noResultsRow" style="display: none;">
+                        <td class="text-center" colspan="50">No results found.</td>
+                    </tr>
                 </table>
             </div>
         </div>
     </section>
+
   </div>
 </div>
 </body>
@@ -191,70 +257,186 @@ if (!isset($_SESSION['username'])) {
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+
 <script>
     $(document).ready(function(){
-        // Add event listener to search input
-        $('#searchInput').on('input', function(){
-            var searchText = $(this).val().toLowerCase(); // Get search input value
-            var noResultsFound = true; // Flag to check if no results found
-            $('#tableBody tr').each(function(){
-                var productName = $(this).find('td[data-column="product_name"]').text().toLowerCase();
-                // Check if product name contains the search text
-                if (productName.indexOf(searchText) > -1) {
-                    $(this).show(); // Show table row
-                    noResultsFound = false; // Set flag to false if results found
-                } else {
-                    $(this).hide(); // Hide table row if no match
+        // Function to calculate column sums based on visible rows
+        function calculateColumnSums(rows) {
+            console.log("Calculating column sums...");
+
+            // Initialize an array to store column sums
+            var columnSums = Array.from({ length: rows[0].getElementsByTagName("td").length }, () => 0);
+
+            // Loop through each row
+            for (var i = 0; i < rows.length; i++) {
+                // Check if the row is visible
+                if (rows[i].style.display !== "none") {
+                    console.log("Row " + i + " is visible.");
+                    // Select all cells in the visible row
+                    var cells = rows[i].getElementsByTagName("td");
+
+                    // Loop through each cell, excluding specified columns
+                    for (var j = 0; j < cells.length; j++) {
+                        // Exclude columns by index (0 for No, 1 for product_name, 2 for dateTime)
+                        if (j !== 0 && j !== 1 && j !== 2) {
+                            // Parse the cell value as a number
+                            var cellValue = parseFloat(cells[j].textContent.trim());
+
+                            // If the cell contains a valid number, add it to the corresponding column sum
+                            if (!isNaN(cellValue)) {
+                                columnSums[j] += cellValue;
+                            }
+                        }
+                    }
                 }
-            });
-            // Show or hide "No results found" row based on search results
-            if (noResultsFound) {
-                $('#noResultsRow').show();
+            }
+
+            // Select the footer row for displaying sums
+            var footerRow = document.getElementById("sumRow");
+
+            if (!footerRow) {
+                console.log("Footer row not found.");
+                return;
+            }
+
+            // Clear previous content
+            footerRow.innerHTML = "";
+
+            // Create and append cells for column sums
+            for (var k = 0; k < columnSums.length; k++) {
+                var cell = document.createElement("td");
+                // Display static values for the first three indexes
+                if (k === 0) {
+                    cell.textContent = "Sum";
+                    cell.classList.add("text-danger","fw-bolder");
+                } else if (k === 1) {
+                    cell.textContent = "Product Name";
+                    cell.classList.add("text-danger","fw-bolder");
+                } else if (k === 2) {
+                    cell.textContent = "( YYY/MMM/DDD )";
+                    cell.classList.add("text-danger","fw-bolder");
+                } else {
+                    // Display sum for non-excluded columns
+                    cell.textContent = columnSums[k];
+                    cell.classList.add("text-danger","fw-bolder");
+                }
+                footerRow.appendChild(cell);
+            }
+            console.log("Column sums calculated successfully.");
+        }
+
+        function performSearch(searchText) {
+    try {
+        var noResultsFound = true; // Flag to check if no results found
+        $('#tableBody tr').each(function(){
+            var productName = $(this).find('td[data-column="product_name"]').text().toLowerCase();
+            // Check if product name contains the search text
+            if (productName.indexOf(searchText) > -1) {
+                $(this).show(); // Show table row
+                noResultsFound = false; // Set flag to false if results found
             } else {
-                $('#noResultsRow').hide();
+                $(this).hide(); // Hide table row if no match
             }
         });
-    });
-</script>
 
-<script>
-    // Add event listener to form submission
-    document.getElementById("filterForm").addEventListener("submit", function(event) {
-        // Prevent default form submission
-        event.preventDefault();
+        // Update sum data after search
+        calculateColumnSums($('#tableBody tr:visible'));
+        
+        // Show or hide "No results found" row based on search results
+        if (noResultsFound) {
+            $('#noResultsRow').show();
+        } else {
+            $('#noResultsRow').hide();
+        }
+    } catch (error) {
+        console.error("Error occurred during search:", error);
+        $('#noResultsRow').show(); // Display "No results found" message for errors
+    }
+    // Freeze columns
+    $(document).freezeColumns();
+}
 
-        // Get the value of the year input
-        var yearInput = document.getElementById("year").value;
+        // Add event listener to Enter key pressed anywhere in the document
+        $(document).on('keydown', function(event){
+            if (event.keyCode === 13) { // Check if Enter key is pressed
+                if ($('#searchInput').is(':focus')) { // Check if search input is focused
 
-        // Check if the year input is empty
-        if (yearInput.trim() === '') {
-            // Refresh the page
-            window.location.reload();
+                    performSearch($('#searchInput').val().toLowerCase());
+                } else {
+                    $('#searchInput').focus(); // If not focused, focus on the search input
+                }
+                return false; // Prevent default behavior of Enter key
+            }
+            
+        });
+
+        // Call calculateColumnSums function after the table data is loaded
+        calculateColumnSums($('#tableBody tr'));
+
+// Attach submit event listener to search form
+$('#month_year_search').on('submit', function(event) {
+    try {
+        event.preventDefault(); // Prevent form submission
+        const yearMonth = $(this).find('input[name="year"]').val();
+
+        // If the input field is empty, show all rows
+        if (!yearMonth) {
+            showAllRows();
             return;
         }
 
-        // If input is not empty, proceed with AJAX request
-        // Get form data
-        var formData = new FormData(this);
+        const selectedDate = new Date(yearMonth);
+        const selectedMonth = selectedDate.getMonth() + 1; // Month is 0-indexed, so add 1
+        const selectedYear = selectedDate.getFullYear();
 
-        // Send form data via AJAX
-        fetch('actions/filter.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                // Update table body with filtered results
-                    document.getElementById("tableBody").innerHTML = data;
+        // Filter table rows based on selected month and year
+        let foundMatch = false;
+        const rows = $('#tableBody tr');
+        rows.each(function() {
+            const cells = $(this).find('td');
+            if (cells.length > 0) {
+                const dateCell = cells.eq(2); // Assuming the third cell contains the date
+                const date = new Date(dateCell.text());
+                const month = date.getMonth() + 1;
+                const year = date.getFullYear();
 
-                // Reapply column freezing after updating table body
-                $(document).freezeColumns();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+                if (month === selectedMonth && year === selectedYear) {
+                    $(this).show(); // Show row
+                    foundMatch = true;
+                } else {
+                    $(this).hide(); // Hide row
+                }
+            }
+        });
+
+        // Update sum data after filter
+        calculateColumnSums($('#tableBody tr:visible'));
+
+        // Show or hide "No results found" message
+        if (foundMatch) {
+            $('#noResultsRow').hide();
+        } else {
+            $('#noResultsRow').show();
+        }
+    } catch (error) {
+        console.error("Error occurred during form submission:", error);
+        $('#noResultsRow').show(); // Display "No results found" message for errors
+    }
+    // Freeze columns
+    $(document).freezeColumns();
+});
+        // Function to show all rows
+        function showAllRows() {
+            $('#tableBody tr').show(); // Show all table rows
+
+            // Update sum data
+            calculateColumnSums($('#tableBody tr'));
+            
+            $('#noResultsRow').hide(); // Hide "No results found" message
+        }
     });
 </script>
+
 
 <script>
     $(document).ready(function () {
@@ -284,52 +466,7 @@ if (!isset($_SESSION['username'])) {
     });
 </script>
 
-<script>
-$(document).ready(() => {
-    const calculateSums = () => {
-        const sums = {};
 
-        // Initialize sums object
-        $("#myTable th:not(:first)").each((index, element) => {
-            const columnName = $(element).attr('id');
-            sums[columnName] = 0;
-        });
 
-        // Calculate sums for visible rows
-        $("#myTable tbody tr:visible").each((index, row) => {
-            $(row).find("td").each((index, cell) => {
-                const columnName = $(cell).attr('data-column');
-                
-                // Skip summing up values for "dateTime" column
-                if (columnName === 'datetime') {
-                    return true; // Skip to the next iteration
-                }
-                
-                const cellValue = parseFloat($(cell).text().trim()) || 0;
-                sums[columnName] += cellValue;
-            });
-        });
-
-        // Update total row cells with sum values
-        $.each(sums, (columnName, total) => {
-            $(`#${columnName}_sum`).text(total);
-        });
-
-        // Set the sum for the "dateTime" column to 0
-        $('#product_name_sum').text(' Product Name ');
-
-        // Set the sum for the "dateTime" column to 0
-        $('#dateTime_sum').text('( YYY/MMM/DDD )');
-    };
-
-    // Call calculateSums after the document is ready
-    calculateSums();
-
-    // Trigger sum calculation after table is filtered
-    $('#myTable').on('search.dt', () => {
-        calculateSums();
-    });
-});
-</script>
 
 </html>

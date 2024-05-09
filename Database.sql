@@ -14,8 +14,6 @@ MySQL - 5.7.31 : Database - inventorymanagement
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`inventorymanagement` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */;
 
-USE `inventorymanagement`;
-
 /*Table structure for table `tbldepartment` */
 
 DROP TABLE IF EXISTS `tbldepartment`;
@@ -663,30 +661,12 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`%` PROCEDURE `Load_Report_Data`(IN input_month VARCHAR(100), IN input_year VARCHAR(100))
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `Load_Report_Data`()
 BEGIN
-    DECLARE start_date DATETIME;
-    DECLARE end_date DATETIME;
-    
-    IF input_month IS NULL AND input_year IS NULL THEN
-        SET start_date = (SELECT MIN(`datetime`) FROM tblproduct_transaction_history);
-        SET end_date = (SELECT MAX(`datetime`) FROM tblproduct_transaction_history);
-    ELSE
-        SET start_date = STR_TO_DATE(CONCAT(input_year, '-', input_month, '-01'), '%Y-%m-%d');
-        SET end_date = LAST_DAY(start_date);
-    END IF;
-
     SELECT t1.*, t2.*
-    FROM (
-        SELECT DISTINCT *
-        FROM tblproduct_transaction_history
-        WHERE `datetime` BETWEEN start_date AND end_date
-    ) AS t1
-    INNER JOIN (
-        SELECT DISTINCT * 
-        FROM tblproduct_sales_months_history
-        WHERE `datetime` BETWEEN start_date AND end_date
-    ) AS t2 ON t1.product_fk = t2.product_fk AND t1.datetime = t2.datetime
+    FROM tblproduct_transaction_history AS t1
+    INNER JOIN tblproduct_sales_months_history AS t2 
+    ON t1.product_fk = t2.product_fk AND t1.datetime = t2.datetime
     ORDER BY t1.datetime, t1.product_fk;
 END */$$
 DELIMITER ;
