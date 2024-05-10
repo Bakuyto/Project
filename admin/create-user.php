@@ -486,7 +486,6 @@ if (isset($_GET['error']) && $_GET['error'] === 'true') {
 </script>
 <script>
   function setTransactionToDelete(transactionName) {
-    console.log("Transaction Name:", transactionName);
     document.getElementById('transactionToDelete').value = transactionName;
   }
 </script>

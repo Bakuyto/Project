@@ -396,7 +396,6 @@ if (!isset($_SESSION['username'])) {
 <script>
 $(document).ready(function(){    
     $('#InsertModalForm').submit(function(e){
-        console.log("Form submitted"); // Debugging statement
         e.preventDefault();
         
         $.ajax({
@@ -405,7 +404,6 @@ $(document).ready(function(){
             data: $(this).serialize() + '&Insert_data=1', // Add Insert_data parameter here
             dataType: 'json',
             success: function(response){
-                console.log("AJAX request successful"); // Debugging statement
                 if(response.success){
                   $('#saveanywaysuccessModal').modal('show').on('hidden.bs.modal', function () {
                         location.reload();
@@ -420,8 +418,6 @@ $(document).ready(function(){
                 }
             },
             error: function(xhr, status, error){
-                console.log("AJAX request failed"); // Debugging statement
-                console.log(xhr.responseText); // Log the responseText for debugging
                 $('#saveanywayerrorModal').modal('show');
                 $('#InsertModal').modal('hide');
                 var errorMessage = xhr.responseJSON ? xhr.responseJSON.error : "An error occurred";
@@ -458,7 +454,6 @@ $(document).ready(function(){
                     }
                 },
                 error: function(xhr, status, error){
-                    console.log(xhr.responseText);
                 }
             });
         });
@@ -474,8 +469,6 @@ $(document).ready(function(){
                 type: 'post',
                 data: {saveChangesBtn: true}, // Set the Insert_data parameter to true
                 success: function(response){
-                    // Check the response if needed
-                    console.log(response);
                     // Show the modal on successful insertion
                     // $('#insertSuccessModal').modal('show');
                     $('#InsertModal').modal('show');
@@ -611,7 +604,7 @@ $(document).ready(function() {
                 $(document).freezeColumns();
             },
             error: function(xhr, status, error) {
-                console.error("AJAX Error:", error);
+
             }
         });
     }
@@ -725,20 +718,17 @@ $(document).ready(function() {
             dataType: "json",
 
             success: function(response) {
-                console.log("AJAX Success:", response);
                 if (response.success) {
                     cell.text(newValue); // Update the cell text with the new value
                     // Retrieve the search input value
                     var searchText = $("#searchInput").val().trim();
                     fetchData(searchText); // Fetch new data after successful update
                 } else {
-                    console.error("Update failed:", response.message);
                     cell.text(oldValue); // Revert the cell text to the original value
                 }
             },
 
             error: function(xhr, status, error) {
-                console.error("AJAX Error:", error);
                 cell.text(oldValue); // Revert the cell text to the original value
             },
             complete: function() {
@@ -887,15 +877,12 @@ $(document).ready(function () {
         // Serialize form data
         var formData = $('#addForm').serialize();
 
-        // console.log("Form data:", formData); // Debugging statement
-
         // AJAX request
         $.ajax({
             type: 'POST',
             url: 'actions/process_form.php',
             data: formData,
             success: function (response) {
-                console.log("AJAX success response:", response); // Debugging statement
 
                 // Parse the JSON response
                 var responseData = JSON.parse(response);
@@ -914,8 +901,6 @@ $(document).ready(function () {
                 }
             },
             error: function (xhr, status, error) {
-                // Handle error
-                console.error("AJAX error:", error); // Log error for debugging
                 // Display error message to the user
                 alert('An error occurred. Please try again later.');
             }

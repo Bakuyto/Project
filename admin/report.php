@@ -105,12 +105,14 @@ background-color: var(--blue);
   <div class="contianer-fluid" style="height:60px;">
     <div class="mx-5 months_year d-flex justify-content-between pt-2 pb-2">
     <form >
-    <input class="form-control" type="search" id="searchInput" placeholder="Search by Product Name" aria-label="Search" style="width:260px">
+    <input class="form-control" type="search" id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:260px">
     </form>
+   
     <form id="month_year_search" method="post">
-        <label for="year">Date Selection: </label>
+        <label for="year">Date: </label>
         <input type="month" id="year" name="year" style="height:38px;">
         <button class="btn ms-1 text-white fw-bolder" type="submit" style="background-color: #28ACE8;height:40px; margin-top:-5px;">search</button>
+        <button id="export2excel" class="btn fw-bolder text-white" style="background-color: green;height:40px;margin-top:-5px;"><i class="fa-solid fa-file-export"></i> to <i class="fa-solid fa-file-excel"></i></button>
     </form>
     </div>
     <section>
@@ -236,15 +238,16 @@ background-color: var(--blue);
                             }
                         } else {
                             // No results message spanning all columns
-                            echo "<tr><td colspan='8'>0 results</td></tr>";
+                            echo "<tr id='noResultsRow' style='display: none;'><td colspan='8'>0 results</td></tr>";
                         }
                         ?>
                         
                     </tbody>
                     <tr id="noResultsRow" style="display: none;">
-                        <td class="text-center" colspan="50">No results found.</td>
+                        <td class="text-center" colspan="30"><h5 >0 results</h5></td>
                     </tr>
                 </table>
+                
             </div>
         </div>
     </section>
@@ -256,14 +259,48 @@ background-color: var(--blue);
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="assets/js/table2excel.js"></script>
 
+<script>
+document.getElementById('export2excel').addEventListener('click', function () {
+    var table = document.getElementById('myTable');
+    var rowsToExport = table.querySelectorAll("tr:not(#noResultsRow)");
+    var csvContent = "data:text/csv;charset=utf-8,";
+
+    // Construct header row
+    var headerRow = [];
+    var headerCells = table.querySelectorAll("th");
+    headerCells.forEach(function (headerCell) {
+        headerRow.push('"' + headerCell.innerText.replace(/"/g, '""') + '"');
+    });
+    csvContent += headerRow.join(",");
+
+    // Construct data rows
+    rowsToExport.forEach(function (row) {
+        var rowData = [];
+        var cells = row.querySelectorAll("td");
+        cells.forEach(function (cell) {
+            rowData.push('"' + cell.innerText.replace(/"/g, '""') + '"');
+        });
+        csvContent += rowData.join(",") + "\n";
+    });
+
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "exported_data.csv");
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+});
+</script>
 
 <script>
     $(document).ready(function(){
         // Function to calculate column sums based on visible rows
         function calculateColumnSums(rows) {
-            console.log("Calculating column sums...");
-
             // Initialize an array to store column sums
             var columnSums = Array.from({ length: rows[0].getElementsByTagName("td").length }, () => 0);
 
@@ -271,7 +308,6 @@ background-color: var(--blue);
             for (var i = 0; i < rows.length; i++) {
                 // Check if the row is visible
                 if (rows[i].style.display !== "none") {
-                    console.log("Row " + i + " is visible.");
                     // Select all cells in the visible row
                     var cells = rows[i].getElementsByTagName("td");
 
@@ -295,7 +331,6 @@ background-color: var(--blue);
             var footerRow = document.getElementById("sumRow");
 
             if (!footerRow) {
-                console.log("Footer row not found.");
                 return;
             }
 
@@ -307,10 +342,10 @@ background-color: var(--blue);
                 var cell = document.createElement("td");
                 // Display static values for the first three indexes
                 if (k === 0) {
-                    cell.textContent = "Sum";
+                    cell.textContent = "Total";
                     cell.classList.add("text-danger","fw-bolder");
                 } else if (k === 1) {
-                    cell.textContent = "Product Name";
+                    cell.textContent = "Name";
                     cell.classList.add("text-danger","fw-bolder");
                 } else if (k === 2) {
                     cell.textContent = "( YYY/MMM/DDD )";
@@ -322,7 +357,6 @@ background-color: var(--blue);
                 }
                 footerRow.appendChild(cell);
             }
-            console.log("Column sums calculated successfully.");
         }
 
         function performSearch(searchText) {
@@ -349,7 +383,6 @@ background-color: var(--blue);
             $('#noResultsRow').hide();
         }
     } catch (error) {
-        console.error("Error occurred during search:", error);
         $('#noResultsRow').show(); // Display "No results found" message for errors
     }
     // Freeze columns
@@ -419,7 +452,6 @@ $('#month_year_search').on('submit', function(event) {
             $('#noResultsRow').show();
         }
     } catch (error) {
-        console.error("Error occurred during form submission:", error);
         $('#noResultsRow').show(); // Display "No results found" message for errors
     }
     // Freeze columns
@@ -436,7 +468,6 @@ $('#month_year_search').on('submit', function(event) {
         }
     });
 </script>
-
 
 <script>
     $(document).ready(function () {
@@ -465,8 +496,5 @@ $('#month_year_search').on('submit', function(event) {
         });
     });
 </script>
-
-
-
 
 </html>
