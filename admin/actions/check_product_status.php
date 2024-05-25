@@ -5,7 +5,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         include '../../connection/connect.php';
 
         // Fetch department names with product_status = 0
-        $check_sql = "SELECT department_name FROM tbldepartment WHERE product_status = 0";
+        $check_sql = "SELECT department_name FROM tbldepartment WHERE active_status = 0";
         $check_result = $conn->query($check_sql);
         
         if ($check_result) {

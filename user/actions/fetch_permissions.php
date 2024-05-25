@@ -42,7 +42,7 @@ if(isset($_GET['search'])) {
 }
 
 // Prepare the SQL query with the search text parameter
-$sql = "CALL update_table_column('$searchText')";
+$sql = "CALL update_table_column('$searchText', NULL)";
 $result = $conn->query($sql);
 
 // Prepare an array to hold the fetched data

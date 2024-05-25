@@ -7,8 +7,8 @@ $errorMessage = ""; // Initialize error message variable
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sanitize and retrieve username from the form
-    $myusername = mysqli_real_escape_string($conn, $_POST['username']);
-    $mypassword = mysqli_real_escape_string($conn, $_POST['password']);
+    $myusername = mysqli_real_escape_string($conn, $_POST['user_log_name']);
+    $mypassword = mysqli_real_escape_string($conn, $_POST['user_log_password']);
 
 
     // Assuming User_login stored procedure returns 'user_level_fk' and 'user_pk' columns
@@ -21,8 +21,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Check if 'user_level_fk' and 'user_pk' are present in the fetched row
         if (isset($row['user_level_fk']) && isset($row['user_pk']) && isset($row['user_department_fk'])) {
             // Store username, user_level_fk, and user_pk in session
-            $_SESSION['username'] = $myusername;
-            $_SESSION['user_log_password'] = $row['user_log_password'];
+            $_SESSION['user_log_name'] = $myusername;
+            $_SESSION['user_log_password'] =$mypassword;
             $_SESSION['user_full_name'] = $row['user_full_name'];
             $_SESSION['user_level_fk'] = $row['user_level_fk'];
             $_SESSION['user_pk'] = $row['user_pk'];
@@ -78,11 +78,11 @@ mysqli_close($conn);
             <div class="mb-3">
                 <div class="form-header"><h1 class="text-center mb-3">Login Form</h1></div>
               <label class="form-label">Username</label>
-              <input type="text" class="form-control" name="username" required>
+              <input type="text" class="form-control" name="user_log_name" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Password</label>
-              <input type="password" class="form-control" name="password" required>
+              <input type="password" class="form-control" name="user_log_password" required>
             </div>
             <!-- <div class="mb-3 form-check">
               <input type="checkbox" class="form-check-input" id="exampleCheck1" name="remember">

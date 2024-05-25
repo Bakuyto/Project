@@ -51,10 +51,10 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
             id="navbarDropdown" role="button" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
             <?php 
-                if(isset($_SESSION['username'])) {
-                    echo $_SESSION['username'];
+                if(isset($_SESSION['user_full_name'])) {
+                    echo $_SESSION['user_full_name'];
                 } else {
-                    echo 'Username';
+                    echo 'user_full_name';
                 }
             ?>
           </a>
@@ -63,8 +63,8 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
             aria-labelledby="navbarDropdown" style="margin-left:-20px;">
             <div class="profile-info">
               <h5 class="ms-3"><?php 
-                if(isset($_SESSION['username'])) {
-                  echo $_SESSION['username'] . '<br>';
+                if(isset($_SESSION['user_full_name'])) {
+                  echo $_SESSION['user_full_name'] . '<br>';
                   // Check if user_level_fk is set in the session and display role accordingly
                   if(isset($_SESSION['user_level_fk'])) {
                       if ($_SESSION['user_level_fk'] == 1) {
@@ -75,7 +75,7 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
                   }
                   
               } else {
-                  echo 'Username';
+                  echo 'user_full_name';
               }
             ?></h5>
             </div>

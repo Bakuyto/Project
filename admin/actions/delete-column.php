@@ -11,10 +11,10 @@ if(isset($_POST['submit_delete_transaction']) && isset($_POST['transactionToDele
       $conn->close();
 
       // Redirect to avoid form resubmission or reload the current page
-      header("Location: create-user.php");
+      header("Location: setting.php");
       exit(); // Ensure script execution stops after redirection
     } else {
-      header("Location: ../create-user.php");
+      header("Location: ../setting.php");
     }
 } else {
     echo "Transaction name not received or is empty.";

@@ -5,7 +5,7 @@ session_start();
 setcookie("loggedIn", "false", time() + 60, "/");
 
 // Check if the user is not logged in
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['user_log_name'])) {
   // Redirect to the login page
   header("Location: ../common/login.php");
   exit(); // Ensure that script execution stops after the redirect
@@ -18,7 +18,7 @@ if (!isset($_SESSION['username'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Main Page</title>
   <link rel="icon" href="assets/img/a.jpg">
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/Homepage.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -46,7 +46,7 @@ if (!isset($_SESSION['username'])) {
         <thead class="new-thead sticky-thead">
           <?php
           include '../connection/connect.php';
-          $sql = "CALL update_table_column('')";
+          $sql = "CALL update_table_column('', NULL)";
           $result = $conn->query($sql);
 
           if ($result && $result->num_rows > 0) {
@@ -55,7 +55,7 @@ if (!isset($_SESSION['username'])) {
             echo "<th class='text-center sticky'>No</th>";
             foreach ($row as $column_name => $value) {
               // Skip rendering specific columns
-              if ($column_name == 'product_pk' || $column_name == 'product_status' || $column_name == 'product_fk') {
+              if ($column_name == 'product_pk' || $column_name == 'product_type_fk' || $column_name == 'product_status' || $column_name == 'product_fk') {
                 continue;
               }
 
@@ -99,8 +99,11 @@ if (!isset($_SESSION['username'])) {
                   echo "RMA";
                   break;
                 case 'Consignment_Stock':
-                  echo "Consignment Stock";
+                  echo "Consignment <br> Stock";
                   break;
+                  case 'STOCK_AVAILABLE':
+                    echo "STOCK <br> AVAILABLE";
+                    break;
                 case 'Pre_Order':
                   echo "Pre Order";
                   break;
@@ -108,7 +111,7 @@ if (!isset($_SESSION['username'])) {
                   echo "Total";
                   break;
                 case 'Current_Stock':
-                  echo "Current Stock";
+                  echo "Current <br> Stock";
                   break;
                 default:
                   // Output column name as is for other columns
@@ -141,16 +144,47 @@ if (!isset($_SESSION['username'])) {
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addForm" method="POST" action="actions/process_form.php">
-                    <div class="row g-3" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
-                        <?php
+                <form id="addForm" method="POST">
+                  <div class="create-body row" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
+                    <div class="select-part" style="width:200px">
+                    <label class="w-100 pb-2 text-center fw-bolder">Product Type</label>
+                    <div class="form-group d-flex">
+                    <select id="productTypeSelect" class="form-select" style="border-radius:5px 0px 0px 5px;" required>
+                      <option class="text-dark" value="" selected disabled>Select Type</option>
+
+                      <?php 
+                            include '../connection/connect.php';
+                            $sql = "Select * from tblproduct_type"; // SQL query to select data from the table
+                            $result = $conn->query($sql); // Execute the query
+            
+                            if ($result->num_rows > 0) {
+                              while ($row = $result->fetch_assoc()) {
+                                  $product_name = $row['product_type_name'];
+                                  $product_id = $row['product_type_pk'];
+                          ?>
+                                  <option id="<?php echo $product_id; ?>" value="<?php echo $product_id; ?>"><?php echo $product_name; ?> </option>
+                          <?php
+                              }
+                          } else {
+                              echo "<option value='' selected>No departments found</option>"; // Output if no results found
+                          }
+                            $conn->close(); // Close the database connection
+                          ?>
+
+                    </select>
+                    <input type="hidden" id="product_type_fk" name="product_type_fk" value="<?php echo $product_id; ?>">
+                    <button type="button" class="btn" style="border-radius:0px 5px 5px 0px; border:1px solid lightgrey" onclick="$('#createtypeModal').modal('show')">+</button>
+                    </div>
+                    </div>
+                    <div class="input-part d-flex">
+                    <?php
                         include '../connection/connect.php';
 
                         $sql = "SELECT
                             COLUMN_NAME AS department_name
                             FROM INFORMATION_SCHEMA.COLUMNS
                             WHERE TABLE_NAME = 'tblproduct_transaction'
-                            AND COLUMN_NAME != 'product_status'
+                            AND COLUMN_NAME NOT IN ('product_status', 'product_type_fk')
                             AND ORDINAL_POSITION >= 2;";
                         $result = $conn->query($sql); // Execute the query
 
@@ -164,39 +198,47 @@ if (!isset($_SESSION['username'])) {
                                 switch ($department_name) {
                                     case 'product_name':
                                         $label = 'Product Name';
+                                        $input_type = 'text'; // Change input type to text for 'product_name'
                                         break;
                                     case 'Consignment_Stock':
                                         $label = 'Consignment Stock';
+                                        $input_type = 'number';
+                                        break;
+                                    case 'PK_CI':
+                                        $label = 'PK+CI';
+                                        $input_type = 'text'; // Change input type to text for 'PK_CI'
                                         break;
                                     case 'Pre_Order':
                                         $label = 'Pre Order';
+                                        $input_type = 'number';
                                         break;
                                     default:
                                         $label = $department_name;
+                                        $input_type = 'number';
                                 }
-                                ?>
-                                <div class="col-12 mb-3" style="flex: 0 0 auto; width: 200px;">
+                        ?>
+                                <div class="col-12 mb-3 me-4" style="width: 200px; margin-left:-15px;">
                                     <label class="form-label text-center fw-bolder w-100"><?= $label ?></label>
-                                    <input type="<?= $department_name === 'product_name' ? 'text' : 'number' ?>" class="form-control<?= $first ? ' required' : '' ?>" id="<?= $department_name ?>" name="<?= $department_name ?>"<?= $first ? ' required' : '' ?>>
+                                    <input type="<?= $input_type ?>" class="form-control<?= $first && $department_name === 'product_name' ? ' required' : '' ?>" id="<?= $department_name ?>" name="<?= $department_name ?>"<?= $first && $department_name === 'product_name' ? ' required' : '' ?>>
                                 </div>
-                                <?php
-                                $first = false; // Unset flag after the first iteration
+                        <?php
                             }
                         } else {
                             echo "<p>No results found</p>"; // Output if no results found
                         }
                         ?>
+
                     </div>
-                    <!-- Submit button -->
-                    <div class="d-flex justify-content-end mt-3">
-                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
-                        <button type="button" id="submitButton" class="btn btn-primary">Submit</button>
+                  </div>
+                  <div class="d-flex justify-content-end mt-3">
+                        <!-- <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button> -->
+                        <button type="submit" id="submitButton" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-</div>
+</div>  
 
 <!-- Success Modal -->
 <div class="modal fade" id="successsModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
@@ -240,45 +282,22 @@ if (!isset($_SESSION['username'])) {
 <div class="modal fade" id="productStatusModal" tabindex="-1" aria-labelledby="productStatusModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="productStatusModalLabel">Select Product Status</h5>
+      <div class="modal-header bg-warning text-white">
+        <h5 class="modal-title" id="productStatusModalLabel">!!! Alert !!!</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="productStatusForm" action="actions/Insert_product_status.php" method="post">
-          <?php
-            // Fetch the current status if available
-            if(isset($_SESSION['user_department_fk'])) {
-              $id = intval($_SESSION['user_department_fk']);
-              $sql = "SELECT product_status FROM tbldepartment WHERE department_pk = $id";
-              $result = $conn->query($sql);
-              if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                $current_status = $row["product_status"];
-              }
-              $result->close();
-            }
-          ?>
-          <div class="mb-3 form-check">
-            <input type="radio" id="active" name="status" value="1" class="form-check-input"<?php if($current_status == 1) echo ' checked'; ?>>
-            <label for="active" class="form-check-label">Active</label>
-          </div>
-          <div class="mb-3 form-check">
-            <input type="radio" id="inactive" name="status" value="0" class="form-check-input"<?php if($current_status == 0) echo ' checked'; ?>>
-            <label for="inactive" class="form-check-label">Inactive</label>
-          </div>
-          <div class="d-flex justify-content-end mt-3">
-            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
+        <h5>Are you sure?</h5>
+        <div class="d-flex justify-content-end">
+        <form action="actions/active_status.php" method="POST">
+            <input type="hidden" name="active_status" value="1">
             <button type="submit" class="btn btn-primary">Save</button>
+          </form>
           </div>
-        </form>
       </div>
     </div>
   </div>
 </div>
-
-
-
 
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -337,6 +356,26 @@ $(document).ready(function () {
     var data; // Variable to hold the fetched data
     // Add permissions variable
     var permissions = {};
+    var activeStatus; // Variable to hold the active status
+
+// Fetch active status from the server
+fetchActiveStatus();
+
+function fetchActiveStatus() {
+    $.ajax({
+        url: "actions/get_active_status.php",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            console.log("Active Status:", response.active_status);
+            activeStatus = response.active_status;
+        },
+        error: function(xhr, status, error) {
+            console.error("Active Status Fetch Error:", error);
+            // Handle the error appropriately (e.g., display an error message)
+        }
+    });
+}
 
     $(document).on("keydown", "tbody td.editable", function(event) {
     // Cache frequently used elements
@@ -387,7 +426,7 @@ $(document).ready(function () {
         var value = $(this).text().trim();
         
         // Check if the entered value is numeric for non-"Product Name" columns
-        if (column !== "product_name" && !(/^\d*\.?\d*$/.test(value))) {
+        if (column !== "product_name" && column !== "PK_CI" && !(/^\d*\.?\d*$/.test(value))) {
             $(this).text("0"); // Display "0" if not numeric
         }
     });
@@ -439,7 +478,7 @@ function updateTable(data, permissions) {
     var columnTotals = {};
     $.each(data, function(index, row) {
         $.each(row, function(column_name, value) {
-            if (column_name !== 'product_pk' && column_name !== 'product_status' && column_name !== 'product_fk') {
+            if (column_name !== 'product_pk' && column_name !== 'product_type_fk' && column_name !== 'product_status' && column_name !== 'product_fk') {
                 // Handle NaN for product name column
                 if (column_name === 'Product Name' && value === null) {
                     value = ''; // Set value to empty string for product name column
@@ -451,11 +490,18 @@ function updateTable(data, permissions) {
 
     // Add total row to the top of tbody
     var totalRow = $("<tr>");
-    totalRow.append("<td class='text-center text-danger fw-bolder'>Total</td>");
-    $.each(columnTotals, function(column_name, total) {
-        totalRow.append("<td><span id='" + column_name + "_sum' class='text-center text-danger fw-bolder'>" + total + "</span></td>");
-    });
-    $('tbody').append(totalRow);
+        totalRow.append("<td class='text-center text-danger fw-bolder'>Total</td>");
+        $.each(columnTotals, function(column_name, total) {
+            if (column_name === 'product_name') {
+                totalRow.append("<td><span name='" + column_name + "_sum' id='" + column_name + "_sum' class='text-center text-danger fw-bolder'>Name</span></td>");
+            } else if(column_name === 'PK_CI') {
+                totalRow.append("<td><span name='" + column_name + "_sum' id='" + column_name + "_sum' class='text-center text-danger fw-bolder'>PK+CI</span></td>");
+            }
+            else {
+                totalRow.append("<td><span name='" + column_name + "_sum' id='" + column_name + "_sum' class='text-center text-danger fw-bolder'>" + total + "</span></td>");
+            }
+        });
+        $('tbody').append(totalRow);
 
 
     if (data.length === 0) {
@@ -480,7 +526,7 @@ function updateTable(data, permissions) {
         tr.append(loopIdTd);
 
         $.each(row, function(column_name, value) {
-            if (column_name !== 'product_pk' && column_name !== 'product_status' && column_name !== 'product_fk') {
+            if (column_name !== 'product_pk' && column_name !== 'product_type_fk' && column_name !== 'product_status' && column_name !== 'product_fk') {
                 var td = $("<td>").attr({
                     "id": column_name,
                     "style": "color:grey",
@@ -491,8 +537,10 @@ function updateTable(data, permissions) {
                 // Check if permission is set for this column
                 permissions.forEach(function(permission) {
                     if (permission === column_name) {
-                        // Allow editing
-                        td.attr("contenteditable", "true").addClass("editable text-dark fw-bolder").css("border","2px solid grey");
+                        // Allow editing if activeStatus is not 1
+                        if (activeStatus !== 1) {
+                            td.attr("contenteditable", "true").addClass("editable text-dark fw-bolder").css("border","2px solid grey");
+                        }
                     }
                 });
 
@@ -649,82 +697,34 @@ function updateValue(cell, newValue, oldValue) {
   });
 </script>
 
-<!-- Sum Column -->
-<script>
-    $(document).ready(function() {
-        // Function to calculate and update sums
-        function updateSums() {
-            // Initialize sums for each column
-            var sums = {};
-
-            // Iterate over each table header (th) except the first one (No)
-            $("#myTable th:not(:first)").each(function() {
-                var columnName = $(this).attr('id'); // Get column name
-                sums[columnName] = 0; // Initialize sum for the column
-            });
-
-            // Iterate over each table row (tr)
-            $("#myTable tbody tr").each(function() {
-                // Iterate over each cell in the row (td)
-                $(this).find("td").each(function() {
-                    var columnName = $(this).attr('data-column'); // Get column name
-                    var cellValue = parseFloat($(this).text().trim()) || 0; // Parse cell value as float, default to 0 if NaN
-                    sums[columnName] += cellValue; // Add cell value to the sum of the column
-                });
-            });
-
-            // Update sums in the table footer
-            $.each(sums, function(columnName, total) {
-                $('#' + columnName + '_sum').text(total); // Update the sum display
-            });
-        }
-
-        // Initial calculation and update on page load
-        updateSums();
-
-        // Function to update sums when cell value changes
-        $(document).on("input", "#myTable td.editable", function() {
-            updateSums(); // Recalculate sums when a cell value changes
-        });
-    });
-</script>
-
 <!-- Adding New Value -->
 <script>
-$(document).ready(function () {
-    $('#submitButton').click(function () {
-        // Serialize form data
-        var formData = $('#addForm').serialize();
+$(document).ready(() => {
+    $('#createButton').click(function () {
+        // Get the value of the type name input field
+        var typeName = $('#typeName').val().trim();
 
-        // console.log("Form data:", formData); // Debugging statement
+        // Check if the input is empty
+        if (typeName === '') {
+            return; // Exit the function, preventing further execution
+        }
+        // Serialize form data
+        var formData = $('#create_type').serialize();
 
         // AJAX request
         $.ajax({
             type: 'POST',
-            url: 'actions/process_form.php',
+            url: 'actions/create_type.php',
             data: formData,
             success: function (response) {
-                console.log("AJAX success response:", response); // Debugging statement
-
-                // Parse the JSON response
-                var responseData = JSON.parse(response);
-                
                 // Check if the operation was successful
-                if (responseData.success) {
-                    // Show success modal
-                    $('#successsModal').modal('show');
-                    
-                    // Clear form inputs
-                    $('#addForm')[0].reset();
+                if (response.success) {
+                    location.reload();
                 } else {
-                    // Show error modal
-                    $('#errorrModal').modal('show');
-                    $('#addModal').modal('hide');
+
                 }
             },
             error: function (xhr, status, error) {
-                // Handle error
-                console.error("AJAX error:", error); // Log error for debugging
                 // Display error message to the user
                 alert('An error occurred. Please try again later.');
             }
@@ -733,4 +733,76 @@ $(document).ready(function () {
 });
 </script>
 
+<!-- Create Type Modal -->
+<div class="modal fade" id="createtypeModal" tabindex="-1" aria-labelledby="createtypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createtypeModalLabel">Create Product Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="create_type" method="post">
+        <div class="mb-3">
+            <label for="inputName" class="form-label">Type Name:</label>
+            <input type="text" class="form-control" name="typeName" id="typeName" placeholder="Enter name" required>
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+        <button type="submit" id="createButton" class="btn btn-primary">Create</button>
+      </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function () {
+    // Function to refresh the page
+    function refreshPage() {
+        location.reload(true); // Reload the page
+    }
+
+    // Submit form via AJAX
+    $('#addForm').submit(function (event) {
+        // Prevent default form submission
+        event.preventDefault();
+
+        // Serialize form data
+        var formData = $(this).serialize();
+
+        // AJAX request
+        $.ajax({
+            type: 'POST',
+            url: 'actions/process_form.php',
+            data: formData,
+            success: function (response) {
+                // Parse the JSON response
+                var responseData = JSON.parse(response);
+
+                // Check if the operation was successful
+                if (responseData.success) {
+                    // Show success modal
+                    $('#successsModal').modal('show');
+
+                    // Clear form inputs
+                    $('#addForm')[0].reset();
+                } else {
+                    // Show error modal
+                }
+            },
+            error: function (xhr, status, error) {
+                // Display error message to the user
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    });
+
+    // Refresh page when addForm modal is hidden
+    $('#addModal').on('hidden.bs.modal', function () {
+        refreshPage();
+    });
+});
+
+</script>
 </html>

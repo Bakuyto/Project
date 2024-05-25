@@ -20,7 +20,7 @@ if (isset($_POST['update-user'])) {
     if ($stmt->execute()) {
         echo "Record updated successfully";
         // Redirect to a new page after successful update if needed
-        header("Location: ../create-user.php");
+        header("Location: ../setting.php");
     } else {
         echo "Error updating record: " . $stmt->error;
     }

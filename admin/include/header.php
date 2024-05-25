@@ -25,8 +25,8 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
         </li>
         <li class="nav-item">
           <a
-            class="nav-link <?php if($current_page == 'create-user.php') echo 'text-light active'; ?>"
-            href="create-user.php"><h4>Create</h4></a>
+            class="nav-link <?php if($current_page == 'setting.php') echo 'text-light active'; ?>"
+            href="setting.php"><h4>Setting</h4></a>
         </li>
         <!-- <li class="nav-item d-sm-none d-md-none">
           <a href="#"><div

@@ -26,7 +26,7 @@ if(isset($_POST['submit_user'])) {
 
         if ($conn->query($sql) === TRUE) {
             echo "Record updated successfully";
-            header("Location: create-user.php");
+            header("Location: setting.php");
         } else {
             echo "Error updating record: " . $conn->error;
         }
@@ -37,7 +37,7 @@ if(isset($_POST['submit_user'])) {
 
         if ($conn->query($sql) === TRUE) {
             echo "New record created successfully";
-            header("Location: ../create-user.php");
+            header("Location: ../setting.php");
         } else {
             echo "Error: " . $sql . "<br>" . $conn->error;
         }

@@ -9,11 +9,11 @@ if(isset($_POST['submit_transaction']) && isset($_POST['column_name']) && !empty
     if ($conn->query($sql) === TRUE) {
         echo "<script>alert('Data inserted successfully');</script>";
         // Redirect to avoid form resubmission
-        header("Location: ../create-user.php ");
+        header("Location: ../setting.php ");
         exit();
     } else {
         echo "<script>alert('Error: " . $conn->error . "');</script>";
-        header("Location: ../create-user.php ");
+        header("Location: ../setting.php ");
     }
 }
 

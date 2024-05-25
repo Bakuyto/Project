@@ -5,7 +5,7 @@ session_start();
 setcookie("loggedIn", "false", time() + 60, "/");
 
 // Check if the user is not logged in
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['user_log_name'])) {
   // Redirect to the login page
   header("Location: ../common/login.php");
   exit(); // Ensure that script execution stops after the redirect
@@ -18,95 +18,43 @@ if (!isset($_SESSION['username'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Report</title>
   <link rel="icon" href="assets/img/a.jpg">
-  <!-- <link rel="stylesheet" href="assets/css/reports.css"> -->
+  <link rel="stylesheet" href="assets/css/reports.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<style>
-    .btn:hover {
-  transform: scaleY(1.1);
-  transition: 1s;
-}
-* {
-  margin: 0;
-  padding: 0;
-}
-
-:root {
-  --blue: #28ACE8;
-  --white: #ffff;
-  --grey: rgb(211, 211, 211);
-}
-
-.tbl-container {
-  max-width: fit-content;
-  max-height: fit-content;
-  overflow: hidden;
-}
-
-.table-container.tbl-fixed {
-  overflow-y: scroll;
-  overflow-x: scroll;
-}
-
-table {
-  min-width: max-content;
-  border: 2px solid lightgrey;
-}
-
-table th {
-  position: sticky;
-  top: 0;
-  background-color: var(--blue);
-  padding-left: 10px;
-  padding-right: 10px;
-  height: 50px;
-  z-index: 1;
-}
-th,td{
-padding: 4px;
-}
-
-table thead tr th {
-  text-align: center;
-  outline: 2px solid lightgrey;
-}
-
-table tbody tr td {
-  text-align: center;
-  background-color: white;
-  outline: 1px solid lightgrey;
-}
-
-table tbody tr td.sticky{
-outline: 2px solid lightgrey;
-}
-/* Sticky Header Styles */
-table thead th.sticky {
-  position: sticky;
-  top: 0;
-  width: auto;
-  z-index: 2;
-}
-table tbody tr td.sticky {
-  position: sticky;
-  z-index: 1;
-}
-
-table tbody tr td:focus{
-font-weight: bolder;
-background-color: var(--blue);
-}
-</style>
 <body>
 <div class="container-fluid m-0 p-0" style="height:100vh;">
   <?php include 'include/header.php'; ?>
   <div class="contianer-fluid" style="height:60px;">
     <div class="mx-5 months_year d-flex justify-content-between pt-2 pb-2">
-    <form >
-    <input class="form-control" type="search" id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:260px">
-    </form>
+    <div class="filter-form d-flex">
+        <form id="searchForm">
+        <input class="form-control me-1" type="search" id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:160px">
+        </form>
+        <select id="select-filter" class="form-select" style="height:38.1px;">
+        <option class="text-dark" value="" selected disabled>Select Type</option>
+        <?php 
+                            include '../connection/connect.php';
+                            $sql = "Select * from tblproduct_type"; // SQL query to select data from the table
+                            $result = $conn->query($sql); // Execute the query
+            
+                            if ($result->num_rows > 0) {
+                              while ($row = $result->fetch_assoc()) {
+                                  $product_name = $row['product_type_name'];
+                                  $product_id = $row['product_type_pk'];
+                          ?>
+                                  <option id="<?php echo $product_id; ?>" value="<?php echo $product_id; ?>"><?php echo $product_name; ?> </option>
+                          <?php
+                              }
+                          } else {
+                              echo "<option value='' selected>No departments found</option>"; // Output if no results found
+                          }
+                            $conn->close(); // Close the database connection
+                          ?>
+                          <option value="all">All</option> <!-- New option for selecting all values -->
+        </select>
+    </div>
    
     <form id="month_year_search" method="post">
         <label for="year">Date: </label>
@@ -133,7 +81,7 @@ background-color: var(--blue);
                                 $row = $result->fetch_assoc();
                                 foreach ($row as $column_name => $value) {
                                     // Skip rendering specific columns
-                                    if ($column_name == 'user_fk' || $column_name == 'product_fk'||$column_name == 'datetime') {
+                                    if ($column_name == 'user_fk' ||$column_name == 'product_type_fk' || $column_name == 'product_fk'||$column_name == 'datetime') {
                                         continue;
                                     }
 
@@ -171,13 +119,16 @@ background-color: var(--blue);
                                             echo "Product Name";
                                             break;
                                         case 'dateTime':
-                                            echo "Date";
+                                            echo "Date <br> Time";
                                             break;
                                         case 'RMA':
                                             echo "RMA";
                                             break;
                                         case 'Consignment_Stock':
-                                            echo "Consignment Stock";
+                                            echo "Consignment <br> Stock";
+                                            break;
+                                        case 'STOCK_AVAILABLE':
+                                            echo "STOCK <br> AVAILABLE";
                                             break;
                                         case 'Pre_Order':
                                             echo "Pre Order";
@@ -228,11 +179,11 @@ background-color: var(--blue);
                                 // Loop for other columns
                                 foreach ($row as $column_name => $value) {
                                     // Skip rendering specific columns
-                                    if ($column_name == 'id' || $column_name == 'user_fk' || $column_name == 'product_fk' || $column_name == 'datetime') {
+                                    if ($column_name == 'id' || $column_name == 'user_fk' || $column_name == 'product_type_fk' || $column_name == 'product_fk' || $column_name == 'datetime') {
                                         continue;
                                     }
                                     // Output cell data
-                                    echo "<td data-column='$column_name'>$value</td>";
+                                    echo "<td data-column='$column_name' data-product-type='".$row['product_type_fk']."'>$value</td>";
                                 }
                                 echo "</tr>";
                             }
@@ -260,6 +211,163 @@ background-color: var(--blue);
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="assets/js/table2excel.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Filter table function
+        function filterTable() {
+            var selectedValue = document.getElementById("select-filter").value;
+            var rows = document.querySelectorAll("#tableBody tr");
+            var noResultsRow = document.getElementById("noResultsRow");
+            var hasVisibleRow = false;
+
+            rows.forEach(function(row) {
+                var productType = row.querySelector("td[data-product-type]").getAttribute("data-product-type");
+
+                if (selectedValue === "all" || selectedValue === productType) {
+                    row.style.display = "";
+                    hasVisibleRow = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            if (hasVisibleRow) {
+                noResultsRow.style.display = "none";
+            } else {
+                noResultsRow.style.display = "";
+            }
+        }
+
+        // Initial filter on page load
+        var selectFilter = document.getElementById("select-filter");
+        selectFilter.value = "all"; // Set default value to "all"
+        selectFilter.addEventListener("change", filterTable);
+        filterTable();
+
+        // Export to CSV function
+        document.getElementById('export2excel').addEventListener('click', function () {
+            var table = document.getElementById('myTable');
+            var rowsToExport = table.querySelectorAll("#tableBody tr:not([style*='display: none'])");
+            var csvContent = "data:text/csv;charset=utf-8,";
+
+            // Construct header row
+            var headerRow = [];
+            var headerCells = table.querySelectorAll("th");
+            headerCells.forEach(function (headerCell) {
+                headerRow.push('"' + headerCell.innerText.replace(/"/g, '""') + '"');
+            });
+            csvContent += headerRow.join(",") + "\n";
+
+            // Construct data rows
+            rowsToExport.forEach(function (row) {
+                var rowData = [];
+                var cells = row.querySelectorAll("td");
+                cells.forEach(function (cell) {
+                    rowData.push('"' + cell.innerText.replace(/"/g, '""') + '"');
+                });
+                csvContent += rowData.join(",") + "\n";
+            });
+
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "exported_data.csv");
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+        });
+    });
+</script>
+
+
+<script>
+        document.getElementById('export2excel').addEventListener('click', function () {
+            var table = document.getElementById('myTable');
+            var rowsToExport = $('#tableBody tr:visible');
+            var csvContent = "data:text/csv;charset=utf-8,";
+
+            // Construct header row
+            var headerRow = [];
+            var headerCells = table.querySelectorAll("th");
+            headerCells.forEach(function (headerCell) {
+                headerRow.push('"' + headerCell.innerText.replace(/"/g, '""') + '"');
+            });
+            csvContent += headerRow.join(",") + "\n";
+
+            // Construct data rows
+            rowsToExport.each(function() {
+                var rowData = [];
+                $(this).find("td").each(function() {
+                    rowData.push('"' + $(this).text().replace(/"/g, '""') + '"');
+                });
+                csvContent += rowData.join(",") + "\n";
+            });
+
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "exported_data.csv");
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+        });
+
+        $('#month_year_search').on('submit', function(event) {
+            try {
+                event.preventDefault(); // Prevent form submission
+                const yearMonth = $(this).find('input[name="year"]').val();
+
+                // If the input field is empty, show all rows
+                if (!yearMonth) {
+                    showAllRows();
+                    return;
+                }
+
+                const selectedDate = new Date(yearMonth);
+                const selectedMonth = selectedDate.getMonth() + 1; // Month is 0-indexed, so add 1
+                const selectedYear = selectedDate.getFullYear();
+
+                // Filter table rows based on selected month and year
+                let foundMatch = false;
+                const rows = $('#tableBody tr');
+                rows.each(function() {
+                    const cells = $(this).find('td');
+                    if (cells.length > 0) {
+                        const dateCell = cells.eq(3); // Assuming the fourth cell contains the date
+                        const date = new Date(dateCell.text());
+                        const month = date.getMonth() + 1;
+                        const year = date.getFullYear();
+
+                        if (month === selectedMonth && year === selectedYear) {
+                            $(this).show(); // Show row
+                            foundMatch = true;
+                        } else {
+                            $(this).hide(); // Hide row
+                        }
+                    }
+                });
+
+                // Show or hide "No results found" message
+                if (foundMatch) {
+                    $('#noResultsRow').hide();
+                } else {
+                    $('#noResultsRow').show();
+                }
+            } catch (error) {
+                $('#noResultsRow').show(); // Display "No results found" message for errors
+            }
+        });
+
+        function showAllRows() {
+            $('#tableBody tr').show();
+            $('#noResultsRow').hide();
+        }
+</script>
 
 <script>
 document.getElementById('export2excel').addEventListener('click', function () {
@@ -314,7 +422,7 @@ document.getElementById('export2excel').addEventListener('click', function () {
                     // Loop through each cell, excluding specified columns
                     for (var j = 0; j < cells.length; j++) {
                         // Exclude columns by index (0 for No, 1 for product_name, 2 for dateTime)
-                        if (j !== 0 && j !== 1 && j !== 2) {
+                        if (j !== 0 && j !== 1 && j !== 2 && j !== 3) {
                             // Parse the cell value as a number
                             var cellValue = parseFloat(cells[j].textContent.trim());
 
@@ -348,6 +456,9 @@ document.getElementById('export2excel').addEventListener('click', function () {
                     cell.textContent = "Name";
                     cell.classList.add("text-danger","fw-bolder");
                 } else if (k === 2) {
+                    cell.textContent = "PK+CI";
+                    cell.classList.add("text-danger","fw-bolder");
+                } else if (k === 3) {
                     cell.textContent = "( YYY/MMM/DDD )";
                     cell.classList.add("text-danger","fw-bolder");
                 } else {
@@ -428,7 +539,7 @@ $('#month_year_search').on('submit', function(event) {
         rows.each(function() {
             const cells = $(this).find('td');
             if (cells.length > 0) {
-                const dateCell = cells.eq(2); // Assuming the third cell contains the date
+                const dateCell = cells.eq(3); // Assuming the third cell contains the date
                 const date = new Date(dateCell.text());
                 const month = date.getMonth() + 1;
                 const year = date.getFullYear();

@@ -1,7 +1,7 @@
 <?php
 include '../../connection/connect.php';
 
-$sql = "CALL update_table_column('')";
+$sql = "CALL update_table_column('', null)";
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {

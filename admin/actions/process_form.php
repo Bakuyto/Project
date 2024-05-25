@@ -4,49 +4,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SERVER['HTTP_X_REQUESTED_WIT
     // Include your database connection script
     include '../../connection/connect.php';
 
-    // Assuming your form fields are named after database columns
-    // You can retrieve the values submitted in the form like this:
-    $values = array();
-    foreach ($_POST as $key => $value) {
-        // Prevent SQL injection by using prepared statements
-        $escaped_value = $conn->real_escape_string($value);
-
-        // Set default value to '0' if the field is empty
-        $values[$key] = !empty($escaped_value) ? $escaped_value : '0';
-
-        // Check if product_name is empty and handle it as required
-        if ($key === 'product_name' && empty($escaped_value)) {
-            echo json_encode(array("success" => false, "error" => "Product name is required"));
+    // Check if required fields are set and not empty
+    $required_fields = array("product_name", "product_type_fk");
+    foreach ($required_fields as $field) {
+        if (empty($_POST[$field])) {
+            echo json_encode(array("success" => false, "error" => ucfirst($field) . " is required"));
             exit;
         }
     }
 
-    // Now, you can process the submitted data, for example, inserting it into the database
-    // Assuming 'tblproduct_transaction' is your table name
+    // Escape and prepare data for insertion
+    $values = array();
+    foreach ($_POST as $key => $value) {
+        $escaped_value = $conn->real_escape_string($value);
+        $values[$key] = !empty($escaped_value) ? "'" . $escaped_value . "'" : '0';
+    }
+
+    // Insert data into tblproduct_transaction
     $columns = implode(", ", array_keys($values));
-    $columnValues = "'" . implode("', '", $values) . "'";
+    $columnValues = implode(", ", $values);
 
     $sql = "INSERT INTO tblproduct_transaction ($columns) VALUES ($columnValues)";
     if ($conn->query($sql) === TRUE) {
-        // Insertion successful for tblproduct_transaction
-
         // Get the ID generated for the inserted record
         $last_insert_id = $conn->insert_id;
 
-        // Now insert into tblproduct_sales_months with the obtained ID
+        // Insert into tblproduct_sales_months with the obtained ID
         $product_fk = $last_insert_id; // Use the ID from tblproduct_transaction
         $sql_sales_months = "INSERT INTO tblproduct_sales_months (product_fk) VALUES ('$product_fk')";
 
         if ($conn->query($sql_sales_months) === TRUE) {
-            // Insertion successful for tblproduct_sales_months
             echo json_encode(array("success" => true)); // Send success response
         } else {
-            // Error occurred for tblproduct_sales_months
-            echo json_encode(array("success" => false, "error" => $conn->error)); // Send error response
+            echo json_encode(array("success" => false, "error" => "Error occurred for tblproduct_sales_months: " . $conn->error)); // Send error response
         }
     } else {
-        // Error occurred for tblproduct_transaction
-        echo json_encode(array("success" => false, "error" => $conn->error)); // Send error response
+        echo json_encode(array("success" => false, "error" => "Error occurred for tblproduct_transaction: " . $conn->error)); // Send error response
     }
 
     // Close the database connection

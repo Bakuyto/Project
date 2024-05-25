@@ -19,7 +19,7 @@ include '../../connection/connect.php';
         // User inserted successfully
         echo "<script>alert('User inserted successfully');</script>";
         // Redirect to avoid form resubmission
-        header("Location: ../create-user.php ");
+        header("Location: ../setting.php ");
         exit();
     } else {
   

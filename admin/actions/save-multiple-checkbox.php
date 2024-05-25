@@ -71,25 +71,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Set message if no brands selected
             $message = "No brands selected.";
             // Pass the error message back to create-user.php using URL parameter
-            header("Location: ../create-user.php?error=true&message=" . urlencode($message));
+            header("Location: ../setting.php?error=true&message=" . urlencode($message));
             exit();
         }
     } else {
         // Set message if department_pk is missing
         $message = "Department primary key is missing.";
         // Pass the error message back to create-user.php using URL parameter
-        header("Location: ../create-user.php?error=true&message=" . urlencode($message));
+        header("Location: ../setting.php?error=true&message=" . urlencode($message));
         exit();
     }
 } else {
     // Set message for invalid request method
     $message = "Invalid request.";
     // Pass the error message back to create-user.php using URL parameter
-    header("Location: ../create-user.php?error=true&message=" . urlencode($message));
+    header("Location: ../setting.php?error=true&message=" . urlencode($message));
     exit();
 }
 
 // Pass the message back to create-user.php using URL parameter
-header("Location: ../create-user.php?success=true&message=" . urlencode($message));
+header("Location: ../setting.php?success=true&message=" . urlencode($message));
 exit();
 ?>
