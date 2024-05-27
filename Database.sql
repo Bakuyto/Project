@@ -20,17 +20,19 @@ DROP TABLE IF EXISTS `tbldepartment`;
 
 CREATE TABLE `tbldepartment` (
   `department_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `active_status` int(11) DEFAULT '0' COMMENT '1=Active, 0=InActive',
   `department_name` varchar(100) COLLATE utf8_unicode_ci DEFAULT '',
   `product_status` int(11) DEFAULT '0' COMMENT '1=Active, 0=InActive',
   PRIMARY KEY (`department_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tbldepartment` */
 
-insert  into `tbldepartment`(`department_pk`,`department_name`,`product_status`) values 
-(1,'Stock',1),
-(2,'Marketing',0),
-(3,'Admin',0);
+insert  into `tbldepartment`(`department_pk`,`active_status`,`department_name`,`product_status`) values 
+(1,1,'Stock',0),
+(2,1,'Marketing',0),
+(3,1,'Admin',0),
+(4,1,'Sale',0);
 
 /*Table structure for table `tblproduct_sales_months` */
 
@@ -63,34 +65,7 @@ insert  into `tblproduct_sales_months`(`product_fk`,`January`,`February`,`March`
 (5,0,0,0,0,0,0,0,0,0,0,0,0),
 (6,0,0,0,0,0,0,0,0,0,0,0,0),
 (7,0,0,0,0,0,0,0,0,0,0,0,0),
-(8,0,0,0,0,0,0,0,0,0,0,0,0),
-(9,0,0,0,0,0,0,0,0,0,0,0,0),
-(10,0,0,0,0,0,0,0,0,0,0,0,0),
-(11,0,0,0,0,0,0,0,0,0,0,0,0),
-(12,0,0,0,0,0,0,0,0,0,0,0,0),
-(13,0,0,0,0,0,0,0,0,0,0,0,0),
-(14,0,0,0,0,0,0,0,0,0,0,0,0),
-(15,0,0,0,0,0,0,0,0,0,0,0,0),
-(16,0,0,0,0,0,0,0,0,0,0,0,0),
-(17,0,0,0,0,0,0,0,0,0,0,0,0),
-(18,0,0,0,0,0,0,0,0,0,0,0,0),
-(19,0,0,0,0,0,0,0,0,0,0,0,0),
-(20,0,0,0,0,0,0,0,0,0,0,0,0),
-(21,0,0,0,0,0,0,0,0,0,0,0,0),
-(22,0,0,0,0,0,0,0,0,0,0,0,0),
-(23,0,0,0,0,0,0,0,0,0,0,0,0),
-(24,0,0,0,0,0,0,0,0,0,0,0,0),
-(25,0,0,0,0,0,0,0,0,0,0,0,0),
-(26,0,0,0,0,0,0,0,0,0,0,0,0),
-(27,0,0,0,0,0,0,0,0,0,0,0,0),
-(28,0,0,0,0,0,0,0,0,0,0,0,0),
-(29,0,0,0,0,0,0,0,0,0,0,0,0),
-(30,0,0,0,0,0,0,0,0,0,0,0,0),
-(31,0,0,0,0,0,0,0,0,0,0,0,0),
-(32,0,0,0,0,0,0,0,0,0,0,0,0),
-(33,0,0,0,0,0,0,0,0,0,0,0,0),
-(34,0,0,0,0,0,0,0,0,0,0,0,0),
-(35,0,0,0,0,0,0,0,0,0,0,0,0);
+(8,0,0,0,0,0,0,0,0,0,0,0,0);
 
 /*Table structure for table `tblproduct_sales_months_history` */
 
@@ -117,73 +92,14 @@ CREATE TABLE `tblproduct_sales_months_history` (
 /*Data for the table `tblproduct_sales_months_history` */
 
 insert  into `tblproduct_sales_months_history`(`datetime`,`product_fk`,`January`,`February`,`March`,`April`,`May`,`June`,`July`,`August`,`September`,`October`,`November`,`December`) values 
-('2024-07-07 13:32:30',1,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',2,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',3,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',4,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',5,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',6,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',7,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',8,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',9,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',10,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',11,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',12,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',13,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',14,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',15,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-07-07 13:32:30',16,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',1,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',2,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',3,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',4,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',5,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',6,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',7,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',8,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',9,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',10,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',11,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',12,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',13,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',14,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',15,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-12-25 13:39:24',16,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',1,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',2,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',3,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',4,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',5,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',6,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',7,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',8,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',9,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',10,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',11,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',12,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',13,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',14,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',15,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',16,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',17,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',18,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',19,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',20,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',21,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',22,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',23,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',24,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',25,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',26,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',27,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',28,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',29,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',30,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',31,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',32,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',33,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',34,0,0,0,0,0,0,0,0,0,0,0,0),
-('2024-05-08 10:55:45',35,0,0,0,0,0,0,0,0,0,0,0,0);
+('2024-05-27 13:59:21',1,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-27 13:59:21',2,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-27 13:59:21',3,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-27 13:59:21',4,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-27 13:59:21',5,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-27 13:59:21',6,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-27 13:59:21',7,0,0,0,0,0,0,0,0,0,0,0,0),
+('2024-05-27 13:59:21',8,0,0,0,0,0,0,0,0,0,0,0,0);
 
 /*Table structure for table `tblproduct_transaction` */
 
@@ -191,53 +107,29 @@ DROP TABLE IF EXISTS `tblproduct_transaction`;
 
 CREATE TABLE `tblproduct_transaction` (
   `product_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `product_type_fk` int(11) DEFAULT NULL,
   `product_name` varchar(150) COLLATE utf8_unicode_ci DEFAULT '',
-  `product_status` int(11) DEFAULT '1' COMMENT '1=Active, 0=InActive',
-  `ETA` int(11) DEFAULT '0',
+  `PK_CI` varchar(150) COLLATE utf8_unicode_ci DEFAULT '',
+  `ETD` int(11) DEFAULT '0',
   `RMA` int(11) DEFAULT '0',
+  `ETA` int(11) DEFAULT '0',
   `Consignment_Stock` int(11) DEFAULT '0',
-  `Pre_Order` int(11) DEFAULT '0',
+  `STOCK_AVAILABLE` int(11) DEFAULT '0',
+  `SHOWS` int(11) DEFAULT '0',
   PRIMARY KEY (`product_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tblproduct_transaction` */
 
-insert  into `tblproduct_transaction`(`product_pk`,`product_name`,`product_status`,`ETA`,`RMA`,`Consignment_Stock`,`Pre_Order`) values 
-(1,'Naraka',1,0,0,10,0),
-(2,'Fanta',1,0,0,0,10),
-(3,'Apex Legend',1,0,0,0,0),
-(4,'AK',1,0,0,0,0),
-(5,'JX',1,0,0,0,0),
-(6,'Cambodia',1,0,0,0,0),
-(7,'Coca',1,0,0,0,0),
-(8,'Dasani',1,0,0,0,0),
-(9,'Mirinda',1,0,0,0,0),
-(10,'Fafa',1,0,0,0,0),
-(11,'Cat',1,0,0,0,0),
-(12,'Dog',1,0,0,0,0),
-(13,'Dianosur',1,0,0,0,0),
-(14,'Nike',1,0,0,0,0),
-(15,'Addidas',1,0,0,0,0),
-(16,'Puma',1,0,0,0,0),
-(17,'Salah',1,0,0,0,0),
-(18,'Nasa',1,0,0,0,0),
-(19,'USA',1,0,0,0,0),
-(20,'Panama',1,0,0,0,0),
-(21,'Japanese',1,0,0,0,0),
-(22,'Canada',1,0,0,0,0),
-(23,'Yakuza',1,0,0,0,0),
-(24,'Brazil',1,0,0,0,0),
-(25,'England',1,0,0,0,0),
-(26,'Spain',1,0,0,0,0),
-(27,'Argentina',1,0,0,0,0),
-(28,'Sweden',1,0,0,0,0),
-(29,'Vietnam',1,0,0,0,0),
-(30,'Laos',1,0,0,0,0),
-(31,'China',1,0,0,0,0),
-(32,'Finland',1,0,0,0,0),
-(33,'Korea',1,0,0,0,0),
-(34,'Brada',1,0,0,0,0),
-(35,'Mabochioka',1,0,0,0,0);
+insert  into `tblproduct_transaction`(`product_pk`,`product_type_fk`,`product_name`,`PK_CI`,`ETD`,`RMA`,`ETA`,`Consignment_Stock`,`STOCK_AVAILABLE`,`SHOWS`) values 
+(1,1,'TP-Link 01','P80',0,0,0,0,0,0),
+(2,1,'TP-Link 02','P90',0,0,0,0,0,0),
+(3,1,'TP-Link 03','P100',0,0,0,0,0,0),
+(4,1,'TP-Link 04','0',0,0,0,0,0,0),
+(5,2,'Deco 01','0',0,0,0,0,0,0),
+(6,2,'Deco 02','0',0,0,0,0,0,0),
+(7,2,'Deco 03','0',0,0,0,0,0,0),
+(8,2,'Deco 04','0',0,0,0,0,0,0);
 
 /*Table structure for table `tblproduct_transaction_history` */
 
@@ -246,86 +138,47 @@ DROP TABLE IF EXISTS `tblproduct_transaction_history`;
 CREATE TABLE `tblproduct_transaction_history` (
   `user_fk` int(11) DEFAULT NULL,
   `product_fk` int(11) DEFAULT NULL,
+  `product_type_fk` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `product_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `PK_CI` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dateTime` timestamp NULL DEFAULT NULL,
-  `ETA` int(11) DEFAULT '0',
+  `ETD` int(11) DEFAULT '0',
   `RMA` int(11) DEFAULT '0',
+  `ETA` int(11) DEFAULT '0',
   `Consignment_Stock` int(11) DEFAULT '0',
-  `Pre_Order` int(11) DEFAULT '0',
+  `STOCK_AVAILABLE` int(11) DEFAULT '0',
+  `SHOWS` int(11) DEFAULT '0',
   KEY `user_fk` (`user_fk`),
   KEY `product_fk` (`product_fk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tblproduct_transaction_history` */
 
-insert  into `tblproduct_transaction_history`(`user_fk`,`product_fk`,`product_name`,`dateTime`,`ETA`,`RMA`,`Consignment_Stock`,`Pre_Order`) values 
-(1,1,'Naraka','2024-07-07 13:32:30',1,10,0,0),
-(2,2,'Fanta','2024-07-07 13:32:30',0,0,0,0),
-(3,3,'Apex Legend','2024-07-07 13:32:30',0,0,0,0),
-(4,4,'AK','2024-07-07 13:32:30',0,0,0,0),
-(5,5,'JX','2024-07-07 13:32:30',0,0,0,0),
-(6,6,'Cambodia','2024-07-07 13:32:30',0,0,0,0),
-(7,7,'Coca','2024-07-07 13:32:30',0,0,0,0),
-(8,8,'Dasani','2024-07-07 13:32:30',0,0,0,0),
-(9,9,'Mirinda','2024-07-07 13:32:30',0,0,0,0),
-(10,10,'Fafa','2024-07-07 13:32:30',0,0,0,0),
-(11,11,'Cat','2024-07-07 13:32:30',0,0,0,0),
-(12,12,'Dog','2024-07-07 13:32:30',0,0,0,0),
-(13,13,'Dianosur','2024-07-07 13:32:30',0,0,0,0),
-(14,14,'Nike','2024-07-07 13:32:30',0,0,0,0),
-(15,15,'Addidas','2024-07-07 13:32:30',0,0,0,0),
-(16,16,'Puma','2024-07-07 13:32:30',0,0,0,0),
-(1,1,'Naraka','2024-12-25 13:39:24',10,10,100,0),
-(2,2,'Fanta','2024-12-25 13:39:24',0,0,0,0),
-(3,3,'Apex Legend','2024-12-25 13:39:24',0,0,0,0),
-(4,4,'AK','2024-12-25 13:39:24',0,0,0,0),
-(5,5,'JX','2024-12-25 13:39:24',0,0,0,0),
-(6,6,'Cambodia','2024-12-25 13:39:24',0,0,0,0),
-(7,7,'Coca','2024-12-25 13:39:24',0,0,0,0),
-(8,8,'Dasani','2024-12-25 13:39:24',0,0,0,0),
-(9,9,'Mirinda','2024-12-25 13:39:24',0,0,0,0),
-(10,10,'Fafa','2024-12-25 13:39:24',0,0,0,0),
-(11,11,'Cat','2024-12-25 13:39:24',0,0,0,0),
-(12,12,'Dog','2024-12-25 13:39:24',0,0,0,0),
-(13,13,'Dianosur','2024-12-25 13:39:24',0,0,0,0),
-(14,14,'Nike','2024-12-25 13:39:24',0,0,0,0),
-(15,15,'Addidas','2024-12-25 13:39:24',0,0,0,0),
-(16,16,'Puma','2024-12-25 13:39:24',0,0,0,0),
-(1,1,'Naraka','2024-05-08 10:55:45',150,0,1321,0),
-(2,2,'Fanta','2024-05-08 10:55:45',250,0,0,0),
-(3,3,'Apex Legend','2024-05-08 10:55:45',0,0,0,0),
-(4,4,'AK','2024-05-08 10:55:45',1500,0,800,0),
-(5,5,'JX','2024-05-08 10:55:45',0,0,0,0),
-(6,6,'Cambodia','2024-05-08 10:55:45',0,0,0,0),
-(7,7,'Coca','2024-05-08 10:55:45',0,0,0,0),
-(8,8,'Dasani','2024-05-08 10:55:45',0,0,0,0),
-(9,9,'Mirinda','2024-05-08 10:55:45',0,0,0,0),
-(10,10,'Fafa','2024-05-08 10:55:45',0,0,0,0),
-(11,11,'Cat','2024-05-08 10:55:45',0,0,0,0),
-(12,12,'Dog','2024-05-08 10:55:45',0,0,0,0),
-(13,13,'Dianosur','2024-05-08 10:55:45',0,0,0,0),
-(14,14,'Nike','2024-05-08 10:55:45',0,0,0,0),
-(15,15,'Addidas','2024-05-08 10:55:45',0,0,0,0),
-(16,16,'Puma','2024-05-08 10:55:45',0,0,0,0),
-(17,17,'Salah','2024-05-08 10:55:45',0,0,0,0),
-(18,18,'Nasa','2024-05-08 10:55:45',0,0,0,0),
-(19,19,'USA','2024-05-08 10:55:45',0,0,0,0),
-(20,20,'Panama','2024-05-08 10:55:45',0,0,0,0),
-(21,21,'Japanese','2024-05-08 10:55:45',0,0,0,0),
-(22,22,'Canada','2024-05-08 10:55:45',0,0,0,0),
-(23,23,'Yakuza','2024-05-08 10:55:45',0,0,0,0),
-(24,24,'Brazil','2024-05-08 10:55:45',0,0,0,0),
-(25,25,'England','2024-05-08 10:55:45',0,0,0,0),
-(26,26,'Spain','2024-05-08 10:55:45',0,0,0,0),
-(27,27,'Argentina','2024-05-08 10:55:45',0,0,0,0),
-(28,28,'Sweden','2024-05-08 10:55:45',0,0,0,0),
-(29,29,'Vietnam','2024-05-08 10:55:45',0,0,0,0),
-(30,30,'Laos','2024-05-08 10:55:45',0,0,0,0),
-(31,31,'China','2024-05-08 10:55:45',0,0,0,0),
-(32,32,'Finland','2024-05-08 10:55:45',0,0,0,0),
-(33,33,'Korea','2024-05-08 10:55:45',0,0,0,0),
-(34,34,'Brada','2024-05-08 10:55:45',0,0,0,0),
-(35,35,'Mabochioka','2024-05-08 10:55:45',0,0,0,0);
+insert  into `tblproduct_transaction_history`(`user_fk`,`product_fk`,`product_type_fk`,`product_name`,`PK_CI`,`dateTime`,`ETD`,`RMA`,`ETA`,`Consignment_Stock`,`STOCK_AVAILABLE`,`SHOWS`) values 
+(1,1,'1','TP-Link 01','P80','2024-05-27 13:59:21',0,0,0,0,0,0),
+(2,2,'1','TP-Link 02','P90','2024-05-27 13:59:21',0,0,0,0,0,0),
+(3,3,'1','TP-Link 03','0','2024-05-27 13:59:21',0,0,0,0,0,0),
+(4,4,'1','TP-Link 04','0','2024-05-27 13:59:21',0,0,0,0,0,0),
+(5,5,'2','Deco 01','0','2024-05-27 13:59:21',0,0,0,0,0,0),
+(6,6,'2','Deco 02','0','2024-05-27 13:59:21',0,0,0,0,0,0),
+(7,7,'2','Deco 03','0','2024-05-27 13:59:21',0,0,0,0,0,0),
+(8,8,'2','Deco 04','0','2024-05-27 13:59:21',0,0,0,0,0,0);
+
+/*Table structure for table `tblproduct_type` */
+
+DROP TABLE IF EXISTS `tblproduct_type`;
+
+CREATE TABLE `tblproduct_type` (
+  `product_type_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `product_type_name` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`product_type_pk`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+/*Data for the table `tblproduct_type` */
+
+insert  into `tblproduct_type`(`product_type_pk`,`product_type_name`) values 
+(1,'TP-Link'),
+(2,'Deco');
 
 /*Table structure for table `tblproductadjustpermission` */
 
@@ -341,11 +194,11 @@ CREATE TABLE `tblproductadjustpermission` (
 /*Data for the table `tblproductadjustpermission` */
 
 insert  into `tblproductadjustpermission`(`department_fk`,`product_tran_name_str`) values 
+(1,'ETD'),
 (1,'ETA'),
-(1,'RMA'),
-(2,'ETA'),
-(3,'ETA'),
-(3,'RMA');
+(2,'SHOWS'),
+(2,'Consignment_Stock'),
+(2,'STOCK_AVAILABLE');
 
 /*Table structure for table `tbluser` */
 
@@ -367,7 +220,7 @@ CREATE TABLE `tbluser` (
 
 insert  into `tbluser`(`user_pk`,`user_department_fk`,`user_level_fk`,`user_full_name`,`user_log_name`,`user_log_password`) values 
 (1,3,1,'Dolla Sok','Dolla','123'),
-(2,1,2,'Dara','Dara','123'),
+(2,1,2,'RY DARA','Dara','123'),
 (3,3,2,'Heng','Heng','123'),
 (4,3,1,'John Cena','John Cena','123'),
 (5,1,2,'Kaka','Kaka','123'),
@@ -677,10 +530,10 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`%` PROCEDURE `Product_Status`(IN department_id INT, IN new_status VARCHAR(255))
+/*!50003 CREATE DEFINER=`root`@`%` PROCEDURE `Product_Status`(IN department_id INT, IN new_status int)
 BEGIN
     UPDATE tbldepartment 
-    SET product_status = new_status 
+    SET active_status = new_status 
     WHERE department_pk = department_id;
 END */$$
 DELIMITER ;
@@ -753,36 +606,59 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`%` PROCEDURE `update_table_column`(IN p_name VARCHAR(150))
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_table_column`(
+    IN `p_name` VARCHAR(150),
+    IN `p_type` INT
+)
 BEGIN
     DECLARE sum_columns TEXT;
     DECLARE sql_query TEXT;
 
-    SET @sql = CONCAT('SELECT PT.*, (');
+    -- Set the initial value of sql_query
+    SET sql_query = CONCAT('SELECT PT.*, (');
 
-    -- Fetch column names starting from the specified index
-    SELECT GROUP_CONCAT(CONCAT(column_name, ' + ') SEPARATOR '') INTO sum_columns
+    -- Fetch column names starting from the specified index, excluding product_status, PK_CI, product_name, and RMA
+    SELECT GROUP_CONCAT(
+         CONCAT(column_name, ' + ') SEPARATOR ''
+    ) INTO sum_columns
     FROM INFORMATION_SCHEMA.COLUMNS
     WHERE table_name = 'tblproduct_transaction'
-    AND ordinal_position >= 4;
+    AND ordinal_position >= 4
+    AND column_name NOT IN ('product_status','PK_CI','product_name', 'RMA','ETD');
 
     -- Remove the last ' + ' from the concatenated sum
     SET sum_columns = LEFT(sum_columns, LENGTH(sum_columns) - 2);
 
-    -- Construct the SELECT statement with the dynamically calculated sum and subtraction
-    IF p_name = "" THEN
-        SET @sql = CONCAT(@sql, sum_columns, ') AS Current_Stock, (', sum_columns, ') - (January + February + March + April + May + June + July + August + September + October + November + December) AS Total, PSM.`December`,PSM.`November`,PSM.`October`,PSM.`September`,PSM.`August`,PSM.`July`,PSM.`June`,PSM.`May`,PSM.`April`,PSM.`March`,PSM.`February`,PSM.`January` FROM tblproduct_transaction PT INNER JOIN tblproduct_sales_months PSM ON PT.product_pk = PSM.product_fk');
-    ELSE
-        SET @sql = CONCAT(@sql, sum_columns, ') AS Current_Stock, (', sum_columns, ') - (January + February + March + April + May + June + July + August + September + October + November + December) AS Total, PSM.`December`,PSM.`November`,PSM.`October`,PSM.`September`,PSM.`August`,PSM.`July`,PSM.`June`,PSM.`May`,PSM.`April`,PSM.`March`,PSM.`February`,PSM.`January` FROM tblproduct_transaction PT INNER JOIN tblproduct_sales_months PSM ON PT.product_pk = PSM.product_fk  WHERE PT.product_name LIKE ?');
+    -- Construct the SELECT statement with the dynamically calculated sum and subtraction of RMA
+    SET @sql_query = CONCAT(
+        sql_query, 
+        sum_columns, 
+        ')- RMA AS Current_Stock, PSM.`December`, PSM.`November`, PSM.`October`, PSM.`September`, PSM.`August`, PSM.`July`, PSM.`June`, PSM.`May`, PSM.`April`, PSM.`March`, PSM.`February`, PSM.`January` FROM tblproduct_transaction PT INNER JOIN tblproduct_sales_months PSM ON PT.product_pk = PSM.product_fk'
+    );
+
+    -- Add conditions based on the input parameters
+    IF p_name <> '' AND p_type IS NOT NULL THEN
+        SET @sql_query = CONCAT(@sql_query, ' WHERE PT.product_name LIKE ? AND PT.product_type_fk = ?');
+    ELSEIF p_name <> '' THEN
+        SET @sql_query = CONCAT(@sql_query, ' WHERE PT.product_name LIKE ?');
+    ELSEIF p_type IS NOT NULL THEN
+        SET @sql_query = CONCAT(@sql_query, ' WHERE PT.product_type_fk = ?');
     END IF;
 
     -- Prepare the statement
-    PREPARE stmt FROM @sql;
+    PREPARE stmt FROM @sql_query;
 
-    -- Execute the statement with the provided parameter
-    IF p_name <> "" THEN
+    -- Execute the statement with the provided parameters
+    IF p_name <> '' AND p_type IS NOT NULL THEN
+        SET @p_name = CONCAT('%', p_name, '%');
+        SET @p_type = p_type;
+        EXECUTE stmt USING @p_name, @p_type;
+    ELSEIF p_name <> '' THEN
         SET @p_name = CONCAT('%', p_name, '%');
         EXECUTE stmt USING @p_name;
+    ELSEIF p_type IS NOT NULL THEN
+        SET @p_type = p_type;
+        EXECUTE stmt USING @p_type;
     ELSE
         EXECUTE stmt;
     END IF;

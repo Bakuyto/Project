@@ -32,28 +32,30 @@ if (!isset($_SESSION['user_log_name'])) {
         <form id="searchForm">
         <input class="form-control me-1" type="search" id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:160px">
         </form>
-        <select id="select-filter" class="form-select" style="height:38.1px;">
-        <option class="text-dark" value="" selected disabled>Select Type</option>
-        <?php 
-                            include '../connection/connect.php';
-                            $sql = "Select * from tblproduct_type"; // SQL query to select data from the table
-                            $result = $conn->query($sql); // Execute the query
-            
-                            if ($result->num_rows > 0) {
-                              while ($row = $result->fetch_assoc()) {
-                                  $product_name = $row['product_type_name'];
-                                  $product_id = $row['product_type_pk'];
-                          ?>
-                                  <option id="<?php echo $product_id; ?>" value="<?php echo $product_id; ?>"><?php echo $product_name; ?> </option>
-                          <?php
-                              }
-                          } else {
-                              echo "<option value='' selected>No departments found</option>"; // Output if no results found
-                          }
-                            $conn->close(); // Close the database connection
-                          ?>
-                          <option value="all">All</option> <!-- New option for selecting all values -->
+            <select id="select-filter" class="form-select" style="height:38.1px;">
+            <option class="text-dark" value="" selected disabled>Select Type</option>
+            <?php 
+                include '../connection/connect.php';
+                $sql = "SELECT * FROM tblproduct_type"; // SQL query to select data from the table
+                $result = $conn->query($sql); // Execute the query
+
+                if ($result->num_rows > 0) {
+                    // Fetch and display each row
+                    while ($row = $result->fetch_assoc()) {
+                        $product_name = htmlspecialchars($row['product_type_name']); // Escape for safety
+                        $product_id = htmlspecialchars($row['product_type_pk']); // Escape for safety
+                        echo "<option id='$product_id' value='$product_id'>$product_name</option>";
+                    }
+                } else {
+                    // If no results found, display a message
+                    echo "<option value='' disabled>No departments found</option>";
+                }
+                // Close the database connection
+                $conn->close();
+            ?>
+            <option value="all">All</option> <!-- New option for selecting all values -->
         </select>
+
     </div>
     <div class="form-inline d-flex flex-row gap-1">
       <button type="button" id="saveChangesBtn" class="btn btn-danger"  style="height:40px;">Generate</button>
@@ -181,28 +183,28 @@ if (!isset($_SESSION['user_log_name'])) {
                     <label class="w-100 pb-2 text-center fw-bolder">Product Type</label>
                     <div class="form-group d-flex">
                     <select id="productTypeSelect" class="form-select" style="border-radius:5px 0px 0px 5px;" required>
-                      <option class="text-dark" value="" selected disabled>Select Type</option>
+                        <option class="text-dark" value="" selected disabled>Select Type</option>
 
-                      <?php 
+                        <?php 
                             include '../connection/connect.php';
-                            $sql = "Select * from tblproduct_type"; // SQL query to select data from the table
+                            $sql = "SELECT * FROM tblproduct_type"; // SQL query to select data from the table
                             $result = $conn->query($sql); // Execute the query
-            
-                            if ($result->num_rows > 0) {
-                              while ($row = $result->fetch_assoc()) {
-                                  $product_name = $row['product_type_name'];
-                                  $product_id = $row['product_type_pk'];
-                          ?>
-                                  <option id="<?php echo $product_id; ?>" value="<?php echo $product_id; ?>"><?php echo $product_name; ?> </option>
-                          <?php
-                              }
-                          } else {
-                              echo "<option value='' selected>No departments found</option>"; // Output if no results found
-                          }
-                            $conn->close(); // Close the database connection
-                          ?>
 
+                            $product_id = ''; // Define product_id variable
+
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    $product_name = $row['product_type_name'];
+                                    $product_id = $row['product_type_pk'];
+                                    echo "<option id='$product_id' value='$product_id'>$product_name</option>";
+                                }
+                            } else {
+                                echo "<option value='' disabled>No departments found</option>"; // Output if no results found
+                            }
+                            $conn->close(); // Close the database connection
+                        ?>
                     </select>
+
                     <input type="hidden" id="product_type_fk" name="product_type_fk" value="<?php echo $product_id; ?>">
                     <button type="button" class="btn" style="border-radius:0px 5px 5px 0px; border:1px solid lightgrey" onclick="$('#createtypeModal').modal('show')">+</button>
                     </div>
@@ -509,14 +511,16 @@ $(document).ready(function() {
 
     // Input validation for numeric columns
     $(document).on("input", "tbody td.editable", function(event) {
-        var column = $(this).attr("data-column");
-        var value = $(this).text().trim();
-        
-        // Check if the entered value is numeric for non-"Product Name" columns
-        if (column !== "product_name" && column !== "PK_CI" && !(/^\d*\.?\d*$/.test(value))) {
-            $(this).text("0"); // Display "0" if not numeric
-        }
+    var column = $(this).attr("data-column");
+    var value = $(this).text().trim();
+    
+    console.log("Column:", column, "Value:", value); // Add this line for debugging
+
+    if (column !== "product_name" && column !== "PK_CI" && !(/^\d*\.?\d*$/.test(value))) {
+        $(this).text("0");
+    }
     });
+
 
     // Event listener for Enter key press in search input
     $("#searchInput").on("keypress", function(event) {
@@ -656,48 +660,48 @@ $(document).ready(function() {
 
 
     function updateValue(cell, newValue, oldValue) {
-        var column = cell.attr("data-column");
+    var column = cell.attr("data-column");
 
-        // If column is not product_name, validate if newValue is numeric
-        if (column !== "product_name" && column !== "PK_CI" && isNaN(newValue)) {
-            alert("Please enter a valid numeric value.");
-            cell.text(oldValue); // Revert the cell text to the original value
-            return;
-        }
-
-        var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
-
-        // Send AJAX request to update the value
-        $.ajax({
-            url: "actions/update.php",
-            type: "POST",
-            data: {
-                id: productId,
-                column: column,
-                newValue: newValue
-            },
-            dataType: "json",
-
-            success: function(response) {
-                if (response.success) {
-                    cell.text(newValue); // Update the cell text with the new value
-                    // Retrieve the search input value
-                    var searchText = $("#searchInput").val().trim();
-                    fetchData(searchText); // Fetch new data after successful update
-                } else {
-                    cell.text(oldValue); // Revert the cell text to the original value
-                }
-            },
-
-            error: function(xhr, status, error) {
-                cell.text(oldValue); // Revert the cell text to the original value
-            },
-            complete: function() {
-                // Remove the contenteditable attribute and reattach click event handler
-                cell.removeAttr("contenteditable");
-            }
-        });
+    // If column is not product_name or PK_CI, validate if newValue is numeric
+    if (column !== "product_name" && column !== "PK_CI" && isNaN(newValue)) {
+        alert("Please enter a valid numeric value.");
+        cell.text(oldValue); // Revert the cell text to the original value
+        return;
     }
+
+    var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
+
+    // Send AJAX request to update the value
+    $.ajax({
+        url: "actions/update.php",
+        type: "POST",
+        data: {
+            id: productId,
+            column: column,
+            newValue: newValue
+        },
+        dataType: "json",
+
+        success: function(response) {
+            if (response.success) {
+                cell.text(newValue); // Update the cell text with the new value
+                // Retrieve the search input value
+                var searchText = $("#searchInput").val().trim();
+                fetchData(searchText); // Fetch new data after successful update
+            } else {
+                cell.text(oldValue); // Revert the cell text to the original value
+            }
+        },
+
+        error: function(xhr, status, error) {
+            cell.text(oldValue); // Revert the cell text to the original value
+        },
+        complete: function() {
+            // Remove the contenteditable attribute and reattach click event handler
+            cell.removeAttr("contenteditable");
+        }
+    });
+}
 
     // Function to handle pagination
     function paginate(direction) {

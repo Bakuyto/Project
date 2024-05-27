@@ -33,28 +33,58 @@ if (isset($_SESSION['user_department_fk'])) {
     $permissions = array();
 }
 
-$searchText = "";
 
-// Check if search parameter is provided
-if(isset($_GET['search'])) {
-    // Sanitize and store the search parameter
-    $searchText = mysqli_real_escape_string($conn, $_GET['search']);
+// Initialize an empty array to hold the data
+$data = [];
+
+// Get the search text and product type parameters from the GET request
+$searchText = isset($_GET['search']) ? $_GET['search'] : '';
+$productType = isset($_GET['product_type']) ? $_GET['product_type'] : null;
+
+// Convert productType to null if it's 'null' or empty string
+$productType = ($productType === null || $productType === 'null' || $productType === '') ? null : (int)$productType;
+
+// Prepare the SQL query based on the presence of productType
+if ($productType === null) {
+    $sql = "CALL update_table_column(?, NULL)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $searchText);
+} else {
+    $sql = "CALL update_table_column(?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $searchText, $productType);
 }
 
-// Prepare the SQL query with the search text parameter
-$sql = "CALL update_table_column('$searchText', NULL)";
-$result = $conn->query($sql);
-
-// Prepare an array to hold the fetched data
-$data = array();
-
-if ($result && $result->num_rows > 0) {
-    // Fetch each row from the result set
-    while ($row = $result->fetch_assoc()) {
-        // Add modified row to the data array
-        $data[] = $row;
+// Execute the statement
+if ($stmt->execute()) {
+    // Fetch the result set
+    $result = $stmt->get_result();
+    if ($result) {
+        // Check if there are rows returned
+        if ($result->num_rows > 0) {
+            // Fetch each row from the result set
+            while ($row = $result->fetch_assoc()) {
+                // Add modified row to the data array
+                $data[] = $row;
+            }
+        }
+        // Get the total number of records
+        $totalRecords = count($data);
+        // Close the result set
+        $result->close();
+    } else {
+        // Handle database error
+        echo json_encode(["error" => "Database error: " . $stmt->error]);
+        exit;
     }
+} else {
+    // Handle execution error
+    echo json_encode(["error" => "Execution error: " . $stmt->error]);
+    exit;
 }
+
+// Close the statement
+$stmt->close();
 
 // Close the database connection
 $conn->close();
@@ -62,7 +92,8 @@ $conn->close();
 // Combine data and permissions and return as JSON
 $response = array(
     'data' => $data,
-    'permissions' => $permissions
+    'permissions' => $permissions,
+    'totalRecords' => $totalRecords
 );
 
 // Output data as JSON
