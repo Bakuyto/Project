@@ -218,7 +218,8 @@ if (!isset($_SESSION['user_log_name'])) {
                             FROM INFORMATION_SCHEMA.COLUMNS
                             WHERE TABLE_NAME = 'tblproduct_transaction'
                             AND COLUMN_NAME NOT IN ('product_status', 'product_type_fk')
-                            AND ORDINAL_POSITION >= 2;";
+                            AND ORDINAL_POSITION >= 2
+                            ORDER BY ORDINAL_POSITION;";
                         $result = $conn->query($sql); // Execute the query
 
                         if ($result && $result->num_rows > 0) {
