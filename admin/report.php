@@ -213,275 +213,7 @@ if (!isset($_SESSION['user_log_name'])) {
 <script src="assets/js/table2excel.js"></script>
 
 <script>
-    $(document).ready(function() {
-        // Filter table function
-        function filterTable() {
-        var selectedValue = document.getElementById("select-filter").value;
-        var rows = document.querySelectorAll("#tableBody tr");
-        var noResultsRow = document.getElementById("noResultsRow");
-        var hasVisibleRow = false;
-
-        rows.forEach(function(row) {
-            var productType = row.querySelector("td[data-product-type]").getAttribute("data-product-type");
-
-            if (selectedValue === "" || selectedValue === "all" || selectedValue === productType) {
-                row.style.display = "";
-                hasVisibleRow = true;
-            } else {
-                row.style.display = "none";
-            }
-        });
-
-        if (hasVisibleRow) {
-            noResultsRow.style.display = "none";
-        } else {
-            noResultsRow.style.display = "";
-        }
-    }
-
-    // Initial filter on page load
-    var selectFilter = document.getElementById("select-filter");
-    selectFilter.addEventListener("change", filterTable);
-    filterTable();
-
-        // Export to CSV function
-        function exportToCSV() {
-            var table = document.getElementById('myTable');
-            var rows = table.querySelectorAll("#tableBody tr");
-            var csvContent = "data:text/csv;charset=utf-8,";
-
-            // Construct header row
-            var headerRow = [];
-            var headerCells = table.querySelectorAll("th");
-            headerCells.forEach(function (headerCell) {
-                headerRow.push('"' + headerCell.innerText.replace(/"/g, '""') + '"');
-            });
-            csvContent += headerRow.join(",") + "\n";
-
-            // Construct data rows
-            rows.forEach(function (row) {
-                if (row.style.display !== 'none') {
-                    var rowData = [];
-                    var cells = row.querySelectorAll("td");
-                    cells.forEach(function (cell) {
-                        rowData.push('"' + cell.innerText.replace(/"/g, '""') + '"');
-                    });
-                    csvContent += rowData.join(",") + "\n";
-                }
-            });
-
-            var encodedUri = encodeURI(csvContent);
-            var link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "exported_data.csv");
-            document.body.appendChild(link);
-
-            link.click();
-
-            document.body.removeChild(link);
-
-            // Reapply column freezing after export (if applicable)
-            freezeColumns();
-        }
-
-
-        document.getElementById('export2excel').addEventListener('click', exportToCSV);
-
-        // Function to calculate column sums based on visible rows
-        function calculateColumnSums(rows) {
-            // Initialize an array to store column sums
-            var columnSums = Array.from({ length: rows[0].getElementsByTagName("td").length }, () => 0);
-
-            // Loop through each row
-            for (var i = 0; i < rows.length; i++) {
-                // Check if the row is visible
-                if (rows[i].style.display !== "none") {
-                    // Select all cells in the visible row
-                    var cells = rows[i].getElementsByTagName("td");
-
-                    // Loop through each cell, excluding specified columns
-                    for (var j = 0; j < cells.length; j++) {
-                        // Exclude columns by index (0 for No, 1 for product_name, 2 for dateTime)
-                        if (j !== 0 && j !== 1 && j !== 2 && j !== 3) {
-                            // Parse the cell value as a number
-                            var cellValue = parseFloat(cells[j].textContent.trim());
-
-                            // If the cell contains a valid number, add it to the corresponding column sum
-                            if (!isNaN(cellValue)) {
-                                columnSums[j] += cellValue;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Select the footer row for displaying sums
-            var footerRow = document.getElementById("sumRow");
-
-            if (!footerRow) {
-                return;
-            }
-
-            // Clear previous content
-            footerRow.innerHTML = "";
-
-            // Create and append cells for column sums
-            for (var k = 0; k < columnSums.length; k++) {
-                var cell = document.createElement("td");
-                // Display static values for the first three indexes
-                if (k === 0) {
-                    cell.textContent = "Total";
-                    cell.classList.add("text-danger", "fw-bolder");
-                } else if (k === 1) {
-                    cell.textContent = "Name";
-                    cell.classList.add("text-danger", "fw-bolder");
-                } else if (k === 2) {
-                    cell.textContent = "PK+CI";
-                    cell.classList.add("text-danger", "fw-bolder");
-                } else if (k === 3) {
-                    cell.textContent = "( YYY/MMM/DDD )";
-                    cell.classList.add("text-danger", "fw-bolder");
-                } else {
-                    // Display sum for non-excluded columns
-                    cell.textContent = columnSums[k];
-                    cell.classList.add("text-danger", "fw-bolder");
-                }
-                footerRow.appendChild(cell);
-            }
-            freezeColumns();
-        }
-
-        function performSearch(searchText) {
-            try {
-                var noResultsFound = true; // Flag to check if no results found
-                $('#tableBody tr').each(function() {
-                    var productName = $(this).find('td[data-column="product_name"]').text().toLowerCase();
-                    // Check if product name contains the search text
-                    if (productName.indexOf(searchText) > -1) {
-                        $(this).show(); // Show table row
-                        noResultsFound = false; // Set flag to false if results found
-                    } else {
-                        $(this).hide(); // Hide table row if no match
-                    }
-                });
-
-                // Update sum data after search
-                calculateColumnSums($('#tableBody tr:visible'));
-
-                // Show or hide "No results found" row based on search results
-                if (noResultsFound) {
-                    $('#noResultsRow').show();
-                } else {
-                    $('#noResultsRow').hide();
-                }
-            } catch (error) {
-                // $('#noResultsRow').show(); // Display "No results found" message for errors
-            }
-            freezeColumns();
-        }
-
-        // Add event listener to Enter key pressed anywhere in the document
-        $(document).on('keydown', function(event) {
-            if (event.keyCode === 13) { // Check if Enter key is pressed
-                if ($('#searchInput').is(':focus')) { // Check if search input is focused
-                    performSearch($('#searchInput').val().toLowerCase());
-                } else {
-                    $('#searchInput').focus(); // If not focused, focus on the search input
-                }
-                return false; // Prevent default behavior of Enter key
-            }
-            freezeColumns();
-        });
-
-        // Call calculateColumnSums function after the table data is loaded
-        calculateColumnSums($('#tableBody tr'));
-
-        // Attach submit event listener to search form
-        $('#month_year_search').on('submit', function(event) {
-            try {
-                event.preventDefault(); // Prevent form submission
-                const yearMonth = $(this).find('input[name="year"]').val();
-
-                // If the input field is empty, show all rows
-                if (!yearMonth) {
-                    showAllRows();
-                    return;
-                }
-
-                const selectedDate = new Date(yearMonth);
-                const selectedMonth = selectedDate.getMonth() + 1; // Month is 0-indexed, so add 1
-                const selectedYear = selectedDate.getFullYear();
-
-                // Filter table rows based on selected month and year
-                let foundMatch = false;
-                const rows = $('#tableBody tr');
-                rows.each(function() {
-                    const cells = $(this).find('td');
-                    if (cells.length > 0) {
-                        const dateCell = cells.eq(3); // Assuming the third cell contains the date
-                        const date = new Date(dateCell.text());
-                        const month = date.getMonth() + 1;
-                        const year = date.getFullYear();
-
-                        if (month === selectedMonth && year === selectedYear) {
-                            $(this).show(); // Show row
-                            foundMatch = true;
-                        } else {
-                            $(this).hide(); // Hide row
-                        }
-                    }
-                });
-
-                // Update sum data after filter
-                calculateColumnSums($('#tableBody tr:visible'));
-
-                // Show or hide "No results found" message
-                if (foundMatch) {
-                    $('#noResultsRow').hide();
-                } else {
-                    $('#noResultsRow').show();
-                }
-            } catch (error) {
-                // $('#noResultsRow').show(); // Display "No results found" message for errors
-            }
-        });
-
-        // Function to show all rows
-        // function showAllRows() {
-        //     $('#tableBody tr').show(); // Show all table rows
-        //     // Update sum data
-        //     calculateColumnSums($('#tableBody tr'));
-        //     $('#noResultsRow').hide(); // Hide "No results found" message
-        // }
-
-        // Function to freeze columns
-        function freezeColumns() {
-            var freezePos = 0;
-            var totalColumnName = 'January'; // Name of the column to freeze at
-            $('thead th').each(function(index, val) {
-                var $self = $(this);
-                var curWidth = $self.outerWidth();
-                if ($self.text().trim() === totalColumnName) {
-                    return false; // Exit loop after the 'Total' column
-                }
-                $('th:nth-child(' + parseInt(index + 1) + '), td:nth-child(' + parseInt(index + 1) + ')').addClass('sticky').css('left', freezePos);
-                freezePos += curWidth;
-            });
-        }
-
-        // Initial freezing of columns
-        freezeColumns();
-
-        // Synchronize horizontal scrolling of thead with tbody
-        $('.table-container').on('scroll', function() {
-            var scrollLeft = $(this).scrollLeft();
-            $('.sticky-thead').css('left', -scrollLeft);
-        });
-    });
-</script>
-
-<!-- <script>
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function() {
         // Filter table function
         function filterTable() {
             var selectedValue = document.getElementById("select-filter").value;
@@ -547,13 +279,9 @@ if (!isset($_SESSION['user_log_name'])) {
 
             document.body.removeChild(link);
         });
-
-        // Initialize DataTables with column freezing
-        $('#myTable').DataTable({
-            fixedColumns: true
-        });
     });
 </script>
+
 
 <script>
         document.getElementById('export2excel').addEventListener('click', function () {
@@ -675,7 +403,6 @@ document.getElementById('export2excel').addEventListener('click', function () {
 
     document.body.removeChild(link);
 });
-
 </script>
 
 <script>
@@ -879,6 +606,6 @@ $('#month_year_search').on('submit', function(event) {
             $('.sticky-thead').css('left', -scrollLeft);
         });
     });
-</script> -->
+</script>
 
 </html>

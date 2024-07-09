@@ -68,14 +68,8 @@ if (!isset($_SESSION['user_log_name'])) {
         // Fetch column names
         $sql = 'SELECT
             COLUMN_NAME AS column_name
-        FROM 
-            INFORMATION_SCHEMA.COLUMNS
-        WHERE 
-            TABLE_SCHEMA = "' . $dbname . '" 
-            AND TABLE_NAME = "tblproduct_transaction"
-        ORDER BY 
-            ORDINAL_POSITION;';
-
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = "' . $dbname . '" AND TABLE_NAME = "tblproduct_transaction"';
         $result = $conn->query($sql);
 
         if($result->num_rows > 0) {

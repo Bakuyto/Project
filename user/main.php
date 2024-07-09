@@ -27,7 +27,8 @@ if (!isset($_SESSION['user_log_name'])) {
 <div class="container-fluid p-0 m-0" style="height:100vh;">
   <?php include 'include/header.php'; ?>
   <div class="container-fluid px-5 main-header d-flex justify-content-between py-2" style="height:60px;">
-  <div class="filter-form d-flex">
+    
+    <div class="filter-form d-flex">
         <form id="searchForm">
         <input class="form-control me-1" type="search" id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:160px">
         </form>
@@ -54,14 +55,16 @@ if (!isset($_SESSION['user_log_name'])) {
                           <option value="all">All</option> <!-- New option for selecting all values -->
         </select>
     </div>
-
-        <div class="form-inline d-flex flex-row gap-1">
-          <button type="button" class="btn text-white" style="height:40px;background-color: #28ACE8;" onclick="$('#addModal').modal('show')">Create</button>
-          <input type="number" id="row" style="width:80px; height: 40px;" class="form-control"/>
-          <button type="button" class="btn btn-success" style="height:40px" id="filter">Filter</button>
-        </div>
-      </div>  
-      <div class="fill" style="height: calc(100vh - 60px - 60px);">
+    <div class="form-inline d-flex flex-row gap-1">
+      <!-- <button type="button" id="saveChangesBtn" class="btn btn-danger"  style="height:40px;">Generate</button> -->
+      <button type="button" class="btn text-white" style="height:40px;background-color: #28ACE8;" onclick="$('#addModal').modal('show')">Create</button>
+      <input type="number" id="row" style="width:80px; height: 40px;" class="form-control" />
+      <button type="button" class="btn btn-success" style="height:40px" id="filter">Filter</button>
+      
+      <!-- <button id="export2excel" class="btn fw-bolder text-white" style="background-color: green;height:40px;"><i class="fa-solid fa-file-export"></i> to <i class="fa-solid fa-file-excel"></i></button> -->
+    </div>
+  </div>
+  <div class="fill" style="height: calc(100vh - 60px - 60px);">
   <section>
   <div class="tables container-fluid px-5 tbl-container d-flex flex-column justify-content-center align-content-center">
     <div class="table-container tbl-fixed">
@@ -70,7 +73,7 @@ if (!isset($_SESSION['user_log_name'])) {
         <thead class="new-thead sticky-thead">
           <?php
           include '../connection/connect.php';
-          $sql = "CALL update_table_column('', NULL)";
+          $sql = "CALL update_table_column('',null)";
           $result = $conn->query($sql);
 
           if ($result && $result->num_rows > 0) {
@@ -79,7 +82,7 @@ if (!isset($_SESSION['user_log_name'])) {
             echo "<th class='text-center sticky'>No</th>";
             foreach ($row as $column_name => $value) {
               // Skip rendering specific columns
-              if ($column_name == 'product_pk' || $column_name == 'product_type_fk' || $column_name == 'product_status' || $column_name == 'product_fk') {
+              if ($column_name == 'product_pk' ||$column_name == 'product_type_fk' || $column_name == 'product_status' || $column_name == 'product_fk') {
                 continue;
               }
 
@@ -109,7 +112,7 @@ if (!isset($_SESSION['user_log_name'])) {
 
 
               // Output the table header for each column
-              echo "<th id='$column_name' class='text-center' style='$background_color'";
+              echo "<th id='$column_name' name='$column_name' class='text-center' style='$background_color'";
               echo "<div class='sticky-background'>"; // Open div for sticky background
               // Special treatment for specific columns
               switch ($column_name) {
@@ -118,6 +121,9 @@ if (!isset($_SESSION['user_log_name'])) {
                   break;
                 case 'product_name':
                   echo "Product Name <br>";
+                  break;
+                case 'PK_CI':
+                  echo "PK+CI";
                   break;
                 case 'RMA':
                   echo "RMA";
@@ -142,24 +148,27 @@ if (!isset($_SESSION['user_log_name'])) {
                   echo $column_name;
               }
               echo "</div>"; // Close div for sticky background
+              echo "</th>";
             }
             echo "</tr>"; // Add closing </tr> tag here
           }
           ?>
         </thead>
-        <tbody>
-        </tbody>
+        
+        <tbody id="tableBody">
+          <div id="sumRow"></div>
+        </tbody>      
       </table>
     </div>
   </div>
 </section>
   </div>
-        </div>
+</div>
            
 
 
 <?php include 'include/footer.php' ?>
-<!-- Modal -->
+<!-- Create Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -196,8 +205,10 @@ if (!isset($_SESSION['user_log_name'])) {
                           ?>
 
                     </select>
+                    <!-- <input type="hidden" id="product_type_fk" name="product_type_fk"> -->
                     <input type="hidden" id="product_type_fk" name="product_type_fk" value="<?php echo $product_id; ?>">
-                    <button type="button" class="btn" style="border-radius:0px 5px 5px 0px; border:1px solid lightgrey" onclick="$('#createtypeModal').modal('show')">+</button>
+                    <!-- <button type="button" class="btn" style="border-radius:0px 0px 0px 0px; border:1px solid lightgrey" onclick="$('#editTypeModal').modal('show')"><i class="fa-solid fa-pen-to-square"></i></button> -->
+                    <button type="button" class="btn" style="border-radius:0px 5px 5px 0px; border:1px solid lightgrey" onclick="$('#addTypeModal').modal('show')"><i class="fa-solid fa-plus"></i></button>
                     </div>
                     </div>
                     <div class="input-part d-flex">
@@ -263,7 +274,28 @@ if (!isset($_SESSION['user_log_name'])) {
             </div>
         </div>
     </div>
-</div>  
+</div>   
+
+<!-- Modal for Adding Product Type -->
+<div class="modal fade" id="addTypeModal" tabindex="-1" aria-labelledby="addTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTypeModalLabel">Add New Product Type</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="create_type">
+                    <div class="mb-3">
+                        <label for="typeName" class="form-label">Type Name</label>
+                        <input type="text" class="form-control" id="typeName" name="typeName" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="createButton">Add Type</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Success Modal -->
 <div class="modal fade" id="successsModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
@@ -379,9 +411,12 @@ $(document).ready(function () {
     var rowsPerPage = 30; // Number of rows per page
     var totalRecords; // Total number of records
     var data; // Variable to hold the fetched data
-    var permissions = {}; // Permissions variable
-    var productType = null; // Variable to hold the selected product type
+    var permissions = {}; // Variable to hold permissions
     var activeStatus; // Variable to hold the active status
+    var searchText = ''; // Global variable to store search text
+    var productType;
+
+    fetchData();
 
     // Fetch active status from the server
     fetchActiveStatus();
@@ -405,47 +440,46 @@ $(document).ready(function () {
     $("#searchForm").submit(function(event) {
         event.preventDefault(); // Prevent the default form submission
         var searchText = $("#searchInput").val().trim();
-        fetchData(searchText, productType); // Pass the search text and product type
+        fetchData(searchText);
     });
 
-    // Event listener for select-filter change
-    $("#select-filter").on("change", function() {
-        console.log("Selected value:", $(this).val());
-        if ($(this).val() === "all") {
-            productType = null;
-        } else {
-            productType = parseInt($(this).val());
-        }
-        console.log("productType:", productType);
-        var searchText = $("#searchInput").val().trim();
-        fetchData(searchText, productType); // Fetch data based on search text and product type
-    });
+    // Function to fetch data along with permissions
+function fetchData(searchText = '', productType = '') {
+    // Adjust productType to send 'null' or '' if 'All' is selected
+    productType = (productType === 'all') ? '' : productType;
 
-    // Fetch data function with productType parameter
-    function fetchData(searchText = '', productType = null) {
-        $.when(
-            $.ajax({
-                url: "actions/fetch_permissions.php?search=" + searchText + "&product_type=" + productType,
-                type: "GET",
-                dataType: "json",
-                success: function(response) {
-                    console.log("Permissions:", response.permissions);
-                    data = response.data;
-                    totalRecords = response.totalRecords;
-                    permissions = response.permissions;
-                },
-                error: function(xhr, status, error) {
-                    console.error("Data Fetch Error:", error);
-                }
-            })
-        ).then(function() {
+    $.ajax({
+        url: "actions/fetch_permissions.php",
+        type: "GET",
+        data: {
+            search: searchText, // Include search text parameter
+            product_type: productType // Include product type parameter
+        },
+        dataType: "json",
+        success: function(response) {
+            console.log("Permissions:", response.permissions);
+            data = response.data;
+            permissions = response.permissions;
             totalRecords = data.length;
-            updateTable(data, permissions);
+            updateTable(data, permissions); // Update table with fetched data and permissions
             updatePagination();
-            $(document).freezeColumns();
-        });
-    }
+        },
+        error: function(xhr, status, error) {
+            console.error("Data Fetch Error:", error);
+        }
+    });
+}
 
+
+    // Event listener for select filter change
+    $("#select-filter").on("change", function() {
+        var searchText = $("#searchInput").val().trim();
+        var productType = $(this).val(); // Get the selected filter value and assign it to productType
+        console.log("Selected Product Type:", productType); // Log the selected product type
+        fetchData(searchText, productType); // Fetch data based on current search text and selected product type
+    });
+
+    // Update the table content with the fetched data and apply permissions
     function updateTable(data, permissions) {
         $('tbody').empty(); // Clear existing table rows
 
@@ -454,6 +488,9 @@ $(document).ready(function () {
         $.each(data, function(index, row) {
             $.each(row, function(column_name, value) {
                 if (column_name !== 'product_pk' && column_name !== 'product_type_fk' && column_name !== 'product_status' && column_name !== 'product_fk') {
+                    if (column_name === 'Product Name' && value === null) {
+                        value = ''; // Set value to empty string for product name column
+                    }
                     columnTotals[column_name] = (columnTotals[column_name] || 0) + parseFloat(value);
                 }
             });
@@ -465,16 +502,16 @@ $(document).ready(function () {
         $.each(columnTotals, function(column_name, total) {
             if (column_name === 'product_name') {
                 totalRow.append("<td><span name='" + column_name + "_sum' id='" + column_name + "_sum' class='text-center text-danger fw-bolder'>Name</span></td>");
-            } else if(column_name === 'PK_CI') {
+            } else if (column_name === 'PK_CI') {
                 totalRow.append("<td><span name='" + column_name + "_sum' id='" + column_name + "_sum' class='text-center text-danger fw-bolder'>PK+CI</span></td>");
-            }
-            else {
+            } else {
                 totalRow.append("<td><span name='" + column_name + "_sum' id='" + column_name + "_sum' class='text-center text-danger fw-bolder'>" + total + "</span></td>");
             }
         });
         $('tbody').append(totalRow);
 
         if (data.length === 0) {
+            // If no results found, display message in a single cell row
             var tr = $("<tr>").appendTo("tbody");
             $("<td colspan='100'>").text("No results found").appendTo(tr);
             return;
@@ -491,7 +528,7 @@ $(document).ready(function () {
             var tr = $("<tr>").attr("id", "row_" + row.product_pk);
 
             // Add a loop ID column
-            var loopIdTd = $("<td>").text(startingLoopId + index).css("color", "grey");
+            var loopIdTd = $("<td>").text(startingLoopId + index).css("color","grey");
             tr.append(loopIdTd);
 
             $.each(row, function(column_name, value) {
@@ -500,12 +537,16 @@ $(document).ready(function () {
                         "id": column_name,
                         "style": "color:grey",
                         "data-column": column_name,
-                        "contenteditable": "false"
+                        "contenteditable": "false" // Set default to false
                     }).text(value);
 
+                    // Check if permission is set for this column
                     permissions.forEach(function(permission) {
-                        if (permission === column_name && activeStatus !== 1) {
-                            td.attr("contenteditable", "true").addClass("editable text-dark fw-bolder").css("border", "2px solid grey");
+                        if (permission === column_name) {
+                            // Allow editing if activeStatus is not 1
+                            if (activeStatus !== 1) {
+                                td.attr("contenteditable", "true").addClass("editable text-dark fw-bolder").css("border","2px solid grey");
+                            }
                         }
                     });
 
@@ -516,20 +557,32 @@ $(document).ready(function () {
         });
     }
 
+    // Function to update pagination controls
     function updatePagination() {
         var totalPages = Math.ceil(totalRecords / rowsPerPage);
         $("#current-page").text(currentPage);
         $("#total-pages").text(totalPages);
-        $("#page-number").val(currentPage);
+        $("#page-number").val(currentPage); // Update input field value
     }
 
+    // Input validation for numeric columns
+    $(document).on("input", "tbody td.editable", function(event) {
+        var column = $(this).attr("data-column");
+        var value = $(this).text().trim();
+        
+        if (column !== "product_name" && column !== "PK_CI" && !(/^\d*\.?\d*$/.test(value))) {
+            $(this).text("0"); // Display "0" if not numeric
+        }
+    });
+
+    // Function to update value with permission check
     function updateValue(cell, newValue, oldValue) {
-        var productId = cell.closest("tr").attr("id").split("_")[1];
+        var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
         var column = cell.attr("data-column");
 
         if (permissions[productId] && permissions[productId][column] === false) {
             alert("You don't have permission to edit this cell.");
-            cell.text(oldValue);
+            cell.text(oldValue); // Revert the cell text to the original value
             return;
         }
 
@@ -543,18 +596,19 @@ $(document).ready(function () {
             },
             dataType: "json",
             success: function(response) {
+                console.log("AJAX Success:", response);
                 if (response.success) {
-                    cell.text(newValue);
+                    cell.text(newValue); // Update the cell text with the new value
                     var searchText = $("#searchInput").val().trim();
-                    fetchData(searchText, productType);
+                    fetchData(searchText); // Fetch new data after successful update
                 } else {
                     console.error("Update failed:", response.message);
-                    cell.text(oldValue);
+                    cell.text(oldValue); // Revert the cell text to the original value
                 }
             },
             error: function(xhr, status, error) {
                 console.error("AJAX Error:", error);
-                cell.text(oldValue);
+                cell.text(oldValue); // Revert the cell text to the original value
             },
             complete: function() {
                 cell.removeAttr("contenteditable");
@@ -562,90 +616,75 @@ $(document).ready(function () {
         });
     }
 
-    function paginate(direction) {
-        var totalPages = Math.ceil(totalRecords / rowsPerPage);
-        if (direction === "next" && currentPage < totalPages) {
-            currentPage++;
-        } else if (direction === "prev" && currentPage > 1) {
-            currentPage--;
-        }
-        fetchData($("#searchInput").val().trim(), productType);
-    }
-
-    $("#prev-btn").click(function() {
-        paginate("prev");
-    });
-
-    $("#next-btn").click(function() {
-        paginate("next");
-    });
-
-    $("#page-number").on("change", function() {
-        var pageNum = parseInt($(this).val());
-        if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= Math.ceil(totalRecords / rowsPerPage)) {
-            currentPage = pageNum;
-            fetchData($("#searchInput").val().trim(), productType);
-        }
-    });
-
-    $('#filter').on('click', function() {
-        const rowLimit = $('#row').val();
-        filterAndPaginate(rowLimit);
-    });
-
-    function filterAndPaginate(rowLimit) {
-        const $table = $("#myTable");
-        const $tbodyRows = $table.find("tbody tr");
-        $tbodyRows.hide();
-
-        if (!rowLimit || parseInt(rowLimit) <= 0) {
-            location.reload();
-            return;
-        } else {
-            $tbodyRows.slice(0, parseInt(rowLimit)).show();
-        }
-
-        currentPage = 1;
-        rowsPerPage = parseInt(rowLimit);
-        fetchData($("#searchInput").val().trim(), productType);
-    }
-
+    // Event listener for Enter key to save edited value
     $(document).on("keydown", "tbody td.editable", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            var cell = $(this);
-            var newValue = cell.text().trim();
-            var oldValue = cell.data("oldValue");
-
-            if (newValue !== oldValue) {
-                updateValue(cell, newValue, oldValue);
-            } else {
-                cell.removeAttr("contenteditable");
-            }
+        var cell = $(this);
+        if (event.which === 13) {
+            event.preventDefault(); // Prevent the default behavior of the Enter key
+            cell.blur();
         }
     });
 
-    $(document).on("click", "tbody td.editable", function(event) {
+    // Event listener for clicking outside the cell to save edited value
+    $(document).on("blur", "tbody td.editable", function() {
         var cell = $(this);
-        cell.data("oldValue", cell.text().trim());
+        var newValue = cell.text().trim();
+        var oldValue = cell.data("old-value");
+        if (newValue !== oldValue) {
+            updateValue(cell, newValue, oldValue); // Update the value with permission check
+        }
     });
 
-    fetchData(); // Initial fetch
-  });
+    // Pagination controls
+    $("#prev-page").click(function() {
+        if (currentPage > 1) {
+            currentPage--;
+            updatePagination();
+            fetchData(); // Fetch data for the previous page
+        }
+    });
+
+    $("#next-page").click(function() {
+        var totalPages = Math.ceil(totalRecords / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            updatePagination();
+            fetchData(); // Fetch data for the next page
+        }
+    });
+
+    // Event listener for page number input change
+    $("#page-number").on("change", function() {
+        var pageNumber = parseInt($(this).val());
+        var totalPages = Math.ceil(totalRecords / rowsPerPage);
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            currentPage = pageNumber;
+            updatePagination();
+            fetchData(); // Fetch data for the specified page
+        } else {
+            alert("Invalid page number. Please enter a valid page number.");
+        }
+    });
+});
+
 </script>
 
 
-<!-- Adding New Value -->
 <script>
 $(document).ready(() => {
-    $('#createButton').click(function () {
+    $('#createButton').click(function (event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+
         // Get the value of the type name input field
         var typeName = $('#typeName').val().trim();
 
         // Check if the input is empty
         if (typeName === '') {
+            alert('Type Name cannot be empty');
             return; // Exit the function, preventing further execution
         }
+
         // Serialize form data
         var formData = $('#create_type').serialize();
 
@@ -654,12 +693,21 @@ $(document).ready(() => {
             type: 'POST',
             url: 'actions/create_type.php',
             data: formData,
+            dataType: 'json', // Assuming the response is JSON
             success: function (response) {
                 // Check if the operation was successful
                 if (response.success) {
-                    location.reload();
+                    // Optionally, display a success message or perform any other action
+                    alert('Type added successfully!');
+                    // Optionally, update the UI with the new type information
+                    // For example, update a dropdown list dynamically
+                    var newOption = $('<option>', {
+                        value: response.product_id,
+                        text: typeName
+                    });
+                    $('#productTypeSelect').append(newOption);
                 } else {
-
+                    alert('Porduct is already existed.');
                 }
             },
             error: function (xhr, status, error) {
@@ -671,28 +719,7 @@ $(document).ready(() => {
 });
 </script>
 
-<!-- Create Type Modal -->
-<div class="modal fade" id="createtypeModal" tabindex="-1" aria-labelledby="createtypeModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="createtypeModalLabel">Create Product Type</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="create_type" method="post">
-        <div class="mb-3">
-            <label for="inputName" class="form-label">Type Name:</label>
-            <input type="text" class="form-control" name="typeName" id="typeName" placeholder="Enter name" required>
-          </div>
-          <div class="d-flex justify-content-end mt-3">
-        <button type="submit" id="createButton" class="btn btn-primary">Create</button>
-      </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <script>
 $(document).ready(function () {
@@ -700,6 +727,12 @@ $(document).ready(function () {
     function refreshPage() {
         location.reload(true); // Reload the page
     }
+
+    // Update hidden input field with selected product type value
+    $('#productTypeSelect').change(function () {
+        var selectedType = $(this).val();
+        $('#product_type_fk').val(selectedType);
+    });
 
     // Submit form via AJAX
     $('#addForm').submit(function (event) {

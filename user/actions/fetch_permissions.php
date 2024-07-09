@@ -1,5 +1,4 @@
 <?php
-
 // Include your database connection file
 include '../../connection/connect.php';
 
@@ -33,7 +32,6 @@ if (isset($_SESSION['user_department_fk'])) {
     $permissions = array();
 }
 
-
 // Initialize an empty array to hold the data
 $data = [];
 
@@ -41,15 +39,20 @@ $data = [];
 $searchText = isset($_GET['search']) ? $_GET['search'] : '';
 $productType = isset($_GET['product_type']) ? $_GET['product_type'] : null;
 
+// Get the product type parameter from GET request
+$productType = isset($_GET['product_type']) ? $_GET['product_type'] : null;
+
 // Convert productType to null if it's 'null' or empty string
 $productType = ($productType === null || $productType === 'null' || $productType === '') ? null : (int)$productType;
 
 // Prepare the SQL query based on the presence of productType
 if ($productType === null) {
+    // Handle case where productType is null or 'all' to fetch all data
     $sql = "CALL update_table_column(?, NULL)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $searchText);
 } else {
+    // Handle case where productType is specific
     $sql = "CALL update_table_column(?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("si", $searchText, $productType);
@@ -89,12 +92,12 @@ $stmt->close();
 // Close the database connection
 $conn->close();
 
-// Combine data and permissions and return as JSON
-$response = array(
-    'data' => $data,
-    'permissions' => $permissions,
-    'totalRecords' => $totalRecords
-);
+// Combine data and permissions into a single response array
+$response = [
+    "data" => $data,
+    "permissions" => $permissions,
+    "totalRecords" => $totalRecords
+];
 
 // Output data as JSON
 header('Content-Type: application/json');

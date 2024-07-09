@@ -32,30 +32,28 @@ if (!isset($_SESSION['user_log_name'])) {
         <form id="searchForm">
         <input class="form-control me-1" type="search" id="searchInput" placeholder="Search by Name" aria-label="Search" style="width:160px">
         </form>
-            <select id="select-filter" class="form-select" style="height:38.1px;">
-            <option class="text-dark" value="" selected disabled>Select Type</option>
-            <?php 
-                include '../connection/connect.php';
-                $sql = "SELECT * FROM tblproduct_type"; // SQL query to select data from the table
-                $result = $conn->query($sql); // Execute the query
-
-                if ($result->num_rows > 0) {
-                    // Fetch and display each row
-                    while ($row = $result->fetch_assoc()) {
-                        $product_name = htmlspecialchars($row['product_type_name']); // Escape for safety
-                        $product_id = htmlspecialchars($row['product_type_pk']); // Escape for safety
-                        echo "<option id='$product_id' value='$product_id'>$product_name</option>";
-                    }
-                } else {
-                    // If no results found, display a message
-                    echo "<option value='' disabled>No departments found</option>";
-                }
-                // Close the database connection
-                $conn->close();
-            ?>
-            <option value="all">All</option> <!-- New option for selecting all values -->
+        <select id="select-filter" class="form-select" style="height:38.1px;">
+        <option class="text-dark" value="" selected disabled>Select Type</option>
+        <?php 
+                            include '../connection/connect.php';
+                            $sql = "Select * from tblproduct_type"; // SQL query to select data from the table
+                            $result = $conn->query($sql); // Execute the query
+            
+                            if ($result->num_rows > 0) {
+                              while ($row = $result->fetch_assoc()) {
+                                  $product_name = $row['product_type_name'];
+                                  $product_id = $row['product_type_pk'];
+                          ?>
+                                  <option id="<?php echo $product_id; ?>" value="<?php echo $product_id; ?>"><?php echo $product_name; ?> </option>
+                          <?php
+                              }
+                          } else {
+                              echo "<option value='' selected>No departments found</option>"; // Output if no results found
+                          }
+                            $conn->close(); // Close the database connection
+                          ?>
+                          <option value="all">All</option> <!-- New option for selecting all values -->
         </select>
-
     </div>
     <div class="form-inline d-flex flex-row gap-1">
       <button type="button" id="saveChangesBtn" class="btn btn-danger"  style="height:40px;">Generate</button>
@@ -151,6 +149,7 @@ if (!isset($_SESSION['user_log_name'])) {
               echo "</div>"; // Close div for sticky background
               echo "</th>";
             }
+            echo "<th class='text-center sticky'>Tool</th>";
             echo "</tr>"; // Add closing </tr> tag here
           }
           ?>
@@ -183,30 +182,31 @@ if (!isset($_SESSION['user_log_name'])) {
                     <label class="w-100 pb-2 text-center fw-bolder">Product Type</label>
                     <div class="form-group d-flex">
                     <select id="productTypeSelect" class="form-select" style="border-radius:5px 0px 0px 5px;" required>
-                        <option class="text-dark" value="" selected disabled>Select Type</option>
+                      <option class="text-dark" value="" selected disabled>Select Type</option>
 
-                        <?php 
+                      <?php 
                             include '../connection/connect.php';
-                            $sql = "SELECT * FROM tblproduct_type"; // SQL query to select data from the table
+                            $sql = "Select * from tblproduct_type"; // SQL query to select data from the table
                             $result = $conn->query($sql); // Execute the query
-
-                            $product_id = ''; // Define product_id variable
-
+            
                             if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                    $product_name = $row['product_type_name'];
-                                    $product_id = $row['product_type_pk'];
-                                    echo "<option id='$product_id' value='$product_id'>$product_name</option>";
-                                }
-                            } else {
-                                echo "<option value='' disabled>No departments found</option>"; // Output if no results found
-                            }
+                              while ($row = $result->fetch_assoc()) {
+                                  $product_name = $row['product_type_name'];
+                                  $product_id = $row['product_type_pk'];
+                          ?>
+                                  <option id="<?php echo $product_id; ?>" value="<?php echo $product_id; ?>"><?php echo $product_name; ?> </option>
+                          <?php
+                              }
+                          } else {
+                              echo "<option value='' selected>No departments found</option>"; // Output if no results found
+                          }
                             $conn->close(); // Close the database connection
-                        ?>
-                    </select>
+                          ?>
 
+                    </select>
                     <input type="hidden" id="product_type_fk" name="product_type_fk" value="<?php echo $product_id; ?>">
-                    <button type="button" class="btn" style="border-radius:0px 5px 5px 0px; border:1px solid lightgrey" onclick="$('#createtypeModal').modal('show')">+</button>
+                    <button type="button" class="btn" style="border-radius:0px 0px 0px 0px; border:1px solid lightgrey" onclick="$('#editTypeModal').modal('show')"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button type="button" class="btn" style="border-radius:0px 5px 5px 0px; border:1px solid lightgrey" onclick="$('#addTypeModal').modal('show')"><i class="fa-solid fa-plus"></i></button>
                     </div>
                     </div>
                     <div class="input-part d-flex">
@@ -274,27 +274,54 @@ if (!isset($_SESSION['user_log_name'])) {
     </div>
 </div>   
 
-<!-- Create Type Modal -->
-<div class="modal fade" id="createtypeModal" tabindex="-1" aria-labelledby="createtypeModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="createtypeModalLabel">Create Product Type</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="create_type" method="post">
-        <div class="mb-3">
-            <label for="inputName" class="form-label">Type Name:</label>
-            <input type="text" class="form-control" name="typeName" id="typeName" placeholder="Enter name" required>
-          </div>
-          <div class="d-flex justify-content-end mt-3">
-        <button type="submit" id="createButton" class="btn btn-primary">Create</button>
-      </div>
-        </form>
-      </div>
+
+<!-- Edit Type Modal -->
+<div class="modal fade" id="editTypeModal" tabindex="-1" aria-labelledby="editTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTypeModalLabel">Edit Product Type</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            
+                <form id="edit_type_form" method="post">
+                <div id="message" class="alert" style="display:none;"></div>
+                    <div class="mb-3">
+                        <label for="editTypeName" class="form-label">New Type Name:</label>
+                        <input type="text" class="form-control" name="editTypeName" id="editTypeName" placeholder="Enter new name" required>
+                    </div>
+                    <!-- Hidden input to store the current product type ID -->
+                    <input type="hidden" id="currentProductTypeID" name="currentProductTypeID">
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" id="editButton" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
+
+
+<!-- Modal for Adding Product Type -->
+<div class="modal fade" id="addTypeModal" tabindex="-1" aria-labelledby="addTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTypeModalLabel">Add New Product Type</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="create_type">
+                    <div class="mb-3">
+                        <label for="typeName" class="form-label">Type Name</label>
+                        <input type="text" class="form-control" id="typeName" name="typeName" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="createButton">Add Type</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Create Success Modal -->
@@ -413,6 +440,67 @@ if (!isset($_SESSION['user_log_name'])) {
     </div>
 </div>
 
+
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirmation</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this record?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="deleteSuccessModal" tabindex="-1" aria-labelledby="deleteSuccessModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="deleteSuccessModalLabel">Success!</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+      </div>
+      <div class="modal-body">
+        Record deleted successfully.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="deleteErrorModal" tabindex="-1" aria-labelledby="deleteErrorModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteErrorModalLabel">Error!</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Failed to delete the record.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -424,6 +512,108 @@ if (!isset($_SESSION['user_log_name'])) {
 <script src="assets/js/colResizable.js" ></script>
 <script src="assets/js/colResizable.min.js" ></script>
 
+
+<script>
+$(document).ready(function() {
+    // Populate the edit modal with the current type name and ID
+    $('#productTypeSelect').on('change', function() {
+        var selectedTypeID = $(this).val();
+        var selectedTypeName = $(this).find('option:selected').text();
+
+        $('#currentProductTypeID').val(selectedTypeID);
+        $('#editTypeName').val(selectedTypeName);
+    });
+
+    // Handle edit type form submission via AJAX
+    $('#edit_type_form').submit(function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        // Serialize form data
+        var formData = $(this).serialize();
+
+        // AJAX request
+        $.ajax({
+            type: 'POST',
+            url: 'actions/edit_product_type.php', // PHP script to handle the update
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Update the selected option text with the new name
+                    var selectedTypeID = $('#currentProductTypeID').val();
+                    var newTypeName = $('#editTypeName').val();
+                    $('#productTypeSelect').find('option[value="' + selectedTypeID + '"]').text(newTypeName);
+
+                    // Hide the modal
+                    // $('#editTypeModal').modal('hide');
+
+                    // Provide user feedback
+                    showMessage(response.message, 'success');
+                } else {
+                    showMessage(response.message, 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error: ' + status + ' - ' + error);
+                showMessage('An error occurred while updating the product type.', 'error');
+            }
+        });
+    });
+
+    // Function to show messages
+    function showMessage(message, type) {
+        var messageElement = $('#message');
+        messageElement.removeClass('alert-success alert-danger');
+        if (type === 'success') {
+            messageElement.addClass('alert-success');
+        } else {
+            messageElement.addClass('alert-danger');
+        }
+        messageElement.text(message).show().delay(3000).fadeOut();
+    }
+});
+
+
+</script>
+
+<script>
+$(document).on("click", ".delete-button", function() {
+    var productId = $(this).attr("data-id");
+
+    // Show confirmation modal
+    $('#deleteConfirmationModal').modal('show');
+
+    // Handle deletion on confirmation
+    $('#confirmDeleteBtn').on('click', function() {
+        $.ajax({
+            url: "actions/delete_product.php",
+            type: "POST",
+            data: {
+                id: productId
+            },
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    $('#deleteConfirmationModal').modal('hide'); // Hide confirmation modal
+                    $('#deleteSuccessModal').modal('show'); // Show success modal
+                } else {
+                    $('#deleteConfirmationModal').modal('hide'); // Hide confirmation modal on error
+                    $('#deleteErrorModal').modal('show'); // Show error modal
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#deleteConfirmationModal').modal('hide'); // Hide confirmation modal on error
+                $('#deleteErrorModal').modal('show'); // Show error modal
+            }
+        });
+    });
+});
+
+// Refresh page on success modal close
+$('#deleteSuccessModal').on('hidden.bs.modal', function () {
+    location.reload();
+});
+</script>
 
 <!-- live Edit and UpdateTable -->
 <script>
@@ -512,16 +702,14 @@ $(document).ready(function() {
 
     // Input validation for numeric columns
     $(document).on("input", "tbody td.editable", function(event) {
-    var column = $(this).attr("data-column");
-    var value = $(this).text().trim();
-    
-    console.log("Column:", column, "Value:", value); // Add this line for debugging
-
-    if (column !== "product_name" && column !== "PK_CI" && !(/^\d*\.?\d*$/.test(value))) {
-        $(this).text("0");
-    }
+        var column = $(this).attr("data-column");
+        var value = $(this).text().trim();
+        
+        // Check if the entered value is numeric for non-"Product Name" columns
+        if (column !== "product_name" && column !== "PK_CI" && !(/^\d*\.?\d*$/.test(value))) {
+            $(this).text("0"); // Display "0" if not numeric
+        }
     });
-
 
     // Event listener for Enter key press in search input
     $("#searchInput").on("keypress", function(event) {
@@ -603,6 +791,7 @@ $(document).ready(function() {
             }
         });
         $('tbody').append(totalRow);
+        
 
         if (data.length === 0) {
             // If no results found, display message in a single cell row
@@ -646,6 +835,14 @@ $(document).ready(function() {
                 }
             });
 
+            var deleteButton = $("<td>").append(
+                $("<button>")
+                    .addClass("btn btn-danger btn-sm delete-button")
+                    .text("Delete")
+                    .attr("data-id", row.product_pk)
+            );
+            tr.append(deleteButton);
+
             $('tbody').append(tr);
         });
         $(document).freezeColumns();
@@ -661,48 +858,48 @@ $(document).ready(function() {
 
 
     function updateValue(cell, newValue, oldValue) {
-    var column = cell.attr("data-column");
+        var column = cell.attr("data-column");
 
-    // If column is not product_name or PK_CI, validate if newValue is numeric
-    if (column !== "product_name" && column !== "PK_CI" && isNaN(newValue)) {
-        alert("Please enter a valid numeric value.");
-        cell.text(oldValue); // Revert the cell text to the original value
-        return;
-    }
-
-    var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
-
-    // Send AJAX request to update the value
-    $.ajax({
-        url: "actions/update.php",
-        type: "POST",
-        data: {
-            id: productId,
-            column: column,
-            newValue: newValue
-        },
-        dataType: "json",
-
-        success: function(response) {
-            if (response.success) {
-                cell.text(newValue); // Update the cell text with the new value
-                // Retrieve the search input value
-                var searchText = $("#searchInput").val().trim();
-                fetchData(searchText); // Fetch new data after successful update
-            } else {
-                cell.text(oldValue); // Revert the cell text to the original value
-            }
-        },
-
-        error: function(xhr, status, error) {
+        // If column is not product_name, validate if newValue is numeric
+        if (column !== "product_name" && column !== "PK_CI" && isNaN(newValue)) {
+            alert("Please enter a valid numeric value.");
             cell.text(oldValue); // Revert the cell text to the original value
-        },
-        complete: function() {
-            // Remove the contenteditable attribute and reattach click event handler
-            cell.removeAttr("contenteditable");
+            return;
         }
-    });
-}
+
+        var productId = cell.closest("tr").attr("id").split("_")[1]; // Extract product ID
+
+        // Send AJAX request to update the value
+        $.ajax({
+            url: "actions/update.php",
+            type: "POST",
+            data: {
+                id: productId,
+                column: column,
+                newValue: newValue
+            },
+            dataType: "json",
+
+            success: function(response) {
+                if (response.success) {
+                    cell.text(newValue); // Update the cell text with the new value
+                    // Retrieve the search input value
+                    var searchText = $("#searchInput").val().trim();
+                    fetchData(searchText); // Fetch new data after successful update
+                } else {
+                    cell.text(oldValue); // Revert the cell text to the original value
+                }
+            },
+
+            error: function(xhr, status, error) {
+                cell.text(oldValue); // Revert the cell text to the original value
+            },
+            complete: function() {
+                // Remove the contenteditable attribute and reattach click event handler
+                cell.removeAttr("contenteditable");
+            }
+        });
+    }
 
     // Function to handle pagination
     function paginate(direction) {
@@ -995,14 +1192,19 @@ $(document).ready(function(){
 
 <script>
 $(document).ready(() => {
-    $('#createButton').click(function () {
+    $('#createButton').click(function (event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+
         // Get the value of the type name input field
         var typeName = $('#typeName').val().trim();
 
         // Check if the input is empty
         if (typeName === '') {
+            alert('Type Name cannot be empty');
             return; // Exit the function, preventing further execution
         }
+
         // Serialize form data
         var formData = $('#create_type').serialize();
 
@@ -1011,12 +1213,21 @@ $(document).ready(() => {
             type: 'POST',
             url: 'actions/create_type.php',
             data: formData,
+            dataType: 'json', // Assuming the response is JSON
             success: function (response) {
                 // Check if the operation was successful
                 if (response.success) {
-                    location.reload();
+                    // Optionally, display a success message or perform any other action
+                    alert('Type added successfully!');
+                    // Optionally, update the UI with the new type information
+                    // For example, update a dropdown list dynamically
+                    var newOption = $('<option>', {
+                        value: response.product_id,
+                        text: typeName
+                    });
+                    $('#productTypeSelect').append(newOption);
                 } else {
-
+                    alert('Porduct is already existed.');
                 }
             },
             error: function (xhr, status, error) {
@@ -1027,6 +1238,8 @@ $(document).ready(() => {
     });
 });
 </script>
+
+
 
 <script>
 $(document).ready(function () {
