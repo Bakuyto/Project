@@ -4,7 +4,6 @@
     $username = "root";
     $password = "Admin_Pacific_219";
     $dbname = "inventorymanagement";
-
     //create connection
 
     $conn = new mysqli($servername, $username, $password, $dbname);

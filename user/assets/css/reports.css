@@ -60,6 +60,7 @@ outline: 2px solid lightgrey;
 table thead th.sticky {
   position: sticky;
   top: 0;
+  width: auto;
   z-index: 2;
 }
 table tbody tr td.sticky {
@@ -70,56 +71,4 @@ table tbody tr td.sticky {
 table tbody tr td:focus{
 font-weight: bolder;
 background-color: var(--blue);
-}
-
-
-/* Default style for all screens */
-.table-container.tbl-fixed {
-height: auto; /* Set a default height */
-/* border: 1px solid blue; */ /* Optional border for debugging */
-}
-
-@media only screen and (min-width: 768px) {
-.table-container.tbl-fixed {
-  height: 50vh;
-  /* border: 1px solid red; */
-}
-}
-
-@media only screen and (min-width: 1024px) {
-.table-container.tbl-fixed {
-  height: 71vh;
-  /* border: 1px solid green; */
-}
-}
-
-@media only screen and (min-width: 1366px) {
-.table-container.tbl-fixed {
-  height: 75vh; /* Added a breakpoint for 14-inch laptops */
-  /* border: 1px solid orange; */
-}
-}
-
-@media only screen and (min-width: 1440px) {
-.table-container.tbl-fixed {
-  height: 81vh;
-  /* border: 1px solid purple; */
-}
-}
-
-
-.password-container {
-  position: relative;
-}
-
-.form-control {
-  padding-right: 40px; /* Adjust this value based on icon size and positioning */
-}
-
-.show-password {
-  position: absolute;
-  top: 50%;
-  right: 10px; /* Adjust this value for proper positioning */
-  transform: translateY(-50%);
-  cursor: pointer;
 }

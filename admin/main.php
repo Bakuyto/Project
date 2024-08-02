@@ -18,7 +18,7 @@ if (!isset($_SESSION['user_log_name'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Main Page</title>
   <link rel="icon" href="assets/img/a.jpg">
-  <link rel="stylesheet" href="assets/css/Homepage.css">
+  <link rel="stylesheet" href="assets/css/Homepage1.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -625,37 +625,76 @@ $(document).ready(function() {
     var searchText = ''; // Global variable to store search text
     var productType;
 
-    // Event listener for Export to Excel button click
-    $("#export2excel").on("click", function () {
-        var visibleRows = $("tbody tr:visible"); // Select only visible rows after filtering and pagination
-        var csvContent = "data:text/csv;charset=utf-8,";
-
-        // Construct header row
-        var headerRow = [];
-        $("#myTable th").each(function () {
-            headerRow.push('"' + $(this).text().replace(/"/g, '""') + '"');
-        });
-        csvContent += headerRow.join(",") + "\n";
-
-        // Construct data rows
-        visibleRows.each(function () {
-            var rowData = [];
-            $(this).find("td").each(function () {
-                rowData.push('"' + $(this).text().replace(/"/g, '""') + '"');
-            });
-            csvContent += rowData.join(",") + "\n";
-        });
-
-        var encodedUri = encodeURI(csvContent);
-        var link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "exported_data.csv");
-        document.body.appendChild(link);
-
-        link.click();
-
-        document.body.removeChild(link);
+    function fetchDataForExport() {
+    $.ajax({
+        url: "actions/fetch_data.php",
+        type: "GET",
+        data: {
+            search: searchText, // Include search text parameter
+            product_type: productType // Include product type parameter
+        },
+        dataType: "json",
+        success: function(response) {
+            var allData = response.data;
+            var sumRowData = response.sumRow; // Fetch sumRow data from response
+            exportToExcel(allData, sumRowData); // Pass all data and sumRow data to the export function
+        },
+        error: function(xhr, status, error) {
+            // Handle error
+        }
     });
+}
+
+$("#export2excel").on("click", function() {
+    // Call fetchDataForExport to get all data for export
+    fetchDataForExport();
+});
+
+// Export to Excel function with sumRow data
+function exportToExcel(data, sumRowData) {
+    var visibleFirstRow = $("tbody tr:visible:first");
+    var csvContent = "data:text/csv;charset=utf-8,";
+
+    // Construct header row excluding 'Tool' column
+    var headerRow = [];
+    $("#myTable th").each(function() {
+        var columnName = $(this).attr("id");
+        if (columnName !== 'product_type_fk' && columnName !== 'Tool') {
+            headerRow.push('"' + $(this).text().replace(/"/g, '""') + '"');
+        }
+    });
+    csvContent += headerRow.join(",") + "\n";
+
+    // Construct data row excluding 'Tool' column
+    var rowData = [];
+    visibleFirstRow.find("td").each(function () {
+        var columnName = $(this).attr("id");
+        if (columnName !== 'product_type_fk' && columnName !== 'Tool') {
+            rowData.push('"' + $(this).text().replace(/"/g, '""') + '"');
+        }
+    });
+    csvContent += rowData.join(",") + "\n";
+
+    // Construct data rows excluding 'Tool' column
+    $.each(data, function(index, rowData) {
+        var rowDataArray = [];
+        $.each(rowData, function(column_name, value) {
+            if (column_name !== 'product_type_fk' && column_name !== 'Tool') {
+                rowDataArray.push('"' + value.toString().replace(/"/g, '""') + '"');
+            }
+        });
+        csvContent += rowDataArray.join(",") + "\n";
+    });
+
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "exported_data.csv");
+    document.body.appendChild(link);
+
+    link.click();
+    document.body.removeChild(link);
+}
 
     $(document).on("keydown", "tbody td.editable", function(event) {
     // Cache frequently used elements

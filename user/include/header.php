@@ -12,7 +12,7 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
     </button>
     <div class="collapse navbar-collapse justify-content-center"
       id="navbarSupportedContent">
-      <!-- <ul class="navbar-nav">
+      <ul class="navbar-nav">
         <li class="nav-item">
           <a
             class="nav-link <?php if($current_page == 'main.php') echo 'text-light active'; ?>"
@@ -23,16 +23,16 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
             class="nav-link <?php if($current_page == 'report.php') echo 'text-light active'; ?>"
             href="report.php"><h4>Report</h4></a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a
             class="nav-link <?php if($current_page == 'create-user.php') echo 'text-light active'; ?>"
             href="create-user.php"><h4>Create</h4></a>
-        </li>
-        <li class="nav-item d-sm-none d-md-none">
+        </li> -->
+        <!-- <li class="nav-item d-sm-none d-md-none">
           <a href="#"><div
               class="nav-link justify-content-end"><h4>Logout</h4></div></a>
-        </li>
-      </ul> -->
+        </li> -->
+      </ul>
     </div>
     <div class="collapse navbar-collapse" id="navbarSupportedContent"
       style="flex-grow:0;">

@@ -1,0 +1,126 @@
+.btn:hover {
+    transform: scaleY(1.1);
+    transition: 1s;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  
+  :root {
+    --blue: #28ACE8;
+    --white: #ffff;
+    --grey: rgb(211, 211, 211);
+  }
+  
+  .tbl-container {
+    max-width: fit-content;
+    max-height: fit-content;
+    overflow: hidden;
+  }
+  
+  .table-container.tbl-fixed {
+    overflow-y: scroll;
+    overflow-x: scroll;
+  }
+  
+  table {
+    min-width: max-content;
+    border: 2px solid lightgrey;
+  }
+  
+  table th {
+    position: sticky;
+    top: 0;
+    background-color: var(--blue);
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 50px;
+    z-index: 1;
+  }
+  th,td{
+  padding: 4px;
+  }
+  
+  table thead tr th {
+    text-align: center;
+    outline: 2px solid lightgrey;
+  }
+  
+  table tbody tr td {
+    text-align: center;
+    background-color: white;
+    outline: 1px solid lightgrey;
+  }
+  
+  table tbody tr td.sticky{
+  outline: 2px solid lightgrey;
+  }
+  /* Sticky Header Styles */
+  table thead th.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  table tbody tr td.sticky {
+    position: sticky;
+    z-index: 1;
+  }
+  
+  table tbody tr td:focus{
+  font-weight: bolder;
+  background-color: var(--blue);
+  }
+  
+
+/* Default style for all screens */
+.table-container.tbl-fixed {
+  height: auto; /* Set a default height */
+  /* border: 1px solid blue; */ /* Optional border for debugging */
+}
+
+@media only screen and (min-width: 768px) {
+  .table-container.tbl-fixed {
+    height: 50vh;
+    /* border: 1px solid red; */
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .table-container.tbl-fixed {
+    height: 71vh;
+    /* border: 1px solid green; */
+  }
+}
+
+@media only screen and (min-width: 1366px) {
+  .table-container.tbl-fixed {
+    height: 75vh; /* Added a breakpoint for 14-inch laptops */
+    /* border: 1px solid orange; */
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .table-container.tbl-fixed {
+    height: 81vh;
+    /* border: 1px solid purple; */
+  }
+}
+
+
+  
+  .password-container {
+    position: relative;
+  }
+  
+  .form-control {
+    padding-right: 40px; /* Adjust this value based on icon size and positioning */
+  }
+  
+  .show-password {
+    position: absolute;
+    top: 50%;
+    right: 10px; /* Adjust this value for proper positioning */
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
